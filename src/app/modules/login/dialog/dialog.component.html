@@ -1,0 +1,26 @@
+<form [formGroup]="form" (ngSubmit)="loginMail()">
+    <mat-form-field>
+        <input matInput placeholder="Email" type="email" formControlName="email" required>
+        <mat-error *ngIf="form.controls.email.hasError('email') && !form.controls.email.hasError('required')">Por favor escriba un email válido</mat-error>
+        <mat-error *ngIf="form.controls.email.hasError('required')">Por favor escriba un email</mat-error>
+    </mat-form-field>
+
+    <mat-form-field class="mt-2">
+        <input matInput placeholder="Contraseña" type="password" formControlName="password" required>
+        <mat-error *ngIf="form.controls.password.hasError('minLength(6)') && !form.controls.password.hasError('required')">La contraseña como mínimo tiene 6 caracteres</mat-error>
+        <mat-error *ngIf="form.controls.password.hasError('required')">Por favor escriba una contraseña</mat-error>
+    </mat-form-field>
+
+    <button mat-raised-button 
+        matTooltip="Conectarse" 
+        type="submit" 
+        [disabled]="!form.valid" 
+        color="primary" 
+        class="mt-2">Conectarse</button>
+</form>
+
+<button mat-raised-button 
+    matTooltip="Conecta mediante Google" 
+    (click)="loginGoogle()" 
+    color="primary" 
+    class="mt-2">Conecta mediante Google</button>
