@@ -1,0 +1,45 @@
+<div class="container-fluid">
+    <form [formGroup]="form" (ngSubmit)="loginMail()">
+        <div class="row justify-content-md-center">
+            <div class="col col-md-auto">
+                <mat-form-field>
+                    <input matInput placeholder="Email" type="email" formControlName="email" required>
+                    <mat-error *ngIf="form.controls.email.hasError('email') && !form.controls.email.hasError('required')">Por favor escriba un email válido</mat-error>
+                    <mat-error *ngIf="form.controls.email.hasError('required')">Por favor escriba un email</mat-error>
+                </mat-form-field>
+            </div>
+        </div>
+
+        <div class="row justify-content-md-center">
+            <div class="col col-md-auto">
+                <mat-form-field class="mt-2">
+                    <input matInput placeholder="Contraseña" type="password" formControlName="password" required>
+                    <mat-error *ngIf="form.controls.password.hasError('minLength(6)') && !form.controls.password.hasError('required')">La contraseña como mínimo tiene 6 caracteres</mat-error>
+                    <mat-error *ngIf="form.controls.password.hasError('required')">Por favor escriba una contraseña</mat-error>
+                </mat-form-field>
+            </div>
+        </div>
+
+        <div class="row justify-content-md-center">
+            <div class="col col-md-auto">
+                <button mat-raised-button 
+                matTooltip="Conectarse" 
+                type="submit" 
+                [disabled]="!form.valid" 
+                color="primary" 
+                class="mt-2">Conectarse</button>
+            </div>
+        </div>
+
+    </form>
+
+    <div class="row justify-content-md-center">
+        <div class="col col-md-auto">
+            <button mat-raised-button 
+            matTooltip="Conecta mediante Google" 
+            (click)="loginGoogle()" 
+            color="primary" 
+            class="mt-2">Conecta mediante Google</button>
+        </div>
+    </div>
+</div>
