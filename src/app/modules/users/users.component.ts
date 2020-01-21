@@ -4,8 +4,7 @@ import { Component, OnInit } from '@angular/core';
     selector: 'app-user',
     templateUrl: './users.component.html',
 })
-export class UsersComponent implements OnInit {
+export class UsersComponent {
     constructor() { }
 
-    ngOnInit(): void { }
 }

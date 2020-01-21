@@ -46,7 +46,7 @@
         <button mat-button [matMenuTriggerFor]="users" matTooltip="Usuarios">Usuarios</button>
         <mat-menu #users="matMenu">
             <button mat-menu-item matTooltip="Listar" routerLink="users">Listar</button>
-            <button mat-menu-item matTooltip="Crear">Crear</button>
+            <button mat-menu-item matTooltip="Crear" (click)="newUser()">Crear</button>
         </mat-menu>
     </ng-container>
 

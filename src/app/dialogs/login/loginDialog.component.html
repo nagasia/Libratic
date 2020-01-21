@@ -23,7 +23,6 @@
         <div class="row justify-content-md-center">
             <div class="col col-md-auto">
                 <button mat-raised-button 
-                matTooltip="Conectarse" 
                 type="submit" 
                 [disabled]="!form.valid" 
                 color="primary" 
@@ -31,15 +30,28 @@
             </div>
         </div>
 
-    </form>
-
-    <div class="row justify-content-md-center">
-        <div class="col col-md-auto">
-            <button mat-raised-button 
-            matTooltip="Conecta mediante Google" 
-            (click)="loginGoogle()" 
-            color="primary" 
-            class="mt-2">Conecta mediante Google</button>
+        <div class="row justify-content-md-center">
+            <div class="col col-md-auto">
+                <button mat-raised-button 
+                type="button"
+                (click)="resetPassword()" 
+                [disabled]="!form.controls.email.valid" 
+                color="primary" 
+                class="mt-2">Reestablecer contraseña</button>
+            </div>
         </div>
-    </div>
+
+        <div class="row justify-content-md-center">
+            <div class="col col-md-auto">
+                <button mat-raised-button 
+                type="button"
+                matTooltip="Conecta mediante Google" 
+                (click)="loginGoogle()" 
+                color="primary" 
+                class="mt-4">Conecta mediante Google</button>
+            </div>
+        </div>
+
+    </form>
+    
 </div>

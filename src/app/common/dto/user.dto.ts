@@ -6,6 +6,6 @@ export interface User {
     phone: string;
     dni?: string;
     userType: string;
-    libraryID: string;
+    libraryIDs: string[];
     favourites?: string[];
 }

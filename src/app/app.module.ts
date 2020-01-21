@@ -20,6 +20,8 @@ import { LoginDialogModule } from './dialogs/login/loginDialog.module';
 import { LoginDialogComponent } from './dialogs/login/loginDialog.component';
 import { LibraryDialogModule } from './dialogs/library/libraryDialog.module';
 import { LibraryDialogComponent } from './dialogs/library/libraryDialog.component';
+import { UserDialogModule } from './dialogs/user/userDialog.module';
+import { UserDialogComponent } from './dialogs/user/userDialog.component';
 
 @NgModule({
     declarations: [AppComponent],
@@ -36,6 +38,7 @@ import { LibraryDialogComponent } from './dialogs/library/libraryDialog.componen
         FavouritesModule,
         LoginDialogModule,
         LibraryDialogModule,
+        UserDialogModule,
         AppRoutingModule,
         AngularFireModule.initializeApp(environment.firebaseConfig),
         AngularFireAuthModule,
@@ -45,6 +48,7 @@ import { LibraryDialogComponent } from './dialogs/library/libraryDialog.componen
     entryComponents: [
         LoginDialogComponent,
         LibraryDialogComponent,
+        UserDialogComponent,
     ]
 })
 export class AppModule { }

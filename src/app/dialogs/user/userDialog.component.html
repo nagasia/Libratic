@@ -1,0 +1,75 @@
+<form [formGroup]="form" (ngSubmit)="save()">
+    <div class="container-fluid">
+
+        <div class="row justify-content-md-center">
+            <div class="col col-md-auto">
+                <mat-form-field>
+                    <input matInput placeholder="Nombre" type="text" formControlName="name" required>
+                    <mat-error *ngIf="form.controls.name.hasError('required')">Por favor escriba un nombre</mat-error>
+                </mat-form-field>
+            </div>
+        </div>
+
+        <div class="row justify-content-md-center">
+            <div class="col col-md-auto">
+                <mat-form-field>
+                    <input matInput placeholder="Dirección" type="text" formControlName="adress" required>
+                    <mat-error *ngIf="form.controls.adress.hasError('required')">Por favor escriba una dirección</mat-error>
+                </mat-form-field>
+            </div>
+        </div>
+
+        <div class="row justify-content-md-center">
+            <div class="col col-md-auto">
+                <mat-form-field>
+                    <input matInput placeholder="Email" type="email" formControlName="email" required>
+                    <mat-error *ngIf="form.controls.email.hasError('email') && !form.controls.email.hasError('required')">Por favor escriba un email válido</mat-error>
+                    <mat-error *ngIf="form.controls.email.hasError('required')">Por favor escriba un email</mat-error>
+                </mat-form-field>
+            </div>
+        </div>
+
+        <div class="row justify-content-md-center">
+            <div class="col col-md-auto">
+                <mat-form-field>
+                    <input matInput placeholder="Teléfono" type="tel" formControlName="phone" required>
+                    <mat-error *ngIf="form.controls.phone.hasError('required')">Por favor escriba un teléfono</mat-error>
+                </mat-form-field>
+            </div>
+        </div>
+
+        <div class="row justify-content-md-center">
+            <div class="col col-md-auto">
+                <mat-form-field>
+                    <input matInput placeholder="DNI" type="text" formControlName="dni" required>
+                    <mat-error *ngIf="form.controls.dni.hasError('required')">Por favor escriba un dni</mat-error>
+                </mat-form-field>
+            </div>
+        </div>
+
+        <div class="row justify-content-md-center">
+            <div class="col col-md-auto">
+                <mat-form-field>
+                    <mat-label>Tipo de usuario</mat-label>
+                        <mat-select formControlName="userType" required>
+                            <mat-option value="user">Usuario</mat-option>
+                            <mat-option value="admin">Administrador</mat-option>
+                        </mat-select>
+                    <mat-error *ngIf="form.controls.userType.hasError('required')">Por favor elija el tipo de usuario</mat-error>
+                </mat-form-field>
+            </div>
+        </div>
+
+        <div class="row justify-content-md-center">
+            <div class="col col-md-auto">
+                <button mat-raised-button 
+                matTooltip="Crear" 
+                type="submit" 
+                [disabled]="!form.valid" 
+                color="primary"
+                class="mt-2">Crear</button>
+            </div>
+        </div>
+
+    </div>
+</form>

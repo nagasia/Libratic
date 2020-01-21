@@ -4,7 +4,8 @@ import { AuthenticationService } from './services/authentication.service';
 import { LoginDialogComponent } from './dialogs/login/loginDialog.component';
 import { LibraryDialogComponent } from './dialogs/library/libraryDialog.component';
 import { User } from './common/dto/user.dto';
-import { FirebaseService } from './services/firebase.service';
+import { FireDBService } from './services/fireDB.service';
+import { UserDialogComponent } from './dialogs/user/userDialog.component';
 
 @Component({
     selector: 'app-root',
@@ -16,11 +17,12 @@ export class AppComponent implements OnDestroy {
     authUser;
     libraryDialog$;
     loginDialog$;
+    userDialog$;
     user$;
 
     constructor(private dialog: MatDialog,
         private authService: AuthenticationService,
-        private fireService: FirebaseService) {
+        private db: FireDBService) {
         this.isLoged = false;
     }
 
@@ -36,6 +38,10 @@ export class AppComponent implements OnDestroy {
         }, error => console.log(error));
     }
 
+    newUser() {
+        this.userDialog$ = this.dialog.open(UserDialogComponent);
+    }
+
     logIn() {
         this.loginDialog$ = this.dialog.open(LoginDialogComponent);
 
@@ -44,7 +50,7 @@ export class AppComponent implements OnDestroy {
                 this.authUser = result;
                 const id = result.uid;
 
-                this.user$ = this.fireService.getOne('users/' + id)
+                this.user$ = this.db.getOne('users/' + id)
                     .subscribe((user: User) => {
                         if (user) {
                             this.isLoged = true;

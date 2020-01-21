@@ -1,7 +1,7 @@
 import { Component, OnDestroy } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material';
-import { FirebaseService } from '../../services/firebase.service';
+import { FireDBService } from '../../services/fireDB.service';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { User } from '../../common/dto/user.dto';
 import { Library } from 'src/app/common/dto/library.dto';
@@ -23,7 +23,7 @@ export class LibraryDialogComponent implements OnDestroy {
 
     constructor(private formBuilder: FormBuilder,
         private dialogRef: MatDialogRef<LibraryDialogComponent>,
-        private db: FirebaseService,
+        private db: FireDBService,
         public authService: AuthenticationService) {
         this.form = this.formBuilder.group({
             name: [null, [Validators.required, Validators.minLength(6)]],
@@ -55,7 +55,7 @@ export class LibraryDialogComponent implements OnDestroy {
                     email: this.admin,
                     phone: data.phoneNumber,
                     userType: 'admin',
-                    libraryID,
+                    libraryIDs: [libraryID],
                 };
                 this.db.save('users/' + this.id, this.user);
 
@@ -73,7 +73,7 @@ export class LibraryDialogComponent implements OnDestroy {
                     email: this.admin,
                     phone: data.phoneNumber,
                     userType: 'admin',
-                    libraryID,
+                    libraryIDs: [libraryID],
                 };
                 this.db.save('users/' + this.id, this.user);
 

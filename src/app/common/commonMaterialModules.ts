@@ -6,10 +6,14 @@ import { MatButtonModule,
     MatTooltipModule,
     MatDialogModule,
     MatInputModule,
-    MatFormFieldModule } from '@angular/material';
+    MatFormFieldModule,
+    MatSelectModule,
+    MatSnackBarModule} from '@angular/material';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
-    imports: [
+    exports: [
+        BrowserAnimationsModule,
         MatButtonModule,
         MatIconModule,
         MatToolbarModule,
@@ -19,17 +23,8 @@ import { MatButtonModule,
         MatDialogModule,
         MatInputModule,
         MatFormFieldModule,
-    ],
-    exports: [
-        MatButtonModule,
-        MatIconModule,
-        MatToolbarModule,
-        MatIconModule,
-        MatMenuModule,
-        MatTooltipModule,
-        MatDialogModule,
-        MatInputModule,
-        MatFormFieldModule
+        MatSelectModule,
+        MatSnackBarModule
     ],
 })
 export class CommonMaterialModules { }
