@@ -6,6 +6,7 @@ import { LendingsComponent } from './modules/lendings/lendings.component';
 import { MoviesComponent } from './modules/movies/movies.component';
 import { TvshowsComponent } from './modules/tvshows/tvshows.component';
 import { FavouritesComponent } from './modules/favourites/favourites.component';
+import { WishedComponent } from './modules/wished/wished.component';
 
 
 const routes: Routes = [
@@ -16,6 +17,7 @@ const routes: Routes = [
     { path: 'movies', component: MoviesComponent },
     { path: 'tv', component: TvshowsComponent },
     { path: 'favourites', component: FavouritesComponent },
+    { path: 'wished', component: WishedComponent },
 ];
 
 @NgModule({

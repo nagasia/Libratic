@@ -22,6 +22,7 @@ import { LibraryDialogModule } from './dialogs/library/libraryDialog.module';
 import { LibraryDialogComponent } from './dialogs/library/libraryDialog.component';
 import { UserDialogModule } from './dialogs/user/userDialog.module';
 import { UserDialogComponent } from './dialogs/user/userDialog.component';
+import { WishedModule } from './modules/wished/wished.module';
 
 @NgModule({
     declarations: [AppComponent],
@@ -36,13 +37,14 @@ import { UserDialogComponent } from './dialogs/user/userDialog.component';
         MoviesModule,
         TvshowsModule,
         FavouritesModule,
+        WishedModule,
         LoginDialogModule,
         LibraryDialogModule,
         UserDialogModule,
         AppRoutingModule,
         AngularFireModule.initializeApp(environment.firebaseConfig),
         AngularFireAuthModule,
-        AngularFireDatabaseModule
+        AngularFireDatabaseModule,
     ],
     bootstrap: [AppComponent],
     entryComponents: [

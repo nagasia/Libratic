@@ -3,47 +3,75 @@
     <div class="spacer"></div>
 
     <ng-container *ngIf="!isLoged || (isLoged && userType=='user')">
-        <button mat-button matTooltip="Libros" routerLink="books">Libros</button>
-        <button mat-button matTooltip="Películas" routerLink="movies">Películas</button>
-        <button mat-button matTooltip="Series" routerLink="tv">Series</button>
+        <button mat-icon-button matTooltip="Libros" routerLink="books">
+            <i class="fas fa-book"></i>
+        </button>
+        <button mat-icon-button matTooltip="Películas" routerLink="movies">
+            <i class="fas fa-film"></i>
+        </button>
+        <button mat-icon-button matTooltip="Series" routerLink="tv">
+            <i class="fas fa-tv"></i>
+        </button>
     </ng-container>
 
     <ng-container *ngIf="isLoged && userType=='user'">
-        <button mat-button matTooltip="Préstamos" routerLink="lendings">Préstamos</button>
+        <button mat-icon-button matTooltip="Préstamos" routerLink="lendings">
+            <i class="far fa-calendar"></i>
+        </button>
 
-        <button mat-button [matMenuTriggerFor]="favs" matTooltip="Favoritos">Favoritos</button>
+        <button mat-icon-button [matMenuTriggerFor]="favs" matTooltip="Favoritos">
+            <i class="fas fa-heart"></i>
+        </button>
         <mat-menu #favs="matMenu">
             <button mat-menu-item matTooltip="Listar" routerLink="favourites">Listar</button>
+            <button mat-menu-item matTooltip="Crear">Crear</button>
+        </mat-menu>
+
+        <button mat-icon-button [matMenuTriggerFor]="wished" matTooltip="Deseados">
+            <i class="fas fa-hand-holding-heart"></i>
+        </button>
+        <mat-menu #wished="matMenu">
+            <button mat-menu-item matTooltip="Listar" routerLink="wished">Listar</button>
             <button mat-menu-item matTooltip="Crear">Crear</button>
         </mat-menu>
     </ng-container>
 
     <ng-container *ngIf="isLoged && userType=='admin'">
-        <button mat-button [matMenuTriggerFor]="books" matTooltip="Libros">Libros</button>
+        <button mat-icon-button [matMenuTriggerFor]="books" matTooltip="Libros">
+            <i class="fas fa-book"></i>
+        </button>
         <mat-menu #books="matMenu">
             <button mat-menu-item matTooltip="Listar" routerLink="books">Listar</button>
             <button mat-menu-item matTooltip="Crear">Crear</button>
         </mat-menu>
 
-        <button mat-button [matMenuTriggerFor]="movies" matTooltip="Películas">Películas</button>
+        <button mat-icon-button [matMenuTriggerFor]="movies" matTooltip="Películas">
+            <i class="fas fa-film"></i>
+        </button>
         <mat-menu #movies="matMenu">
             <button mat-menu-item matTooltip="Listar" routerLink="movies">Listar</button>
             <button mat-menu-item matTooltip="Crear">Crear</button>
         </mat-menu>
 
-        <button mat-button [matMenuTriggerFor]="tvShows" matTooltip="Series">Series</button>
+        <button mat-icon-button [matMenuTriggerFor]="tvShows" matTooltip="Series">
+            <i class="fas fa-tv"></i>
+        </button>
         <mat-menu #tvShows="matMenu">
             <button mat-menu-item matTooltip="Listar" routerLink="tv">Listar</button>
             <button mat-menu-item matTooltip="Crear">Crear</button>
         </mat-menu>
 
-        <button mat-button [matMenuTriggerFor]="lendings" matTooltip="Préstamos">Préstamos</button>
+        <button mat-icon-button [matMenuTriggerFor]="lendings" matTooltip="Préstamos">
+            <i class="far fa-calendar"></i>
+        </button>
         <mat-menu #lendings="matMenu">
             <button mat-menu-item matTooltip="Listar" routerLink="lendings">Listar</button>
             <button mat-menu-item matTooltip="Crear">Crear</button>
         </mat-menu>
 
-        <button mat-button [matMenuTriggerFor]="users" matTooltip="Usuarios">Usuarios</button>
+        <button mat-icon-button [matMenuTriggerFor]="users" matTooltip="Usuarios">
+            <i class="fas fa-users"></i>
+        </button>
         <mat-menu #users="matMenu">
             <button mat-menu-item matTooltip="Listar" routerLink="users">Listar</button>
             <button mat-menu-item matTooltip="Crear" (click)="newUser()">Crear</button>
@@ -51,15 +79,18 @@
     </ng-container>
 
     <ng-container *ngIf="!isLoged">
-        <button mat-button matTooltip="Nueva biblioteca" (click)="newLibrary()">Nueva biblioteca</button>
+        <button mat-button matTooltip="Nueva biblioteca" (click)="newLibrary()">
+            <i class="fas fa-plus"></i>
+            <i class="fas fa-landmark"></i>
+        </button>
 
         <button mat-icon-button (click)="logIn()" matTooltip="Conectarse">
-            <mat-icon>account_circle</mat-icon>
+            <i class="fas fa-sign-in-alt"></i>
         </button>
     </ng-container>
 
     <button mat-icon-button *ngIf="isLoged" (click)="logOut()" matTooltip="Desconectarse" routerLink="/">
-        <mat-icon>exit_to_app</mat-icon>
+        <i class="fas fa-sign-out-alt"></i>
     </button>
 </mat-toolbar>
 
