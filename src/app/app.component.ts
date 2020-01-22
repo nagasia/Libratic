@@ -6,6 +6,7 @@ import { LibraryDialogComponent } from './dialogs/library/libraryDialog.componen
 import { User } from './common/dto/user.dto';
 import { FireDBService } from './services/fireDB.service';
 import { UserDialogComponent } from './dialogs/user/userDialog.component';
+import { Library } from './common/dto/library.dto';
 
 @Component({
     selector: 'app-root',
@@ -13,27 +14,30 @@ import { UserDialogComponent } from './dialogs/user/userDialog.component';
 })
 export class AppComponent implements OnDestroy {
     isLoged: boolean;
-    userType: string;
-    authUser;
+    isAdmin: boolean;
+    authUser: User;
+    authLibrary: Library;
     libraryDialog$;
     loginDialog$;
     userDialog$;
-    user$;
+    library$;
 
     constructor(private dialog: MatDialog,
         private authService: AuthenticationService,
         private db: FireDBService) {
         this.isLoged = false;
+        this.isAdmin = false;
     }
 
     newLibrary() {
         this.libraryDialog$ = this.dialog.open(LibraryDialogComponent);
 
         this.libraryDialog$.afterClosed().subscribe(result => {
-            if (result) {
-                this.authUser = result;
-                this.isLoged = true;
-                this.userType = 'admin';
+            this.authUser = this.authService.authUser;
+            this.authLibrary = this.authService.authLibrary;
+
+            if (this.authUser.userLevel === 'admin') {
+                this.isAdmin = true;
             }
         }, error => console.log(error));
     }
@@ -46,17 +50,17 @@ export class AppComponent implements OnDestroy {
         this.loginDialog$ = this.dialog.open(LoginDialogComponent);
 
         this.loginDialog$.afterClosed().subscribe(result => {
-            if (result) {
-                this.authUser = result;
-                const id = result.uid;
+            if (this.authService.authUser) {
+                this.authUser = this.authService.authUser;
 
-                this.user$ = this.db.getOne('users/' + id)
-                    .subscribe((user: User) => {
-                        if (user) {
-                            this.isLoged = true;
-                            this.userType = user.userType;
-                        }
-                    }, error => console.log(error));
+                this.library$ = this.db.getOne('libraries/' + this.authUser.libraryID)
+                    .subscribe((library: Library) => this.authLibrary = library,
+                        error => console.log(error));
+
+                if (this.authUser.userLevel === 'admin') {
+                    this.isAdmin = true;
+                }
+                this.isLoged = true;
             }
         });
     }
@@ -64,6 +68,7 @@ export class AppComponent implements OnDestroy {
     logOut() {
         this.authService.logout();
         this.isLoged = false;
+        this.isAdmin = false;
     }
 
     ngOnDestroy() {
@@ -73,8 +78,8 @@ export class AppComponent implements OnDestroy {
         if (this.loginDialog$) {
             this.loginDialog$.unsubscribe();
         }
-        if (this.user$) {
-            this.user$.unsubscribe();
+        if (this.library$) {
+            this.library$.unsubscribe();
         }
     }
 }

@@ -4,6 +4,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { AuthenticationService } from '../../services/authentication.service';
 import { FireDBService } from '../../services/fireDB.service';
 import { FormatterService } from '../../services/formatter.service';
+import { User } from 'src/app/common/dto/user.dto';
 
 @Component({
     selector: 'app-login-dialog',
@@ -11,7 +12,7 @@ import { FormatterService } from '../../services/formatter.service';
 })
 export class LoginDialogComponent implements OnDestroy {
     form: FormGroup;
-    user;
+    user: User;
     login$;
 
     constructor(private formBuilder: FormBuilder,
@@ -26,10 +27,11 @@ export class LoginDialogComponent implements OnDestroy {
         });
     }
 
-    loginGoogle() {
-        this.authService.googleLogin();
-        this.db.getOne('users/' + this.authService.user.email)
-            .subscribe(user => {
+    async loginGoogle() {
+        await this.authService.googleLogin();
+
+        this.login$ = this.db.getOne('users/' + this.formatter.formatEmail(this.authService.user.email))
+            .subscribe((user: User) => {
                 if (user) {
                     this.user = user;
                     this.onClose();
@@ -39,6 +41,7 @@ export class LoginDialogComponent implements OnDestroy {
                 }
             },
                 error => console.log(error));
+
     }
 
     loginMail() {
@@ -47,9 +50,9 @@ export class LoginDialogComponent implements OnDestroy {
         const emailFormatted = this.formatter.formatEmail(email);
 
         this.login$ = this.db.getOne('users/' + emailFormatted)
-            .subscribe(user => {
+            .subscribe(async (user: User) => {
                 if (user) {
-                    this.authService.mailLogin(email, password);
+                    await this.authService.mailLogin(email, password);
                     this.user = user;
                     this.onClose();
                 } else {
@@ -70,7 +73,8 @@ export class LoginDialogComponent implements OnDestroy {
     }
 
     onClose() {
-        this.dialogRef.close(this.user);
+        this.authService.authUser = this.user;
+        this.dialogRef.close();
     }
 
     ngOnDestroy() {

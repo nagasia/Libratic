@@ -3,9 +3,10 @@ export interface User {
     name?: string;
     adress?: string;
     email: string;
-    phone: string;
+    phone?: string;
     dni?: string;
-    userType: string;
-    libraryIDs: string[];
+    userLevel: string;
+    libraryID: string;
     favourites?: string[];
+    wished?: string[];
 }

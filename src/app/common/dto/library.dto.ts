@@ -1,6 +1,5 @@
 export interface Library {
     id: string;
-    name: string;
     adress: string;
     adminIDs: string[];
     usersIDs?: string[];

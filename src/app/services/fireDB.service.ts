@@ -8,8 +8,7 @@ export class FireDBService {
     constructor(public db: AngularFireDatabase) { }
 
     save(path: string, data: any) {
-        this.db.object(path).update(data)
-            .catch(error => console.log(error));
+        return this.db.object(path).update(data);
     }
 
     getList(path: string) {
@@ -21,7 +20,6 @@ export class FireDBService {
     }
 
     remove(path: string) {
-        return this.db.object(path).remove()
-            .catch(error => console.log(error));
+        return this.db.object(path).remove();
     }
 }

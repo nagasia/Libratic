@@ -22,9 +22,9 @@
         <div class="row justify-content-md-center">
             <div class="col col-md-auto">
                 <mat-form-field>
-                    <input matInput placeholder="Email del administrador" type="email" formControlName="admin" required class="col">
-                    <mat-error *ngIf="form.controls.admin.hasError('email') && !form.controls.admin.hasError('required')">Por favor escriba un email válido</mat-error>
-                    <mat-error *ngIf="form.controls.admin.hasError('required')">Por favor escriba un email</mat-error>
+                    <input matInput placeholder="Email del administrador" type="email" formControlName="email" required class="col">
+                    <mat-error *ngIf="form.controls.email.hasError('email') && !form.controls.email.hasError('required')">Por favor escriba un email válido</mat-error>
+                    <mat-error *ngIf="form.controls.email.hasError('required')">Por favor escriba un email</mat-error>
                 </mat-form-field>
             </div>
         </div>
@@ -41,7 +41,6 @@
         <div class="row justify-content-md-center">
             <div class="col col-md-auto">
                 <button mat-raised-button 
-                matTooltip="Crear" 
                 type="submit" 
                 [disabled]="!form.valid" 
                 color="primary"
