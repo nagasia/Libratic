@@ -3,10 +3,7 @@ import { MatDialog } from '@angular/material';
 import { AuthenticationService } from './services/authentication.service';
 import { LoginDialogComponent } from './dialogs/login/loginDialog.component';
 import { LibraryDialogComponent } from './dialogs/library/libraryDialog.component';
-import { User } from './common/dto/user.dto';
-import { FireDBService } from './services/fireDB.service';
 import { UserDialogComponent } from './dialogs/user/userDialog.component';
-import { Library } from './common/dto/library.dto';
 
 @Component({
     selector: 'app-root',
@@ -15,16 +12,13 @@ import { Library } from './common/dto/library.dto';
 export class AppComponent implements OnDestroy {
     isLoged: boolean;
     isAdmin: boolean;
-    authUser: User;
-    authLibrary: Library;
     libraryDialog$;
     loginDialog$;
     userDialog$;
-    library$;
+
 
     constructor(private dialog: MatDialog,
-        private authService: AuthenticationService,
-        private db: FireDBService) {
+        private authService: AuthenticationService) {
         this.isLoged = false;
         this.isAdmin = false;
     }
@@ -33,11 +27,12 @@ export class AppComponent implements OnDestroy {
         this.libraryDialog$ = this.dialog.open(LibraryDialogComponent);
 
         this.libraryDialog$.afterClosed().subscribe(result => {
-            this.authUser = this.authService.authUser;
-            this.authLibrary = this.authService.authLibrary;
+            if (this.authService.authUser) {
+                this.isLoged = true;
 
-            if (this.authUser.userLevel === 'admin') {
-                this.isAdmin = true;
+                if (this.authService.authUser.userLevel === 'admin') {
+                    this.isAdmin = true;
+                }
             }
         }, error => console.log(error));
     }
@@ -51,16 +46,11 @@ export class AppComponent implements OnDestroy {
 
         this.loginDialog$.afterClosed().subscribe(result => {
             if (this.authService.authUser) {
-                this.authUser = this.authService.authUser;
+                this.isLoged = true;
 
-                this.library$ = this.db.getOne('libraries/' + this.authUser.libraryID)
-                    .subscribe((library: Library) => this.authLibrary = library,
-                        error => console.log(error));
-
-                if (this.authUser.userLevel === 'admin') {
+                if (this.authService.authUser.userLevel === 'admin') {
                     this.isAdmin = true;
                 }
-                this.isLoged = true;
             }
         });
     }
@@ -77,9 +67,6 @@ export class AppComponent implements OnDestroy {
         }
         if (this.loginDialog$) {
             this.loginDialog$.unsubscribe();
-        }
-        if (this.library$) {
-            this.library$.unsubscribe();
         }
     }
 }

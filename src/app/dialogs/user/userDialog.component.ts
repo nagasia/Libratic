@@ -1,9 +1,10 @@
 import { Component, OnDestroy } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { MatDialogRef } from '@angular/material';
+import { MatDialogRef, MatSnackBar } from '@angular/material';
 import { User } from 'src/app/common/dto/user.dto';
 import { FireDBService } from '../../services/fireDB.service';
 import { AuthenticationService } from '../../services/authentication.service';
+import { FormatterService } from '../../services/formatter.service';
 
 @Component({
     selector: 'app-user-dialog',
@@ -11,12 +12,15 @@ import { AuthenticationService } from '../../services/authentication.service';
 })
 export class UserDialogComponent implements OnDestroy {
     form: FormGroup;
+    library$;
     newUser$;
 
     constructor(private formBuilder: FormBuilder,
         private dialogRef: MatDialogRef<UserDialogComponent>,
         private db: FireDBService,
-        private authService: AuthenticationService) {
+        private authService: AuthenticationService,
+        private formatter: FormatterService,
+        private snackBar: MatSnackBar) {
         this.form = this.formBuilder.group({
             name: [null, [Validators.required, Validators.minLength(6)]],
             adress: [null, [Validators.required, Validators.minLength(6)]],
@@ -33,32 +37,59 @@ export class UserDialogComponent implements OnDestroy {
         const email = Object.assign({}, this.form.value).email;
         const phone = Object.assign({}, this.form.value).phone;
         const dni = Object.assign({}, this.form.value).dni;
-        const userType = Object.assign({}, this.form.value).userType;
-
+        const userLevel = Object.assign({}, this.form.value).userType;
         const password = dni + new Date().getTime().toString();
+        const id = this.formatter.formatEmail(email);
 
-        /*this.authService.newUserMail(email, password);
+        this.newUser$ = this.db.getOne('users/' + id)
+            .subscribe(response => {
+                if (!response) {
+                    const library = this.authService.authLibrary;
 
-        this.newUser$ = this.authService.newUser
-            .subscribe(data => {
-                if (data) {
                     const user: User = {
-                        id: data.uid,
+                        id,
                         name,
                         adress,
                         email,
                         phone,
                         dni,
-                        userType,
-                        libraryID: this.authService.loadedLibrary.id,
+                        userLevel,
+                        libraryID: library.id,
                     };
 
-                    this.db.save('users/' + data.uid, user);
-                    this.authService.reestartPassword(email);
+                    this.db.save('users/' + id, user)
+                        .then(async data => {
+                            this.snackBar.open('Usuario guardado', '', { duration: 2000 });
+
+                            if (library.usersIDs) {
+                                library.usersIDs.push(id);
+                            } else {
+                                library.usersIDs = [id];
+                            }
+
+                            this.db.save('libraries/' + library.id, library)
+                                .catch(error => {
+                                    console.log(error);
+                                    this.onClose();
+                                });
+
+                            await this.authService.newUser(email, password);
+                            this.authService.reestartPassword(email);
+                            this.onClose();
+                        })
+                        .catch(error => {
+                            this.snackBar.open('Problema al guardar al usuario', '', { duration: 2000 });
+                            console.log(error);
+                            this.onClose();
+                        });
+                } else {
+                    this.snackBar.open('El usuario ya existe', '', { duration: 2000 });
                     this.onClose();
                 }
-            })
-            .catch(error => console.log(error));*/
+            }, error => {
+                console.log(error);
+                this.onClose();
+            });
     }
 
     onClose() {
@@ -68,6 +99,9 @@ export class UserDialogComponent implements OnDestroy {
     ngOnDestroy() {
         if (this.newUser$) {
             this.newUser$.unsubscribe();
+        }
+        if (this.library$) {
+            this.library$.unsubscribe();
         }
     }
 

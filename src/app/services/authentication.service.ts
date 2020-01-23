@@ -24,19 +24,26 @@ export class AuthenticationService {
     }
 
     async mailLogin(email: string, password: string) {
-        await this.fbAuth.auth.signInWithEmailAndPassword(email, password)
+        return await this.fbAuth.auth.signInWithEmailAndPassword(email, password)
             .then(user => {
                 this.user = user.user;
-            })
-            .catch(error => console.log(error));
+            });
     }
 
     async googleLogin() {
-        await this.fbAuth.auth.signInWithPopup(new auth.GoogleAuthProvider())
+        return await this.fbAuth.auth.signInWithPopup(new auth.GoogleAuthProvider())
             .then(user => {
                 this.user = user.user;
-            })
+            });
+    }
+
+    async newUser(email: string, password: string) {
+        await this.fbAuth.auth.createUserWithEmailAndPassword(email, password)
             .catch(error => console.log(error));
+    }
+
+    async reestartPassword(email: string) {
+        return await this.fbAuth.auth.sendPasswordResetEmail(email);
     }
 
     logout() {
@@ -45,9 +52,4 @@ export class AuthenticationService {
         this.authUser = null;
         this.authLibrary = null;
     }
-
-    reestartPassword(email: string) {
-        return this.fbAuth.auth.sendPasswordResetEmail(email);
-    }
-
 }
