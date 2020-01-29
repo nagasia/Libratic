@@ -1,6 +1,7 @@
 export interface Library {
     id: string;
     adress: string;
+    city?: string;
     adminIDs: string[];
     usersIDs?: string[];
     booksIDs?: string[];

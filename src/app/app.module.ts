@@ -4,6 +4,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AngularFireModule } from '@angular/fire';
 import { AngularFireAuthModule } from '@angular/fire/auth';
 import { AngularFireDatabaseModule } from '@angular/fire/database';
+import { AngularFireStorageModule } from '@angular/fire/storage';
 import { CommonModule } from '@angular/common';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -20,8 +21,6 @@ import { LoginDialogModule } from './dialogs/login/loginDialog.module';
 import { LoginDialogComponent } from './dialogs/login/loginDialog.component';
 import { LibraryDialogModule } from './dialogs/library/libraryDialog.module';
 import { LibraryDialogComponent } from './dialogs/library/libraryDialog.component';
-import { UserDialogModule } from './dialogs/user/userDialog.module';
-import { UserDialogComponent } from './dialogs/user/userDialog.component';
 import { WishedModule } from './modules/wished/wished.module';
 
 @NgModule({
@@ -40,17 +39,16 @@ import { WishedModule } from './modules/wished/wished.module';
         WishedModule,
         LoginDialogModule,
         LibraryDialogModule,
-        UserDialogModule,
         AppRoutingModule,
         AngularFireModule.initializeApp(environment.firebaseConfig),
         AngularFireAuthModule,
         AngularFireDatabaseModule,
+        AngularFireStorageModule
     ],
     bootstrap: [AppComponent],
     entryComponents: [
         LoginDialogComponent,
         LibraryDialogComponent,
-        UserDialogComponent,
     ]
 })
 export class AppModule { }

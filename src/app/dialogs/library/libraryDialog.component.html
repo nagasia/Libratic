@@ -2,49 +2,61 @@
 
     <div class="container-fluid">
         
-        <div class="row justify-content-md-center">
-            <div class="col col-md-auto">
-                <mat-form-field>
+        <div class="row">
+            <div class="col">
+                <mat-form-field  class="w-100">
                     <input matInput placeholder="Nombre" type="text" formControlName="name" required>
-                    <mat-error *ngIf="form.controls.name.hasError('required')">Por favor escriba un nombre</mat-error>
+                    <mat-error *ngIf="!form.controls.name.hasError('required')">Mínimo 6 caracteres</mat-error>
+                    <mat-error *ngIf="form.controls.name.hasError('required')">Por favor indique un nombre de biblioteca</mat-error>
                 </mat-form-field>
             </div>
         </div>
 
-        <div class="row justify-content-md-center">
-            <div class="col col-md-auto">
-                <mat-form-field>
+        <div class="row mt-2">
+            <div class="col">
+                <mat-form-field class="w-100">
                     <input matInput placeholder="Dirección" type="text" formControlName="adress">
                 </mat-form-field>
             </div>
         </div>
 
-        <div class="row justify-content-md-center">
-            <div class="col col-md-auto">
-                <mat-form-field>
-                    <input matInput placeholder="Email del administrador" type="email" formControlName="email" required class="col">
-                    <mat-error *ngIf="form.controls.email.hasError('email') && !form.controls.email.hasError('required')">Por favor escriba un email válido</mat-error>
-                    <mat-error *ngIf="form.controls.email.hasError('required')">Por favor escriba un email</mat-error>
+        <div class="row mt-2">
+            <div class="col">
+                <mat-form-field class="w-100">
+                    <input matInput placeholder="Ciudad" type="text" formControlName="city">
                 </mat-form-field>
             </div>
         </div>
 
-        <div class="row justify-content-md-center">
-            <div class="col col-md-auto">
-                <mat-form-field>
-                    <input matInput placeholder="Contraseña" type="password" formControlName="password">
-                    <mat-hint align="start">Si se conecta mediante google, no es necesario</mat-hint>
-                </mat-form-field>
+        <ng-container *ngIf="!isEditting">
+            <div class="row mt-2">
+                <div class="col">
+                    <mat-form-field class="w-100">
+                        <input matInput placeholder="Email del administrador" type="email" formControlName="email" required>
+                        <mat-error *ngIf="form.controls.email.hasError('email') && !form.controls.email.hasError('required')">Por favor escriba un email válido</mat-error>
+                        <mat-error *ngIf="form.controls.email.hasError('required')">Por favor indique un email</mat-error>
+                    </mat-form-field>
+                </div>
             </div>
-        </div>
+    
+            <div class="row mt-2">
+                <div class="col">
+                    <mat-form-field class="w-100">
+                        <input matInput placeholder="Contraseña" type="password" formControlName="password" required>
+                        <mat-hint align="start">Contraseña de Gmail para poder conectarse mediante Google</mat-hint>
+                        <mat-error *ngIf="!form.controls.password.hasError('required')">Mínimo 6 caracteres</mat-error>
+                        <mat-error *ngIf="form.controls.password.hasError('required')">Por favor indique una contraseña</mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+        </ng-container>
 
-        <div class="row justify-content-md-center">
+        <div class="row justify-content-md-center mt-4">
             <div class="col col-md-auto">
                 <button mat-raised-button 
                 type="submit" 
                 [disabled]="!form.valid" 
-                color="primary"
-                class="mt-4">Crear</button>
+                color="primary">Guardar</button>
             </div>
         </div>
     </div>

@@ -38,7 +38,7 @@ export class AuthenticationService {
     }
 
     async newUser(email: string, password: string) {
-        await this.fbAuth.auth.createUserWithEmailAndPassword(email, password)
+        return await this.fbAuth.auth.createUserWithEmailAndPassword(email, password)
             .catch(error => console.log(error));
     }
 

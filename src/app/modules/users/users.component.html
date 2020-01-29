@@ -1,1 +1,154 @@
-Users
+<div *ngIf="isAdmin">
+    <mat-toolbar>
+        <span>{{authService.authLibrary.id}}</span>
+        <div class="spacer"></div>
+        <button mat-icon-button matTooltip="Crear" (click)="newUser()" color="primary">
+            <i class="fas fa-user-plus"></i>
+        </button>
+    </mat-toolbar>
+
+    <div class="container-fluid mt-3">
+        <mat-accordion>
+            <mat-expansion-panel *ngFor="let item of usersList">
+                <mat-expansion-panel-header>
+                    <mat-panel-title *ngIf="checkAdmin(item)">Admin</mat-panel-title>
+                    <mat-panel-title *ngIf="!checkAdmin(item)">{{item.name}}</mat-panel-title>
+                    <mat-panel-description>{{item.email}}</mat-panel-description>
+
+                    <button mat-icon-button matTooltip="Editar" (click)="editUser(item)" color="primary">
+                        <i class="fas fa-user-edit"></i>
+                    </button>
+                    <button mat-icon-button matTooltip="Eliminar" (click)="deleteUser(item.id)" color="primary">
+                        <i class="fas fa-user-slash"></i>
+                    </button>
+                </mat-expansion-panel-header>
+
+                <div class="container-fluid" *ngIf="!checkAdmin(item)">
+                    <div class="row">
+                        <div class="col-auto">
+                            <span *ngIf="item.picture">
+                                <i class="fas fa-user fa-4x"></i>
+                            </span>
+
+                            <span *ngIf="!item.picture">
+                                <i class="fas fa-user fa-4x"></i>
+                            </span>
+                        </div>
+
+                        <div class="col">
+                            <div class="row" *ngIf="item.adress">
+                                <div class="col">
+                                    <span>Dirección: {{item.adress}}</span>
+                                </div>
+                            </div>
+
+                            <div class="row" *ngIf="item.city">
+                                <div class="col">
+                                    <span>Ciudad: {{item.city}}</span>
+                                </div>
+                            </div>
+
+                            <div class="row" *ngIf="item.phone || item.dni">
+                                <div class="col" *ngIf="item.phone">
+                                    <span>Teléfono: {{item.phone}}</span>
+                                </div>
+
+                                <div class="col" *ngIf="item.dni">
+                                    <span>DNI: {{item.dni}}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </mat-expansion-panel>
+        </mat-accordion>
+    </div>
+
+
+</div>
+
+<div *ngIf="!isAdmin">
+    <mat-card class="w-75 container-fluid mt-4">
+        <mat-card-header>
+            <mat-card-title>{{authService.authUser.name}}</mat-card-title>
+            <mat-card-subtitle>{{authService.authUser.dni}}</mat-card-subtitle>
+        </mat-card-header>
+
+        <mat-card-content>
+            <form [formGroup]="form" (ngSubmit)="save()" class="pl-3">
+                <div class="row">
+                    <div class="col-auto">
+                        <span *ngIf="authService.authUser.picture" class="content-fluid">
+                            <i class="fas fa-user fa-4x"></i>
+                        </span>
+
+                        <span *ngIf="!authService.authUser.picture" class="content-fluid">
+                            <i class="fas fa-user fa-4x"></i>
+                        </span>
+                    </div>
+
+                    <div class="col">
+                        <input type="file" accept=".png,.jpg" (change)="storage.upload($event)">
+                    </div>
+                </div>
+
+                <div class="row mt-2">
+                    <div class="col">
+                        <mat-form-field class="w-75">
+                            <input matInput placeholder="Dirección" type="text" formControlName="adress" required>
+                            <mat-error *ngIf="!form.controls.adress.hasError('required')">Mínimo 6 caracteres
+                            </mat-error>
+                            <mat-error *ngIf="form.controls.adress.hasError('required')">Por favor indique una
+                                dirección
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                </div>
+
+                <div class="row mt-2">
+                    <div class="col">
+                        <mat-form-field class="w-50">
+                            <input matInput placeholder="Ciudad" type="text" formControlName="city" required>
+                            <mat-error *ngIf="form.controls.city.hasError('required')">Por favor indique una ciudad
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                </div>
+
+                <div class="row mt-2">
+                    <div class="col">
+                        <mat-form-field class="w-50">
+                            <input matInput placeholder="Email" type="email" formControlName="email" required>
+                            <mat-error
+                                *ngIf="form.controls.email.hasError('email') && !form.controls.email.hasError('required')">
+                                Por
+                                favor escriba un email válido</mat-error>
+                            <mat-error *ngIf="form.controls.email.hasError('required')">Por favor indique un email
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                </div>
+
+                <div class="row mt-2">
+                    <div class="col">
+                        <mat-form-field class="w-25">
+                            <input matInput placeholder="Teléfono" type="tel" formControlName="phone" required>
+                            <mat-error *ngIf="!form.controls.phone.hasError('required')">En total 9 dígitos
+                            </mat-error>
+                            <mat-error *ngIf="form.controls.phone.hasError('required')">Por favor indique un
+                                teléfono
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                </div>
+
+                <div class="row justify-content-md-center mt-2">
+                    <div class="col col-md-auto">
+                        <button mat-raised-button type="submit" [disabled]="!form.valid"
+                            color="primary">Guardar</button>
+                    </div>
+                </div>
+            </form>
+        </mat-card-content>
+    </mat-card>
+</div>

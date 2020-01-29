@@ -3,7 +3,6 @@ import { MatDialogRef, MatSnackBar } from '@angular/material';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { AuthenticationService } from '../../services/authentication.service';
 import { FireDBService } from '../../services/fireDB.service';
-import { FormatterService } from '../../services/formatter.service';
 import { User } from '../../common/dto/user.dto';
 import { Library } from '../../common/dto/library.dto';
 
@@ -21,9 +20,7 @@ export class LoginDialogComponent implements OnDestroy {
     constructor(private formBuilder: FormBuilder,
         private authService: AuthenticationService,
         private db: FireDBService,
-        private formatter: FormatterService,
-        private dialogRef: MatDialogRef<LoginDialogComponent>,
-        private snackBar: MatSnackBar) {
+        private dialogRef: MatDialogRef<LoginDialogComponent>) {
         this.form = this.formBuilder.group({
             email: [null, [Validators.required, Validators.email]],
             password: [null, [Validators.required, Validators.minLength(6)]],
@@ -34,23 +31,44 @@ export class LoginDialogComponent implements OnDestroy {
         await this.authService.googleLogin()
             .catch(error => console.log(error));
 
+        this.processUser();
+    }
+
+    async loginMail() {
+        const email = Object.assign({}, this.form.value).email;
+        const password = Object.assign({}, this.form.value).password;
+
+        await this.authService.mailLogin(email, password).catch(error => {
+            if (error.code === 'auth/wrong-password') {
+                this.onClose('Contraseña incorrecta');
+            } else if (error.code === 'auth/too-many-requests') {
+                this.onClose('Demasiados intentos, intentelo en un rato');
+            } else {
+                console.log(error);
+                this.onClose('Email incorrecto');
+            }
+        });
+
+        this.processUser();
+    }
+
+    private processUser() {
         if (this.authService.user) {
-            this.user$ = this.db.getOne('users/' + this.formatter.formatEmail(this.authService.user.email))
+            this.user$ = this.db.getOne('users/' + this.authService.user.uid)
                 .subscribe((user: User) => {
                     if (user) {
                         this.library$ = this.db.getOne('libraries/' + user.libraryID)
                             .subscribe((library: Library) => {
                                 this.user = user;
                                 this.library = library;
-                                this.onClose();
+                                this.onClose('Conexión con éxito', user);
                             }, error => {
                                 console.log(error);
                                 this.onClose();
                             });
                     } else {
-                        this.snackBar.open('El usuario no existe', '', { duration: 2000 });
                         this.authService.logout();
-                        this.onClose();
+                        this.onClose('El usuario no existe');
                     }
                 },
                     error => {
@@ -60,66 +78,26 @@ export class LoginDialogComponent implements OnDestroy {
         }
     }
 
-    loginMail() {
-        const email = Object.assign({}, this.form.value).email;
-        const password = Object.assign({}, this.form.value).password;
-        const emailFormatted = this.formatter.formatEmail(email);
-
-        this.user$ = this.db.getOne('users/' + emailFormatted)
-            .subscribe(async (user: User) => {
-                if (user) {
-                    await this.authService.mailLogin(email, password).catch(error => {
-                        if (error.code === 'auth/wrong-password') {
-                            this.snackBar.open('Contraseña incorrecta', '', { duration: 2000 });
-                            this.onClose();
-                        } else if (error.code === 'auth/too-many-requests') {
-                            this.snackBar.open('Demasiados intentos, intentelo en un rato', '', { duration: 2000 });
-                            this.onClose();
-                        } else {
-                            console.log(error);
-                            this.snackBar.open('Email incorrecto', '', { duration: 2000 });
-                            this.onClose();
-                        }
-                    });
-
-                    if (this.authService.user && this.authService.user.uid) {
-                        this.library$ = this.db.getOne('libraries/' + user.libraryID)
-                            .subscribe((library: Library) => {
-                                this.user = user;
-                                this.library = library;
-                                this.onClose();
-                            }, error => {
-                                console.log(error);
-                                this.onClose();
-                            });
-                    } else {
-                        this.authService.logout();
-                        this.onClose();
-                    }
-                } else {
-                    this.snackBar.open('El usuario no existe', '', { duration: 2000 });
-                    this.onClose();
-                }
-            },
-                error => {
-                    console.log(error);
-                    this.onClose();
-                });
-    }
-
     resetPassword() {
         const email = Object.assign({}, this.form.value).email;
         if (email) {
             this.authService.reestartPassword(email)
-                .then(response => this.snackBar.open('Correo enviado', '', { duration: 2000 }))
-                .catch(error => this.snackBar.open('Correo no enviado', '', { duration: 2000 }));
+                .then(() => this.onClose('Correo enviado'))
+                .catch(() => this.onClose('Correo no enviado'));
         }
     }
 
-    onClose() {
-        this.authService.authUser = this.user;
-        this.authService.authLibrary = this.library;
-        this.dialogRef.close();
+    onClose(motive?: string, user?: User) {
+        if (user) {
+            this.authService.authUser = this.user;
+            this.authService.authLibrary = this.library;
+            this.dialogRef.close({ motive, user });
+        } else if (motive) {
+            this.dialogRef.close(motive);
+        } else {
+            this.dialogRef.close();
+        }
+
     }
 
     ngOnDestroy() {

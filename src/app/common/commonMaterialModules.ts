@@ -2,13 +2,15 @@ import { NgModule } from '@angular/core';
 import { MatButtonModule,
     MatIconModule,
     MatToolbarModule,
-    MatMenuModule,
     MatTooltipModule,
     MatDialogModule,
     MatInputModule,
     MatFormFieldModule,
     MatSelectModule,
-    MatSnackBarModule} from '@angular/material';
+    MatSnackBarModule,
+    MatListModule,
+    MatExpansionModule,
+    MatCardModule} from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
@@ -18,13 +20,15 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
         MatIconModule,
         MatToolbarModule,
         MatIconModule,
-        MatMenuModule,
         MatTooltipModule,
         MatDialogModule,
         MatInputModule,
         MatFormFieldModule,
         MatSelectModule,
-        MatSnackBarModule
+        MatSnackBarModule,
+        MatListModule,
+        MatExpansionModule,
+        MatCardModule
     ],
 })
 export class CommonMaterialModules { }

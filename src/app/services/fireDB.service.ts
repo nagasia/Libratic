@@ -15,6 +15,11 @@ export class FireDBService {
         return this.db.list(path).snapshotChanges();
     }
 
+    getListFiltered(path: string, child: string, value: any){
+        return this.db.list(path,
+            ref => ref.orderByChild(child).equalTo(value)).valueChanges();
+    }
+
     getOne(path: string) {
         return this.db.object(path).valueChanges();
     }
