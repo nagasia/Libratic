@@ -47,3 +47,4 @@ Thumbs.db
 
 # Own files
 pasos.txt
+src/environments/*

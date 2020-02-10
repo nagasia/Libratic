@@ -23,7 +23,7 @@ export class AppComponent implements OnDestroy {
         this.isAdmin = false;
 
         if (!this.isLoged) {
-            this.router.navigate(['/']);
+            this.router.navigate(['']);
         }
     }
 
@@ -34,7 +34,7 @@ export class AppComponent implements OnDestroy {
 
         this.libraryDialog$.afterClosed().subscribe(result => {
             if (result) {
-                if (result.library) {
+                if (result.done) {
                     this.snackBar.open(result.motive, '', { duration: 2000 });
                     this.authenticate();
                 } else {
@@ -91,6 +91,7 @@ export class AppComponent implements OnDestroy {
         this.authService.logout();
         this.isLoged = false;
         this.isAdmin = false;
+        this.router.navigate(['']);
     }
 
     ngOnDestroy() {

@@ -11,6 +11,7 @@ import { of } from 'rxjs';
 export class StorageService {
     url = of('');
     thumb: string;
+    savedPicture: string;
     task;
 
     constructor(private storage: AngularFireStorage,
@@ -27,6 +28,13 @@ export class StorageService {
                 + this.authService.authUser.id + this.thumb;
 
             this.db.save('users/' + this.authService.authUser.id, this.authService.authUser);
+        })).subscribe();
+    }
+
+    async uploadCover(path: string, event: any) {
+        this.task = this.storage.upload(path, event.target.files[0]);
+        await this.task.snapshotChanges().pipe(finalize(() => {
+            this.savedPicture = 'gs://libratic-7153b.appspot.com/' + path + this.thumb;
         })).subscribe();
     }
 

@@ -1,79 +1,87 @@
-<form [formGroup]="form" (ngSubmit)="save()">
-    <div class="container-fluid">
+<h1 mat-dialog-title *ngIf="editting">Editar usuario</h1>
+<h1 mat-dialog-title *ngIf="!editting">Nuevo usuario</h1>
 
-        <div class="row">
-            <div class="col">
-                <mat-form-field class="w-100">
-                    <input matInput placeholder="Nombre" type="text" formControlName="name" required>
-                    <mat-error *ngIf="!form.controls.name.hasError('required')">Mínimo 6 caracteres</mat-error>
-                    <mat-error *ngIf="form.controls.name.hasError('required')">Por favor indique un nombre</mat-error>
+<form [formGroup]="form" (ngSubmit)="save()">
+    <mat-dialog-content>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col">
+                    <mat-form-field class="w-100">
+                        <input matInput placeholder="Nombre" type="text" formControlName="name" required>
+                        <mat-error *ngIf="!form.controls.name.hasError('required')">Mínimo 6 caracteres</mat-error>
+                        <mat-error *ngIf="form.controls.name.hasError('required')">Por favor indique un nombre
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div class="row mt-2">
+                <div class="col">
+                    <mat-form-field class="w-100">
+                        <input matInput placeholder="Dirección" type="text" formControlName="adress" required>
+                        <mat-error *ngIf="!form.controls.adress.hasError('required')">Mínimo 6 caracteres</mat-error>
+                        <mat-error *ngIf="form.controls.adress.hasError('required')">Por favor indique una dirección
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div class="row mt-2">
+                <div class="col">
+                    <mat-form-field class="w-100">
+                        <input matInput placeholder="Ciudad" type="text" formControlName="city" required>
+                        <mat-error *ngIf="form.controls.city.hasError('required')">Por favor indique una ciudad
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div class="row mt-2">
+                <div class="col">
+                    <mat-form-field class="w-100">
+                        <input matInput placeholder="Email" type="email" formControlName="email" required>
+                        <mat-error
+                            *ngIf="form.controls.email.hasError('email') && !form.controls.email.hasError('required')">
+                            Por
+                            favor escriba un email válido</mat-error>
+                        <mat-error *ngIf="form.controls.email.hasError('required')">Por favor indique un email
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div class="row row-cols-2 mt-2">
+                <mat-form-field class="col">
+                    <input matInput placeholder="Teléfono" type="tel" formControlName="phone" required>
+                    <mat-error *ngIf="!form.controls.phone.hasError('required')">En total 9 dígitos</mat-error>
+                    <mat-error *ngIf="form.controls.phone.hasError('required')">Por favor indique un teléfono
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field class="col">
+                    <input matInput placeholder="DNI" type="text" formControlName="dni" required>
+                    <mat-error *ngIf="!form.controls.phone.hasError('required')">En total 8 dígitos, sin letra
+                    </mat-error>
+                    <mat-error *ngIf="form.controls.dni.hasError('required')">Por favor indique un dni</mat-error>
                 </mat-form-field>
             </div>
-        </div>
 
-        <div class="row mt-2">
-            <div class="col">
-                <mat-form-field class="w-100">
-                    <input matInput placeholder="Dirección" type="text" formControlName="adress" required>
-                    <mat-error *ngIf="!form.controls.adress.hasError('required')">Mínimo 6 caracteres</mat-error>
-                    <mat-error *ngIf="form.controls.adress.hasError('required')">Por favor indique una dirección
+            <div class="row mt-2">
+                <mat-form-field class="col-md-auto">
+                    <mat-label>Tipo de usuario</mat-label>
+                    <mat-select formControlName="userLevel" required>
+                        <mat-option value="user">Usuario</mat-option>
+                        <mat-option value="admin">Administrador</mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="form.controls.userLevel.hasError('required')">Por favor indique el tipo de usuario
                     </mat-error>
                 </mat-form-field>
             </div>
         </div>
+    </mat-dialog-content>
 
-        <div class="row mt-2">
-            <div class="col">
-                <mat-form-field class="w-100">
-                    <input matInput placeholder="Ciudad" type="text" formControlName="city" required>
-                    <mat-error *ngIf="form.controls.city.hasError('required')">Por favor indique una ciudad</mat-error>
-                </mat-form-field>
-            </div>
-        </div>
+    <mat-dialog-actions align="center">
+        <button mat-raised-button type="submit" [disabled]="!form.valid" color="primary">Guardar</button>
+    </mat-dialog-actions>
 
-        <div class="row mt-2">
-            <div class="col">
-                <mat-form-field class="w-100">
-                    <input matInput placeholder="Email" type="email" formControlName="email" required>
-                    <mat-error
-                        *ngIf="form.controls.email.hasError('email') && !form.controls.email.hasError('required')">Por
-                        favor escriba un email válido</mat-error>
-                    <mat-error *ngIf="form.controls.email.hasError('required')">Por favor indique un email</mat-error>
-                </mat-form-field>
-            </div>
-        </div>
-
-        <div class="row row-cols-2 mt-2">
-            <mat-form-field class="col">
-                <input matInput placeholder="Teléfono" type="tel" formControlName="phone" required>
-                <mat-error *ngIf="!form.controls.phone.hasError('required')">En total 9 dígitos</mat-error>
-                <mat-error *ngIf="form.controls.phone.hasError('required')">Por favor indique un teléfono</mat-error>
-            </mat-form-field>
-
-            <mat-form-field class="col">
-                <input matInput placeholder="DNI" type="text" formControlName="dni" required>
-                <mat-error *ngIf="!form.controls.phone.hasError('required')">En total 8 dígitos, sin letra</mat-error>
-                <mat-error *ngIf="form.controls.dni.hasError('required')">Por favor indique un dni</mat-error>
-            </mat-form-field>
-        </div>
-
-        <div class="row mt-2">
-            <mat-form-field class="col-md-auto">
-                <mat-label>Tipo de usuario</mat-label>
-                <mat-select formControlName="userLevel" required>
-                    <mat-option value="user">Usuario</mat-option>
-                    <mat-option value="admin">Administrador</mat-option>
-                </mat-select>
-                <mat-error *ngIf="form.controls.userLevel.hasError('required')">Por favor indique el tipo de usuario
-                </mat-error>
-            </mat-form-field>
-        </div>
-
-        <div class="row justify-content-md-center mt-2">
-            <div class="col col-md-auto">
-                <button mat-raised-button type="submit" [disabled]="!form.valid" color="primary">Guardar</button>
-            </div>
-        </div>
-
-    </div>
 </form>

@@ -19,7 +19,6 @@ export class UserDialogComponent implements OnDestroy {
     dni: number;
     userLevel: string;
     uid: string;
-    library$;
     newUser$;
 
     constructor(private formBuilder: FormBuilder,
@@ -67,49 +66,69 @@ export class UserDialogComponent implements OnDestroy {
                 .then((data: any) => {
                     this.uid = data.user.uid;
 
-                    this.newUser();
+                    this.checkUser();
                 })
                 .catch(error => {
                     console.log(error);
-                    this.onClose('El usuario ya existe (save)');
+                    this.onClose('El usuario ya existe');
                 });
         }
     }
 
-    private newUser() {
+    private checkUser() {
         this.newUser$ = this.db.getOne('users/' + this.uid)
             .subscribe(response => {
                 if (!response) {
-                    const user: User = {
-                        id: this.uid,
-                        name: this.name,
-                        adress: this.adress,
-                        city: this.city,
-                        email: this.email,
-                        phone: this.phone,
-                        dni: this.dni,
-                        userLevel: this.userLevel,
-                        libraryID: this.authService.authLibrary.id,
-                    };
-
-                    this.db.save('users/' + this.uid, user)
-                        .then(() => {
-                            this.authService.reestartPassword(this.email)
-                                .catch(error => { console.log(error); });
-
-                            this.updateLibrary();
-                        })
-                        .catch(error => {
-                            console.log(error);
-                            this.onClose('Problema al guardar al usuario');
-                        });
+                    this.newUser();
                 } else {
-                    this.onClose('El usuario ya existe (newUser)');
+                    this.onClose('El usuario ya existe');
                 }
             }, error => {
                 console.log(error);
                 this.onClose();
             });
+    }
+
+    private newUser() {
+        if (this.newUser$) {
+            this.newUser$.unsubscribe();
+        }
+
+        const user: User = {
+            id: this.uid,
+            name: this.name,
+            adress: this.adress,
+            city: this.city,
+            email: this.email,
+            phone: this.phone,
+            dni: this.dni,
+            userLevel: this.userLevel,
+            libraryID: this.authService.authLibrary.id,
+        };
+
+        if (user.userLevel === 'admin') {
+            this.db.saveAdmin(user, this.authService.authLibrary)
+                .then(() => {
+                    this.authService.reestartPassword(this.email)
+                        .catch(error => console.log(error));
+                    this.onClose('Usuario guardado');
+                })
+                .catch(error => {
+                    console.log(error);
+                    this.onClose('Problema al guardar al usuario');
+                });
+        } else {
+            this.db.saveUser(user)
+                .then(() => {
+                    this.authService.reestartPassword(this.email)
+                        .catch(error => console.log(error));
+                    this.onClose('Usuario guardado');
+                })
+                .catch(error => {
+                    console.log(error);
+                    this.onClose('Problema al guardar al usuario');
+                });
+        }
     }
 
     private editUser() {
@@ -125,23 +144,8 @@ export class UserDialogComponent implements OnDestroy {
             libraryID: this.authService.authLibrary.id,
         };
 
-        this.db.save('users/' + this.uid, user)
+        this.db.updateUser(user)
             .then(() => this.onClose('Usuario editado'))
-            .catch(error => {
-                console.log(error);
-                this.onClose();
-            });
-    }
-
-    private updateLibrary() {
-        if (this.authService.authLibrary.usersIDs) {
-            this.authService.authLibrary.usersIDs.push(this.uid);
-        } else {
-            this.authService.authLibrary.usersIDs = [this.uid];
-        }
-
-        this.db.save('libraries/' + this.authService.authLibrary.id, this.authService.authLibrary)
-            .then(() => this.onClose('Usuario guardado'))
             .catch(error => {
                 console.log(error);
                 this.onClose();
@@ -159,9 +163,6 @@ export class UserDialogComponent implements OnDestroy {
     ngOnDestroy() {
         if (this.newUser$) {
             this.newUser$.unsubscribe();
-        }
-        if (this.library$) {
-            this.library$.unsubscribe();
         }
     }
 }

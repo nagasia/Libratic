@@ -61,6 +61,7 @@ export class LoginDialogComponent implements OnDestroy {
                             .subscribe((library: Library) => {
                                 this.user = user;
                                 this.library = library;
+
                                 this.onClose('Conexión con éxito', user);
                             }, error => {
                                 console.log(error);

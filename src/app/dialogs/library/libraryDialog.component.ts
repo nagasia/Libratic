@@ -57,7 +57,7 @@ export class LibraryDialogComponent implements OnDestroy {
         this.date = new Date().getTime().toString();
 
         if (this.isEditting) {
-            this.editLibrary();
+            this.saveLibrary();
         } else {
             this.library$ = this.db.getOne('libraries/' + this.name)
                 .subscribe(library => {
@@ -74,13 +74,21 @@ export class LibraryDialogComponent implements OnDestroy {
     }
 
     private async processMethod() {
+        if (this.library$) {
+            this.library$.unsubscribe();
+        }
+
         await this.authService.newUser(this.email, this.password)
             .then((data: any) => {
                 const uid = data.user.uid;
 
                 this.user$ = this.db.getOne('users/' + uid)
                     .subscribe((user: User) => {
-                        this.processUser(user, uid);
+                        if (!user) {
+                            this.newUser(uid);
+                        } else {
+                            this.onClose('El usuario ya existe');
+                        }
                     });
             })
             .catch(error => {
@@ -89,15 +97,11 @@ export class LibraryDialogComponent implements OnDestroy {
             });
     }
 
-    private processUser(user: User, uid: string) {
-        if (!user) {
-            this.newUser(uid);
-        } else {
-            this.onClose('El usuario ya existe');
-        }
-    }
-
     private newUser(uid: string) {
+        if (this.user$) {
+            this.user$.unsubscribe();
+        }
+
         this.user = {
             id: uid,
             email: this.email,
@@ -105,58 +109,47 @@ export class LibraryDialogComponent implements OnDestroy {
             libraryID: this.name,
         };
 
-        this.db.save('users/' + this.user.id, this.user)
-            .then(data => {
-                this.authService.authUser = this.user;
-                this.newLibrary();
-            })
-            .catch(error => {
-                console.log(error);
-                this.onClose();
-            });
+        this.saveLibrary();
     }
 
-    private newLibrary() {
-        const library: Library = {
-            id: this.name,
-            adress: this.adress,
-            city: this.city,
-            adminIDs: [this.user.id],
-        };
+    private saveLibrary() {
+        if (this.isEditting) {
+            this.authService.authLibrary.id = this.name;
+            this.authService.authLibrary.adress = this.adress;
+            this.authService.authLibrary.city = this.city;
 
-        this.db.save('libraries/' + library.id, library)
-            .then(() => {
-                this.authService.authLibrary = library;
-                this.onClose('Biblioteca creada', library);
-            })
-            .catch(error => {
-                console.log(error);
-                this.onClose();
-            });
+            this.db.updateLibrary(this.authService.authLibrary)
+                .then(() => {
+                    this.onClose('Biblioteca editada');
+                })
+                .catch(error => {
+                    console.log(error);
+                    this.onClose();
+                });
+        } else {
+            console.log(this.name, this.adress, this.city);
+            const library: Library = {
+                id: this.name,
+                adress: this.adress,
+                city: this.city,
+                adminIDs: [this.user.id],
+            };
+
+            this.db.saveLibrary(this.user, library)
+                .then(() => {
+                    this.authService.authLibrary = library;
+                    this.onClose('Biblioteca creada', true);
+                })
+                .catch(error => {
+                    console.log(error);
+                    this.onClose();
+                });
+        }
     }
 
-    private editLibrary() {
-        const library: Library = {
-            id: this.name,
-            adress: this.adress,
-            city: this.city,
-            adminIDs: this.authService.authLibrary.adminIDs,
-        };
-
-        this.db.save('libraries/' + library.id, library)
-            .then(() => {
-                this.authService.authLibrary = library;
-                this.onClose('Biblioteca editada');
-            })
-            .catch(error => {
-                console.log(error);
-                this.onClose();
-            });
-    }
-
-    private onClose(motive?: string, library?: Library) {
-        if (library) {
-            this.dialogRef.close({ motive, library });
+    private onClose(motive?: string, done?: boolean) {
+        if (done) {
+            this.dialogRef.close({ motive, done });
         } else if (motive) {
             this.dialogRef.close(motive);
         } else {

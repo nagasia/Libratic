@@ -1,3 +1,122 @@
-<p>
-  books works!
-</p>
+<mat-toolbar>
+    <a href="https://openlibrary.org/" target="_blank" matTooltip="Patrocinado por OpenLibrary">
+        <img class="w-75" src="https://openlibrary.org/static/images/openlibrary-logo-tighter.svg">
+    </a>
+
+    <div class="spacer"></div>
+    <button mat-icon-button matTooltip="Crear" (click)="newBook()" color="primary" *ngIf="isAdmin">
+        <i class="fas fa-plus"></i>
+        <i class="fas fa-book"></i>
+    </button>
+</mat-toolbar>
+
+<div class="container-fluid mt-3">
+    <mat-accordion>
+        <mat-expansion-panel *ngFor="let item of books">
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <span class="mr-2"><b>{{item.title}}</b></span>
+                    <span>{{item.subtitle}}</span>
+                </mat-panel-title>
+                <mat-panel-description>{{item.authors}}</mat-panel-description>
+
+                <button mat-icon-button matTooltip="Añadir favorito" (click)="addBookFavourite(item.isbn)"
+                    color="primary" *ngIf="isLoged && !isAdmin">
+                    <i class="fas fa-heart"></i>
+                </button>
+                <button mat-icon-button matTooltip="Editar" (click)="editBook(item)" color="primary" *ngIf="isAdmin">
+                    <i class="fas fa-pen"></i>
+                    <i class="fas fa-book"></i>
+                </button>
+                <button mat-icon-button matTooltip="Eliminar" (click)="deleteBook(item.isbn)" color="primary"
+                    *ngIf="isAdmin">
+                    <i class="fas fa-minus"></i>
+                    <i class="fas fa-book"></i>
+                </button>
+            </mat-expansion-panel-header>
+
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-2">
+                        <span *ngIf="item.cover">
+                            <img [src]="item.cover" class="w-100">
+                        </span>
+
+                        <span *ngIf="!item.cover" class="content-fluid">
+                            <i class="fas fa-book fa-4x"></i>
+                        </span>
+                    </div>
+
+                    <div class="col">
+                        <div class="row">
+                            <div class="col-auto">
+                                <b>ISBN:</b>
+                                <span> {{item.isbn}}</span>
+                            </div>
+
+                            <div class="col-auto" *ngIf="item.cdu">
+                                <b>CDU:</b>
+                                <span> {{item.cdu}}</span>
+                            </div>
+                        </div>
+
+                        <div class="row mt-2">
+                            <div class="col-auto" *ngIf="item.publishers">
+                                <b>Editorial:</b>
+                                <span> {{item.publishers}}</span>
+                            </div>
+
+                            <div class="col-auto" *ngIf="item.publish_date">
+                                <b>Fecha de publicación:</b>
+                                <span> {{item.publish_date}}</span>
+                            </div>
+
+                            <div class="col-auto" *ngIf="item.publish_places">
+                                <b>Lugar de publicación:</b>
+                                <span> {{item.publish_places}}</span>
+                            </div>
+                        </div>
+
+                        <div class="row mt-2">
+                            <div class="col-auto" *ngIf="item.physical_format">
+                                <b>Formato:</b>
+                                <span> {{item.physical_format}}</span>
+                            </div>
+
+                            <div class="col-auto" *ngIf="item.number_of_pages">
+                                <b>Páginas:</b>
+                                <span> {{item.number_of_pages}}</span>
+                            </div>
+                        </div>
+
+                        <div class="row mt-2" *ngIf="item.subjects">
+                            <div class="col-auto">
+                                <b>Temas:</b>
+                                <mat-chip-list>
+                                    <mat-chip *ngFor="let subject of item.subjects">{{subject}}</mat-chip>
+                                </mat-chip-list>
+                            </div>
+                        </div>
+
+                        <div class="row mt-2" *ngIf="item.description">
+                            <div class="col-auto">
+                                <b>Resumen:</b>
+                                <p> {{item.description}}</p>
+                            </div>
+                        </div>
+
+                        <div class="row mt-2 justify-content-end" *ngIf="item.url">
+                            <div class="col-auto">
+                                <a [href]="item.url" target="_blank">
+                                    <button mat-raised-button color="primary">Entrada en OpenLibrary</button>
+                                </a>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </mat-expansion-panel>
+    </mat-accordion>
+</div>

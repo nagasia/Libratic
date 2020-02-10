@@ -1,0 +1,190 @@
+<h2 mat-dialog-title>Nuevo libro</h2>
+
+<form [formGroup]="form" (ngSubmit)="save()">
+    <mat-dialog-content>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-auto">
+                    <mat-form-field>
+                        <input matInput placeholder="ISBN" type="number" formControlName="isbn" required>
+                        <mat-error *ngIf="!form.controls.isbn.hasError('required')">El ISBN contiene entre 10 y 13
+                            digitos
+                        </mat-error>
+                        <mat-error *ngIf="form.controls.isbn.hasError('required')">Por favor indique un ISBN</mat-error>
+                    </mat-form-field>
+                </div>
+
+                <div class="col-auto">
+                    <button mat-raised-button type="button" (click)="searchOpenLibrary()" color="primary">
+                        <i class="fas fa-search"></i>
+                        <span class="ml-2">Buscar en OpenLibrary</span>
+                    </button>
+                </div>
+
+                <div class="col" *ngIf="asked">
+                    <mat-progress-spinner mode="indeterminate" color="primary"></mat-progress-spinner>
+                </div>
+            </div>
+
+            <div class="row mt-2">
+                <div class="col-2">
+                    <span *ngIf="cover">
+                        <img [src]="cover" class="w-100">
+                    </span>
+
+                    <span *ngIf="!cover" class="content-fluid">
+                        <i class="fas fa-book fa-4x"></i>
+                    </span>
+                </div>
+
+                <div class="col align-self-center mt-2">
+                    <input mat-raised-button type="file" accept=".png,.jpg" (change)="setCover($event)">
+                </div>
+            </div>
+
+            <div class="row mt-2">
+                <div class="col">
+                    <mat-form-field class="w-100">
+                        <input matInput placeholder="Título" type="text" formControlName="title" required>
+                        <mat-error *ngIf="form.controls.title.hasError('required')">Por favor indique un título
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div class="row mt-2">
+                <div class="col">
+                    <mat-form-field class="w-100">
+                        <input matInput placeholder="Subtítulo" type="text" formControlName="subtitle">
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div class="row mt-2">
+                <div class="col">
+                    <mat-form-field>
+                        <input matInput placeholder="CDU" type="text" formControlName="cdu">
+                    </mat-form-field>
+                </div>
+
+                <div class="col">
+                    <mat-form-field>
+                        <input matInput placeholder="Nº de páginas" type="text" formControlName="number_of_pages">
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div class="row mt-2">
+                <div class="col">
+                    <mat-form-field class="w-100">
+                        <mat-chip-list #publisherList aria-label="Editoriales">
+                            <mat-chip *ngFor="let publisher of publishers" [selectable]="selectable"
+                                [removable]="removable" (removed)="removeItem(publisher,'publishers')">
+                                {{publisher}}
+                                <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+                            </mat-chip>
+                            <input placeholder="Editoriales" [matChipInputFor]="publisherList"
+                                [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="addOnBlur"
+                                (matChipInputTokenEnd)="addItem($event,'publishers')" required>
+                        </mat-chip-list>
+                        <mat-hint align="start">Si añade más de una editorial, pulse intro entre ellas</mat-hint>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div class="row mt-2">
+                <div class="col">
+                    <mat-form-field class="w-100">
+                        <mat-chip-list #subjectList>
+                            <mat-chip *ngFor="let subject of subjects" [selectable]="selectable" [removable]="removable"
+                                (removed)="removeItem(subject,'subjects')">
+                                {{subject}}
+                                <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+                            </mat-chip>
+                            <input placeholder="Temas" [matChipInputFor]="subjectList"
+                                [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="addOnBlur"
+                                (matChipInputTokenEnd)="addItem($event,'subjects')">
+                        </mat-chip-list>
+                        <mat-hint align="start">Si añade más de un tema, pulse intro entre ellos</mat-hint>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div class="row mt-2">
+                <div class="col">
+                    <mat-form-field class="w-100">
+                        <mat-chip-list #authorList>
+                            <mat-chip *ngFor="let author of authors" [selectable]="selectable" [removable]="removable"
+                                (removed)="removeItem(author,'authors')">
+                                {{author}}
+                                <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+                            </mat-chip>
+                            <input placeholder="Autores" [matChipInputFor]="authorList"
+                                [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="addOnBlur"
+                                (matChipInputTokenEnd)="addItem($event,'authors')" required>
+                        </mat-chip-list>
+                        <mat-hint align="start">Si añade más de un autor, pulse intro entre ellos</mat-hint>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div class="row mt-2">
+                <div class="col">
+                    <mat-form-field>
+                        <input matInput placeholder="Fecha de publicación" type="text" formControlName="publish_date"
+                            required>
+                        <mat-error *ngIf="form.controls.publish_date.hasError('required')">Por favor indique una fecha
+                            de publicación</mat-error>
+                    </mat-form-field>
+                </div>
+
+                <div class="col">
+                    <mat-form-field>
+                        <mat-label>Formato físico</mat-label>
+                        <mat-select formControlName="physical_format">
+                            <mat-option *ngFor="let item of formats" [value]="item">{{item}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div class="row mt-2">
+                <div class="col">
+                    <mat-form-field class="w-100">
+                        <mat-chip-list #placeList>
+                            <mat-chip *ngFor="let place of publish_places" [selectable]="selectable"
+                                [removable]="removable" (removed)="removeItem(place,'publish_places')">
+                                {{place}}
+                                <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+                            </mat-chip>
+                            <input placeholder="Lugares de publicación" [matChipInputFor]="placeList"
+                                [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="addOnBlur"
+                                (matChipInputTokenEnd)="addItem($event,'publish_places')">
+                        </mat-chip-list>
+                        <mat-hint align="start">Si añade más de un lugar de publicación, pulse intro entre ellos
+                        </mat-hint>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div class="row mt-2">
+                <div class="col">
+                    <mat-form-field class="w-100">
+                        <input matInput placeholder="Entrada en OpenLibrary" type="url" formControlName="url">
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div class="row mt-2">
+                <div class="col">
+                    <mat-label>Resumen</mat-label>
+                    <textarea matInput cols="30" rows="5" formControlName="description"></textarea>
+                </div>
+            </div>
+        </div>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="center">
+        <button mat-raised-button type="submit" [disabled]="!form.valid" color="primary">Guardar</button>
+    </mat-dialog-actions>
+</form>

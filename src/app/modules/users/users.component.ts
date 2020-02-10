@@ -6,6 +6,7 @@ import { MatDialog, MatSnackBar } from '@angular/material';
 import { UserDialogComponent } from '../../dialogs/user/userDialog.component';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { StorageService } from '../../services/storage.service';
+import { CommonFunctions } from '../../common/commonFunctions';
 
 @Component({
     selector: 'app-user',
@@ -24,10 +25,11 @@ export class UsersComponent implements OnInit, OnDestroy {
         private db: FireDBService,
         public storage: StorageService,
         private formBuilder: FormBuilder,
+        public functions: CommonFunctions,
         private dialog: MatDialog,
         private snackBar: MatSnackBar) {
 
-        this.isAdmin = this.checkAdmin(this.authService.authUser);
+        this.isAdmin = this.functions.isAdmin(this.authService.authUser);
         if (!this.isAdmin) {
             this.form = this.formBuilder.group({
                 adress: [this.authService.authUser.adress, [Validators.required, Validators.minLength(6)]],
@@ -75,25 +77,22 @@ export class UsersComponent implements OnInit, OnDestroy {
         });
     }
 
+    update(user: User) {
+        this.db.updateUser(user)
+            .then(() => this.snackBar.open('Usuario editado', '', { duration: 2000 }))
+            .catch(error => {
+                console.log(error);
+                this.snackBar.open('Error al editar al usuario', '', { duration: 2000 });
+            });
+    }
+
     deleteUser(id: string) {
-        this.db.remove('users/' + id)
+        this.db.deleteUser(id)
             .then(() => this.snackBar.open('Usuario borrado', '', { duration: 2000 }))
             .catch(error => {
                 console.log(error);
                 this.snackBar.open('Error al borrar al usuario', '', { duration: 2000 });
             });
-    }
-
-    save() {
-
-    }
-
-    checkAdmin(user: User): boolean {
-        let result = false;
-        if (user.userLevel === 'admin') {
-            result = true;
-        }
-        return result;
     }
 
     ngOnDestroy() {

@@ -1,25 +1,17 @@
+import { Lending } from './lendings.dto';
 export interface Library {
     id: string;
     adress: string;
     city?: string;
     adminIDs: string[];
     usersIDs?: string[];
-    booksIDs?: string[];
-    moviesIDs?: string[];
-    tvsIDs?: string[];
-    bookLendings?: [{
-        bookId: string;
-        startDate: string;
-        endDate: string;
-    }];
-    movieLendings?: [{
-        movieId: string;
-        startDate: string;
-        endDate: string;
-    }];
-    tvLendings?: [{
-        tvId: string;
-        startDate: string;
-        endDate: string;
-    }];
+    booksIDs?: number[];
+    moviesIDs?: number[];
+    tvsIDs?: number[];
+    bookLendings?: Lending[];
+    movieLendings?: Lending[];
+    tvLendings?: Lending[];
+    bookWished?: number[];
+    moviesWished?: number[];
+    tvsWished?: number[];
 }
