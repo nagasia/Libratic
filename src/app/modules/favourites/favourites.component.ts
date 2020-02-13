@@ -3,6 +3,8 @@ import { AuthenticationService } from '../../services/authentication.service';
 import { FireDBService } from '../../services/fireDB.service';
 import * as _ from 'lodash';
 import { Book } from '../../common/dto/book.dto';
+import { Movie } from '../../common/dto/movie.dto';
+import { TvShow } from '../../common/dto/tv.dto';
 
 @Component({
     selector: 'app-favourites',
@@ -48,10 +50,14 @@ export class FavouritesComponent implements OnInit, OnDestroy {
                 .subscribe(data => {
                     if (data) {
                         data.forEach(id => {
-                            this.bookRef$ = this.db.getOne('movies/' + id)
-                                .subscribe(movie => this.movieList.push(movie));
+                            this.bookRef$ = this.db.getOne('movies/' + id).subscribe((movie: Movie) => {
+                                const index = _.find(this.movieList, b => b.id === movie.id);
+                                if (!index) {
+                                    this.movieList.push(movie)
+                                    this.movieList = _.sortBy(this.movieList, 'title');
+                                }
+                            });
                         });
-                        this.movieList = _.sortBy(this.movieList, 'title');
                     }
                 },
                     error => console.log(error));
@@ -59,10 +65,15 @@ export class FavouritesComponent implements OnInit, OnDestroy {
                 .subscribe(data => {
                     if (data) {
                         data.forEach(id => {
-                            this.bookRef$ = this.db.getOne('tvs/' + id)
-                                .subscribe(tv => this.tvList.push(tv));
+                            this.bookRef$ = this.db.getOne('tvs/' + id).subscribe((tv: TvShow) => {
+                                const index = _.find(this.tvList, b => b.id === tv.id);
+                                if (!index) {
+                                    this.tvList.push(tv)
+                                    this.tvList = _.sortBy(this.tvList, 'title');
+                                }
+                            });
                         });
-                        this.tvList = _.sortBy(this.tvList, 'title');
+
                     }
                 },
                     error => console.log(error));
