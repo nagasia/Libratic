@@ -105,6 +105,7 @@ export class LibraryDialogComponent implements OnDestroy {
         this.user = {
             id: uid,
             email: this.email,
+            name: 'Admin',
             userLevel: 'admin',
             libraryID: this.name,
         };

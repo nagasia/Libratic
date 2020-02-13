@@ -16,7 +16,6 @@ export interface Movie {
         name: string;
     }];
     crew: [{
-        department: string;
         job: string;
         name: string;
     }];

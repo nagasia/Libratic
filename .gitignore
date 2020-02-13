@@ -47,4 +47,5 @@ Thumbs.db
 
 # Own files
 pasos.txt
-src/environments/*
+src/environments/environment.prod.ts
+src/environments/environment.ts

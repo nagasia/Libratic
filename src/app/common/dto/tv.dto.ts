@@ -16,7 +16,6 @@ export interface TvShow {
         name: string;
     }];
     crew: [{
-        department: string;
         name: string;
         job: string;
     }];

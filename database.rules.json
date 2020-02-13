@@ -1,0 +1,28 @@
+{
+    "rules": {
+        ".read": true,
+        ".write": "auth.uid != null",
+        "users": {
+            ".indexOn": [
+                "libraryID",
+                "userLevel"
+            ]
+        },
+        "books": {
+            ".indexOn": [
+                "title"
+            ]
+        },
+        "libraries": {
+            ".indexOn": [
+                "id",
+                "booksIDs"
+            ]
+        },
+        "movies": {
+            ".indexOn": [
+                "title"
+            ]
+        }
+    }
+}

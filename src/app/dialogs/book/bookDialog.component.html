@@ -1,4 +1,5 @@
-<h2 mat-dialog-title>Nuevo libro</h2>
+<h2 mat-dialog-title *ngIf="editting">Editar libro</h2>
+<h2 mat-dialog-title *ngIf="!editting">Nuevo libro</h2>
 
 <form [formGroup]="form" (ngSubmit)="save()">
     <mat-dialog-content>

@@ -32,6 +32,20 @@ export class FireDBService {
         return this.db.object(path).remove();
     }
 
+    // selects
+    getList(path: string) {
+        return this.db.list(path).valueChanges();
+    }
+
+    getListFiltered(path: string, child: string, value: any) {
+        return this.db.list(path,
+            ref => ref.orderByChild(child).equalTo(value)).valueChanges();
+    }
+
+    getOne(path: string) {
+        return this.db.object(path).valueChanges();
+    }
+
     // users
     saveUser(user: User) {
         if (this.authService.authLibrary.usersIDs) {
@@ -409,19 +423,5 @@ export class FireDBService {
 
         return this.set('/libraries/' + this.authService.authLibrary.id + '/tvsWished/',
             this.authService.authLibrary.tvsWished);
-    }
-
-    // selects
-    getList(path: string) {
-        return this.db.list(path).valueChanges();
-    }
-
-    getListFiltered(path: string, child: string, value: any) {
-        return this.db.list(path,
-            ref => ref.orderByChild(child).equalTo(value)).valueChanges();
-    }
-
-    getOne(path: string) {
-        return this.db.object(path).valueChanges();
     }
 }

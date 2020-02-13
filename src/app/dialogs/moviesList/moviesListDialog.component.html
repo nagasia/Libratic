@@ -1,0 +1,49 @@
+<h2 mat-dialog-title>Listado de películas</h2>
+
+<mat-dialog-content>
+    <div class="container-fluid">
+        <mat-radio-group (change)="setMovie($event)">
+            <div class="row mb-2" *ngFor="let item of movieList">
+                <div class="col-auto align-self-center">
+                    <mat-radio-button [value]='item' color="primary"></mat-radio-button>
+                </div>
+
+                <div class="col">
+                    <div class="row">
+                        <div class="col-2 align-self-center">
+                            <img class="w-100" [src]="image + item.poster_path" *ngIf="item.poster_path">
+                            <i class="fas fa-film fa-4x" *ngIf="!item.poster_path"></i>
+                        </div>
+
+                        <div class="col align-self-center">
+                            <div class="row">
+                                <div class="col">
+                                    <b>Título: </b>
+                                    <span>{{item.title}}</span>
+                                </div>
+                            </div>
+
+                            <div class="row" *ngIf="item.release_date">
+                                <div class="col">
+                                    <b>Fecha de estreno: </b>
+                                    <span>{{item.release_date}}</span>
+                                </div>
+                            </div>
+
+                            <div class="row" *ngIf="item.overview">
+                                <div class="col">
+                                    <b>Resumen: </b>
+                                    <span>{{item.overview}}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </mat-radio-group>
+    </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="center">
+    <button mat-raised-button (click)="onClick()" color="primary">Seleccionar</button>
+</mat-dialog-actions>

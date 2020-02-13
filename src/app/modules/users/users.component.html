@@ -11,8 +11,7 @@
         <mat-accordion>
             <mat-expansion-panel *ngFor="let item of usersList">
                 <mat-expansion-panel-header>
-                    <mat-panel-title *ngIf="functions.isAdmin(item)">Admin</mat-panel-title>
-                    <mat-panel-title *ngIf="!functions.isAdmin(item)">{{item.name}}</mat-panel-title>
+                    <mat-panel-title>{{item.name}}</mat-panel-title>
                     <mat-panel-description>{{item.email}}</mat-panel-description>
 
                     <button mat-icon-button matTooltip="Editar" (click)="editUser(item)" color="primary">

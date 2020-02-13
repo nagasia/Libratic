@@ -12,7 +12,8 @@ import { MatButtonModule,
     MatExpansionModule,
     MatCardModule,
     MatProgressSpinnerModule,
-    MatChipsModule} from '@angular/material';
+    MatChipsModule,
+    MatRadioModule} from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
@@ -32,7 +33,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
         MatExpansionModule,
         MatCardModule,
         MatProgressSpinnerModule,
-        MatChipsModule
+        MatChipsModule,
+        MatRadioModule
     ],
 })
 export class CommonMaterialModules { }

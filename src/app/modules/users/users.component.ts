@@ -7,6 +7,7 @@ import { UserDialogComponent } from '../../dialogs/user/userDialog.component';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { StorageService } from '../../services/storage.service';
 import { CommonFunctions } from '../../common/commonFunctions';
+import * as _ from 'lodash';
 
 @Component({
     selector: 'app-user',
@@ -48,7 +49,9 @@ export class UsersComponent implements OnInit, OnDestroy {
                 .subscribe(data => {
                     this.usersList = data;
                     this.isLoading = false;
-                });
+                    this.usersList = _.sortBy(this.usersList, 'name');
+                },
+                    error => console.log(error));
         }
     }
 

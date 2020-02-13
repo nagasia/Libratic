@@ -10,6 +10,7 @@ import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 import { OpenLibraryShort, OpenLibraryLong } from 'src/app/common/dto/openLibrary.dto';
 import { isNullOrUndefined } from 'util';
+import { CommonFunctions } from '../../common/commonFunctions';
 
 @Component({
     selector: 'app-book-dialog',
@@ -54,6 +55,7 @@ export class BookDialogComponent implements OnDestroy {
         private db: FireDBService,
         private snackBar: MatSnackBar,
         private http: HttpClient,
+        private functions: CommonFunctions,
         @Inject(MAT_DIALOG_DATA) public editting: Book) {
         if (editting) {
             this.isbn = editting.isbn;
@@ -254,7 +256,7 @@ export class BookDialogComponent implements OnDestroy {
             this.book.description = this.description;
             this.book.physical_format = this.physical_format;
             this.book.url = this.url;
-            this.checkKeys();
+            this.book = this.functions.checkKeys(this.book);
 
             this.db.updateBook(this.book)
                 .then(() => this.onClose('Libro editado', this.book))
@@ -263,7 +265,7 @@ export class BookDialogComponent implements OnDestroy {
                     this.onClose('Problema al editar el libro');
                 });
         } else {
-            this.checkKeys();
+            this.book = this.functions.checkKeys(this.book);
 
             this.db.saveBook(this.book)
                 .then(() => this.onClose('Libro guardado'))
@@ -317,15 +319,6 @@ export class BookDialogComponent implements OnDestroy {
                 break;
         }
         return result;
-    }
-
-    private checkKeys() {
-        const dataKeys = Object.keys(this.book);
-        dataKeys.forEach(element => {
-            if (!this.book[element]) {
-                this.book[element] = null;
-            }
-        });
     }
 
     addItem(event: MatChipInputEvent, list: string) {
