@@ -1,21 +1,20 @@
-import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { Movie } from '../../common/dto/movie.dto';
 import { HttpClient } from '@angular/common/http';
 import { MovieDB } from '../../common/dto/movieDB.dto';
 import * as _ from 'lodash';
-import { element } from 'protractor';
 
 @Component({
     selector: 'app-movies-list-dialog',
     templateUrl: './moviesListDialog.component.html',
 })
-export class MoviesListDialogComponent implements OnInit, OnDestroy {
+export class MoviesListDialogComponent implements OnInit {
     apiKey = '?api_key=e50d63dbcb5c1a6c703ea83cfed8cb7c';
     language = '&language=es';
     image = 'https://image.tmdb.org/t/p/original';
     query = '&query=';
-    discover = 'discover/';
+    //discover = 'discover/';
     searchUrl = 'https://api.themoviedb.org/3/';
     credits = '&append_to_response=credits';
     movieURL = 'https://www.themoviedb.org/movie/';
@@ -132,5 +131,4 @@ export class MoviesListDialogComponent implements OnInit, OnDestroy {
         this.dialogRef.close(this.movie);
     }
 
-    ngOnDestroy() { }
 }

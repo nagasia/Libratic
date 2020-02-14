@@ -53,7 +53,7 @@ export class FavouritesComponent implements OnInit, OnDestroy {
                             this.bookRef$ = this.db.getOne('movies/' + id).subscribe((movie: Movie) => {
                                 const index = _.find(this.movieList, b => b.id === movie.id);
                                 if (!index) {
-                                    this.movieList.push(movie)
+                                    this.movieList.push(movie);
                                     this.movieList = _.sortBy(this.movieList, 'title');
                                 }
                             });
@@ -68,7 +68,7 @@ export class FavouritesComponent implements OnInit, OnDestroy {
                             this.bookRef$ = this.db.getOne('tvs/' + id).subscribe((tv: TvShow) => {
                                 const index = _.find(this.tvList, b => b.id === tv.id);
                                 if (!index) {
-                                    this.tvList.push(tv)
+                                    this.tvList.push(tv);
                                     this.tvList = _.sortBy(this.tvList, 'title');
                                 }
                             });

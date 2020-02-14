@@ -10,13 +10,14 @@ export interface TvShow {
     number_of_seasons: number;
     overview: string;
     poster_path: string;
+    vote_average: number;
     production_companies: string[];
     cast: [{
         character: string;
         name: string;
     }];
     crew: [{
-        name: string;
         job: string;
+        name: string;
     }];
 }

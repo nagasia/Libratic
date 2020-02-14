@@ -13,6 +13,7 @@ export interface TvDb {
     number_of_seasons: number;
     overview: string;
     poster_path: string;
+    vote_average: number;
     production_companies: [{
         name: string;
     }];

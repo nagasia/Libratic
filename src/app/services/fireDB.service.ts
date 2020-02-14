@@ -13,7 +13,7 @@ import { Library } from '../common/dto/library.dto';
     providedIn: 'root'
 })
 export class FireDBService {
-    constructor(public db: AngularFireDatabase,
+    constructor(private db: AngularFireDatabase,
         private authService: AuthenticationService) { }
 
     getRef(path: string) {

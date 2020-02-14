@@ -1,78 +1,79 @@
 import { Component, Inject } from '@angular/core';
-import { Movie } from '../../common/dto/movie.dto';
-import { FormBuilder, Validators, FormGroup } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA, MatChipInputEvent, MatDialog } from '@angular/material';
+import { TvShow } from '../../common/dto/tv.dto';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatDialogRef, MatDialog, MAT_DIALOG_DATA, MatChipInputEvent } from '@angular/material';
 import { StorageService } from 'src/app/services/storage.service';
 import { FireDBService } from 'src/app/services/fireDB.service';
+import { CommonFunctions } from 'src/app/common/commonFunctions';
 import { ENTER } from '@angular/cdk/keycodes';
 import * as _ from 'lodash';
-import { MoviesListDialogComponent } from '../moviesList/moviesListDialog.component';
-import { CommonFunctions } from '../../common/commonFunctions';
+import { TvListDialogComponent } from '../tvList/tvListDialog.component';
 
 @Component({
-    selector: 'app-movie-dialog',
-    templateUrl: './movieDialog.component.html',
+    selector: 'app-tv-dialog',
+    templateUrl: './tvDialog.component.html',
 })
-export class MovieDialogComponent {
+export class TvDialogComponent {
     readonly separatorKeysCodes: number[] = [ENTER];
     visible = true;
     selectable = true;
     removable = true;
     addOnBlur = true;
 
-    genres: string[] = [];
+    created_by = [];
+    first_air_date: string;
+    genres = [];
     homepage: string;
-    url?: string;
+    url: string;
     id: number;
-    title: string;
+    name: string;
+    number_of_episodes: number;
+    number_of_seasons: number;
     overview: string;
     poster_path: string;
-    production_companies: string[] = [];
-    release_date: string;
-    runtime: number;
-    tagline: string;
     vote_average: number;
+    production_companies = [];
     cast: any = [];
     crew: any = [];
 
-    movie: Movie;
+    tv: TvShow;
     form: FormGroup;
     newPoster = false;
     founded = false;
     posterEvent;
 
     constructor(private formBuilder: FormBuilder,
-        private dialogRef: MatDialogRef<MovieDialogComponent>,
+        private dialogRef: MatDialogRef<TvDialogComponent>,
         private storage: StorageService,
         private db: FireDBService,
         private dialog: MatDialog,
         private functions: CommonFunctions,
-        @Inject(MAT_DIALOG_DATA) public editting: Movie) {
+        @Inject(MAT_DIALOG_DATA) public editting: TvShow) {
         if (this.editting) {
-            this.setData();
+            this.setDataFromEdit();
         }
         this.form = this.formBuilder.group({
+            first_air_date: [this.first_air_date, [Validators.required]],
             homepage: this.homepage,
-            overview: this.overview,
-            release_date: [this.release_date, [Validators.required]],
-            runtime: this.runtime,
-            tagline: this.tagline,
-            title: [this.title, [Validators.required]],
+            name: [this.name, [Validators.required]],
+            number_of_episodes: this.number_of_episodes,
+            number_of_seasons: this.number_of_seasons,
             vote_average: this.vote_average,
+            overview: this.overview,
         });
     }
 
-    private setData() {
+    private setDataFromEdit() {
+        this.first_air_date = this.editting.first_air_date;
         this.homepage = this.editting.homepage;
         this.url = this.editting.url;
         this.id = this.editting.id;
+        this.name = this.editting.name;
+        this.number_of_episodes = this.editting.number_of_episodes;
+        this.number_of_seasons = this.editting.number_of_seasons;
+        this.vote_average = this.editting.vote_average;
         this.overview = this.editting.overview;
         this.poster_path = this.editting.poster_path;
-        this.release_date = this.editting.release_date;
-        this.runtime = this.editting.runtime;
-        this.tagline = this.editting.tagline;
-        this.title = this.editting.title;
-        this.vote_average = this.editting.vote_average;
 
         if (this.editting.cast) {
             this.cast = this.editting.cast;
@@ -97,76 +98,87 @@ export class MovieDialogComponent {
         } else {
             this.production_companies = [];
         }
+
+        if (this.editting.created_by) {
+            this.created_by = this.editting.created_by;
+        } else {
+            this.created_by = [];
+        }
     }
 
-    async save() {
+    async setDataFromForm() {
+        this.first_air_date = Object.assign({}, this.form.value).first_air_date;
         this.homepage = Object.assign({}, this.form.value).homepage;
-        this.title = Object.assign({}, this.form.value).title;
-        this.overview = Object.assign({}, this.form.value).overview;
-        this.release_date = Object.assign({}, this.form.value).release_date;
-        this.runtime = Object.assign({}, this.form.value).runtime;
-        this.tagline = Object.assign({}, this.form.value).tagline;
+        this.name = Object.assign({}, this.form.value).name;
+        this.number_of_episodes = Object.assign({}, this.form.value).number_of_episodes;
+        this.number_of_seasons = Object.assign({}, this.form.value).number_of_seasons;
         this.vote_average = Object.assign({}, this.form.value).vote_average;
+        this.overview = Object.assign({}, this.form.value).overview;
 
         if (!this.founded && !this.editting) {
             this.id = new Date().getTime();
         }
 
         if (this.newPoster) {
-            await this.storage.uploadCover('movies/' + this.id, this.posterEvent)
+            await this.storage.uploadCover('tvs/' + this.id, this.posterEvent)
                 .then(() => {
                     this.poster_path = this.storage.savedPicture;
                 })
                 .catch(error => console.log(error));
         }
 
-        this.movie = {
+        this.tv = {
+            created_by: this.created_by,
+            first_air_date: this.first_air_date,
             genres: this.genres,
             homepage: this.homepage,
             url: this.url,
             id: this.id,
+            name: this.name,
+            number_of_episodes: this.number_of_episodes,
+            number_of_seasons: this.number_of_seasons,
             overview: this.overview,
             poster_path: this.poster_path,
-            production_companies: this.production_companies,
-            release_date: this.release_date,
-            runtime: this.runtime,
-            tagline: this.tagline,
-            title: this.title,
             vote_average: this.vote_average,
+            production_companies: this.production_companies,
             cast: this.cast,
             crew: this.crew,
         };
-        this.movie = this.functions.checkKeys(this.movie);
+        this.tv = this.functions.checkKeys(this.tv);
 
+        this.save();
+    }
+
+    private save() {
         if (this.editting) {
-            this.db.updateMovie(this.movie)
-                .then(() => this.onClose('Película editada', this.movie))
+            this.db.updateTV(this.tv)
+                .then(() => this.onClose('Serie editada', this.tv))
                 .catch(error => {
                     console.log(error);
-                    this.onClose('Problema al editar la película');
+                    this.onClose('Problema al editar la serie');
                 });
         } else {
-            this.db.saveMovie(this.movie)
-                .then(() => this.onClose('Película guardada'))
+            this.db.saveTV(this.tv)
+                .then(() => this.onClose('Serie guardada'))
                 .catch(error => {
                     console.log(error);
-                    this.onClose('Problema al guardar la película');
+                    this.onClose('Problema al guardar la serie');
                 });
         }
     }
 
     searchTMDB() {
-        this.title = Object.assign({}, this.form.value).title;
-        this.release_date = Object.assign({}, this.form.value).release_date;
+        this.name = Object.assign({}, this.form.value).name;
+        this.first_air_date = Object.assign({}, this.form.value).first_air_date;
         this.founded = false;
 
-        if (this.title || this.release_date) {
-            const movieDialog = this.dialog.open(MoviesListDialogComponent, {
+        if (this.name || this.first_air_date) {
+            const tvDialog = this.dialog.open(TvListDialogComponent, {
                 width: '50%',
-                data: this.title,
+                data: this.name,
             });
 
-            movieDialog.afterClosed().subscribe((result: Movie) => {
+            tvDialog.afterClosed().subscribe((result: TvShow) => {
                 if (result) {
                     this.founded = true;
 
@@ -177,15 +189,16 @@ export class MovieDialogComponent {
                     this.production_companies = result.production_companies;
                     this.cast = result.cast;
                     this.crew = result.crew;
+                    this.created_by = result.created_by;
 
                     this.form.patchValue({
+                        first_air_date: result.first_air_date,
                         homepage: result.homepage,
-                        overview: result.overview,
-                        release_date: result.release_date,
-                        runtime: result.runtime,
-                        tagline: result.tagline,
-                        title: result.title,
+                        name: result.name,
+                        number_of_episodes: result.number_of_episodes,
+                        number_of_seasons: result.number_of_seasons,
                         vote_average: result.vote_average,
+                        overview: result.overview,
                     });
                 }
             },
@@ -204,6 +217,9 @@ export class MovieDialogComponent {
                     break;
                 case 'production_companies':
                     this.production_companies.push(value.trim());
+                    break;
+                case 'created_by':
+                    this.created_by.push(value.trim());
                     break;
                 case 'cast':
                     if (value.includes(':')) {
@@ -240,6 +256,9 @@ export class MovieDialogComponent {
             case 'production_companies':
                 _.remove(this.production_companies, currentItem => currentItem === item);
                 break;
+            case 'created_by':
+                _.remove(this.created_by, currentItem => currentItem === item);
+                break;
             case 'cast':
                 _.remove(this.cast, (currentItem: any) => currentItem.character === item.character
                     && currentItem.name === item.name);
@@ -256,9 +275,9 @@ export class MovieDialogComponent {
         this.newPoster = true;
     }
 
-    onClose(motive?: string, movie?: Movie) {
-        if (movie) {
-            this.dialogRef.close({ motive, movie });
+    onClose(motive?: string, tv?: TvShow) {
+        if (tv) {
+            this.dialogRef.close({ motive, tv });
         } else if (motive) {
             this.dialogRef.close(motive);
         } else {
