@@ -7,6 +7,7 @@ import { OpenLibraryRequest, OpenLibraryShort, OpenLibraryLong } from '../../com
 import { map } from 'rxjs/operators';
 import { isNullOrUndefined } from 'util';
 import * as _ from 'lodash';
+import { async } from '@angular/core/testing';
 
 @Component({
     selector: 'app-book-list-dialog',
@@ -109,22 +110,25 @@ export class BookListDialogComponent implements OnInit {
 
         await this.http.get(this.urlStart + this.isbn + this.urlShortEnd)
             .pipe(map(data => this.parseShortJson(data)))
-            .subscribe(async (resultShort: OpenLibraryShort) => {
+            .subscribe(async (resultShort: Promise<OpenLibraryShort>) => {
                 await this.http.get(this.urlStart + this.isbn + this.urlLongEnd)
                     .pipe(map(data2 => this.parseLongJson(data2)))
                     .subscribe(async (resultLong: OpenLibraryLong) => {
-                        await resultShort;
-                        console.log(resultShort);
-                        console.log(resultLong);
-                        
-                        const subtitle = resultShort.subtitle;
-                        const physical_format = this.functions.translatePhysicalFormat(resultShort.physical_format);
+                        console.log('onclick-short', resultShort);
+                        console.log('onclick-long', resultLong);
+
+                        const subtitle = (await resultShort).subtitle;
+                        const physical_format = this.functions.translatePhysicalFormat((await resultShort).physical_format);
                         const url = resultLong.url;
-                        const title = resultShort.title;
+                        const title = (await resultShort).title;
 
                         let description;
-                        if (!isNullOrUndefined(resultShort.description)) {
-                            description = this.returnDataIfNotUndefined(resultShort.description.value);
+                        if (!isNullOrUndefined((await resultShort).description)) {
+                            if (typeof (await resultShort).description === 'string') {
+                                description = this.returnDataIfNotUndefined((await resultShort).description);
+                            } else {
+                                description = this.returnDataIfNotUndefined((await resultShort).description.value);
+                            }
                         }
 
                         let cover;
@@ -135,36 +139,36 @@ export class BookListDialogComponent implements OnInit {
                         }
 
                         let publishers;
-                        if (resultShort.publishers) {
-                            publishers = resultShort.publishers.sort();
+                        if ((await resultShort).publishers) {
+                            publishers = (await resultShort).publishers.sort();
                         } else if (resultLong.publishers) {
                             publishers = this.functions.fillArray(resultLong.publishers).sort();
                         }
 
                         let number_of_pages;
-                        if (resultShort.number_of_pages) {
-                            number_of_pages = resultShort.number_of_pages;
+                        if ((await resultShort).number_of_pages) {
+                            number_of_pages = (await resultShort).number_of_pages;
                         } else if (resultLong.number_of_pages) {
                             number_of_pages = resultLong.number_of_pages;
                         }
 
                         let publish_date;
-                        if (resultShort.publish_date) {
-                            publish_date = resultShort.publish_date;
+                        if ((await resultShort).publish_date) {
+                            publish_date = (await resultShort).publish_date;
                         } else if (resultLong.publish_date) {
                             publish_date = resultLong.publish_date;
                         }
 
                         let authors;
-                        if (resultShort.authors) {
-                            authors = this.functions.fillArray(resultShort.authors).sort();
+                        if ((await resultShort).authors) {
+                            authors = this.functions.fillArray((await resultShort).authors).sort();
                         } else if (resultLong.authors) {
                             authors = this.functions.fillArray(resultLong.authors).sort();
                         }
 
                         let subjects;
-                        if (resultShort.subjects) {
-                            subjects = resultShort.subjects;
+                        if ((await resultShort).subjects) {
+                            subjects = (await resultShort).subjects;
                             subjects.forEach(element => element = element.toLowerCase());
                             if (resultLong.subjects) {
                                 const temporalList = this.functions.fillArray(resultLong.subjects);
@@ -181,10 +185,10 @@ export class BookListDialogComponent implements OnInit {
                         }
 
                         let publish_places;
-                        if (resultShort.publish_places) {
-                            publish_places = resultShort.publish_places.sort();
+                        if ((await resultShort).publish_places) {
+                            publish_places = (await resultShort).publish_places.sort();
                         } else if (resultLong.publish_places) {
-                            publish_places = this.functions.fillArray(resultShort.publish_places).sort();
+                            publish_places = this.functions.fillArray((await resultShort).publish_places).sort();
                         }
 
                         this.book = {
@@ -210,27 +214,32 @@ export class BookListDialogComponent implements OnInit {
     }
 
     private setIsbn() {
-        for (let element of this.selectedBook.isbn) {
-            if (element.length === 13) {
-                element = element.substring(3);
-            }
-            if (element.startsWith('84')) {
+        for (const element of this.selectedBook.isbn) {
+            if ((element.length === 13 && element.startsWith('97884')) || element.startsWith('84')) {
                 this.isbn84.push(element);
             }
-        }
 
-        if (this.isbn84.length > 0) {
-            this.isbn = this.isbn84[0];
-        } else {
-            this.isbn = this.selectedBook.isbn[0];
+            if (this.isbn84.length > 0) {
+                this.isbn = this.isbn84[0];
+            } else {
+                this.isbn = this.selectedBook.isbn[0];
+            }
         }
     }
 
+    /*private parseShortJson(data: any): OpenLibraryShort {
+        const dataKeys = Object.keys(data);
+        const [firstKey] = dataKeys;
+        return data[firstKey].details;
+    }*/
+
     private async parseShortJson(data: any): Promise<OpenLibraryShort> {
+        console.log('parsejson-data', data);
         const dataKeys = Object.keys(data);
 
         if (dataKeys.length > 0) {
             const [firstKey] = dataKeys;
+            console.log('parsejson-details', data[firstKey].details);
             return data[firstKey].details;
         } else {
             if (this.isbn84.length > 0) {

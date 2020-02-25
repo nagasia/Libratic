@@ -1,13 +1,13 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatDialogRef, MatDialog, MatChipInputEvent } from '@angular/material';
-import { StorageService } from 'src/app/services/storage.service';
 import { FireDBService } from 'src/app/services/fireDB.service';
 import { CommonFunctions } from 'src/app/common/commonFunctions';
 import { Book } from 'src/app/common/dto/book.dto';
 import { BookListDialogComponent } from '../bookList/bookListDialog.component';
 import * as _ from 'lodash';
 import { ENTER } from '@angular/cdk/keycodes';
+import { AuthenticationService } from '../../services/authentication.service';
 
 @Component({
     selector: 'app-book-search-dialog',
@@ -358,7 +358,7 @@ export class BookSearchDialogComponent {
 
     constructor(private formBuilder: FormBuilder,
         private dialogRef: MatDialogRef<BookSearchDialogComponent>,
-        private storage: StorageService,
+        private authService: AuthenticationService,
         private db: FireDBService,
         private dialog: MatDialog,
         private functions: CommonFunctions) {
@@ -425,7 +425,21 @@ export class BookSearchDialogComponent {
     }
 
     save() {
-        console.log(this.book);
+        if (this.functions.isAdmin(this.authService.authUser)) {
+            this.db.saveLibraryBookWished(this.book)
+                .then(() => this.onClose('Libro deseado agregado'))
+                .catch(error => {
+                    console.log(error);
+                    this.onClose('Problema al guardar el libro deseado');
+                });
+        } else {
+            this.db.saveUserBookWished(this.book.isbn, this.book)
+                .then(() => this.onClose('Libro deseado agregado'))
+                .catch(error => {
+                    console.log(error);
+                    this.onClose('Problema al guardar el libro deseado');
+                });
+        }
     }
 
     onClose(motive?: string) {
