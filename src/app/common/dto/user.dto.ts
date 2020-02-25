@@ -11,10 +11,10 @@ export interface User {
     picture?: string;
     userLevel: string;
     libraryID: string;
-    bookFavourited?: number[];
+    bookFavourited?: string[];
     moviesFavourited?: number[];
     tvsFavourited?: number[];
-    bookWished?: number[];
+    bookWished?: string[];
     moviesWished?: number[];
     tvsWished?: number[];
     bookLendings?: Lending[];

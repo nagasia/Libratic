@@ -1,0 +1,183 @@
+<h2 mat-dialog-title>Buscar película</h2>
+
+<form [formGroup]="form" (ngSubmit)="save()">
+    <mat-dialog-content>
+        <div class="content-fluid">
+            <div class="row">
+                <div class="col">
+                    <span>Búsqueda por título:</span>
+                </div>
+            </div>
+
+            <div class="row mt-2">
+                <div class="col">
+                    <mat-form-field class="w-100">
+                        <input matInput placeholder="Título" type="text" formControlName="title">
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <span>Búsqueda por características:</span>
+                </div>
+            </div>
+
+            <div class="row row-cols-3 mt-2">
+                <div class="col">
+                    <mat-form-field>
+                        <input matInput placeholder="Fecha de estreno" type="text" formControlName="release_date">
+                    </mat-form-field>
+                </div>
+
+                <div class="col">
+                    <mat-form-field>
+                        <input matInput placeholder="Duración" type="number" formControlName="runtime">
+                    </mat-form-field>
+                </div>
+
+                <div class="col">
+                    <mat-form-field>
+                        <input matInput placeholder="Puntuación" type="number" formControlName="vote_average">
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div class="row row-cols-2 mt-2">
+                <div class="col">
+                    <mat-form-field>
+                        <mat-select placeholder="Géneros" formControlName="genresSelected" multiple>
+                            <mat-option value="28" color="primary">Acción</mat-option>
+                            <mat-option value="16" color="primary">Animación</mat-option>
+                            <mat-option value="12" color="primary">Aventura</mat-option>
+                            <mat-option value="10752" color="primary">Bélica</mat-option>
+                            <mat-option value="878" color="primary">Ciencia ficción</mat-option>
+                            <mat-option value="35" color="primary">Comedia</mat-option>
+                            <mat-option value="80" color="primary">Crimen</mat-option>
+                            <mat-option value="99" color="primary">Documental</mat-option>
+                            <mat-option value="18" color="primary">Drama</mat-option>
+                            <mat-option value="10751" color="primary">Familia</mat-option>
+                            <mat-option value="14" color="primary">Fantasía</mat-option>
+                            <mat-option value="36" color="primary">Historia</mat-option>
+                            <mat-option value="10402" color="primary">Música</mat-option>
+                            <mat-option value="9648" color="primary">Misterio</mat-option>
+                            <mat-option value="37" color="primary">Oeste</mat-option>
+                            <mat-option value="10770" color="primary">Película de TV</mat-option>
+                            <mat-option value="10749" color="primary">Romance</mat-option>
+                            <mat-option value="27" color="primary">Terror</mat-option>
+                            <mat-option value="53" color="primary">Suspense</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+
+                <div class="col">
+                    <mat-form-field>
+                        <mat-select placeholder="Ordenar por" formControlName="orderBy">
+                            <mat-option value="">No ordenar</mat-option>
+                            <mat-option value="popularity.asc">Popularidad ascendente</mat-option>
+                            <mat-option value="popularity.desc">Popularidad descendente</mat-option>
+                            <mat-option value="release_date.asc">Fecha de emisión ascendente</mat-option>
+                            <mat-option value="release_date.desc">Fecha de emisión descendente</mat-option>
+                            <mat-option value="revenue.asc">Ganancias ascendente</mat-option>
+                            <mat-option value="revenue.desc">Ganancias descendente</mat-option>
+                            <mat-option value="vote_average.asc">Puntuación ascendente</mat-option>
+                            <mat-option value="vote_average.desc">Puntuación descendente</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div class="row justify-content-end mt-2">
+                <div class="col-auto">
+                    <button mat-raised-button type="button" color="primary" (click)="searchTMDB()">
+                        <i class="fas fa-search"></i>
+                        <span class="ml-2">Buscar en The Movie DB</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="row" *ngIf="id">
+                <div class="col-2 align-self-center">
+                    <img [src]="poster_path" class="w-100" *ngIf="poster_path">
+                    <i class="fas fa-film fa-4x" *ngIf="!poster_path"></i>
+                </div>
+
+                <div class="col align-self-center">
+                    <div class="row" *ngIf="homepage">
+                        <a [href]="homepage" target="_blank">
+                            <button mat-raised-button type="button" color="primary">Web oficial</button>
+                        </a>
+                    </div>
+
+                    <div class="row mt-2" *ngIf="url">
+                        <a [href]="url" target="_blank">
+                            <button mat-raised-button type="button" color="primary">Entrada en The Movie DB</button>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-2" *ngIf="genres.length > 0">
+                <div class="col">
+                    <b>Géneros</b>
+                    <mat-chip-list>
+                        <mat-chip *ngFor="let genre of genres">
+                            {{genre}}
+                        </mat-chip>
+                    </mat-chip-list>
+                </div>
+            </div>
+
+            <div class="row mt-2" *ngIf="cast.length > 0">
+                <div class="col">
+                    <b>Actores</b>
+                    <mat-chip-list>
+                        <mat-chip *ngFor="let item of cast">
+                            {{item.character}}: {{item.name}}
+                        </mat-chip>
+                    </mat-chip-list>
+                </div>
+            </div>
+
+            <div class="row mt-2" *ngIf="crew.length > 0">
+                <div class="col">
+                    <b>Personal</b>
+                    <mat-chip-list>
+                        <mat-chip *ngFor="let item of crew">
+                            {{item.job}}: {{item.name}}
+                        </mat-chip>
+                    </mat-chip-list>
+                </div>
+            </div>
+
+            <div class="row mt-2" *ngIf="production_companies.length > 0">
+                <div class="col">
+                    <b>Productoras</b>
+                    <mat-chip-list>
+                        <mat-chip *ngFor="let company of production_companies">
+                            {{company}}
+                        </mat-chip>
+                    </mat-chip-list>
+                </div>
+            </div>
+
+            <div class="row mt-2" *ngIf="tagline">
+                <div class="col">
+                    <b>Lema: </b>
+                    <span>{{tagline}}</span>
+                </div>
+            </div>
+
+            <div class="row mt-2" *ngIf="overview">
+                <div class="col">
+                    <b>Resumen: </b>
+                    <span>{{overview}}</span>
+                </div>
+            </div>
+        </div>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="center">
+        <button mat-raised-button type="submit" [disabled]="!movie" color="primary">Guardar</button>
+    </mat-dialog-actions>
+</form>

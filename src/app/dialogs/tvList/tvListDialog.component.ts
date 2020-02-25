@@ -4,6 +4,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { HttpClient } from '@angular/common/http';
 import { TvDb } from 'src/app/common/dto/tvDB.dto';
 import * as _ from 'lodash';
+import { CommonFunctions } from 'src/app/common/commonFunctions';
 
 @Component({
     selector: 'app-tv-list-dialog',
@@ -13,13 +14,25 @@ export class TvListDialogComponent implements OnInit {
     apiKey = '?api_key=e50d63dbcb5c1a6c703ea83cfed8cb7c';
     language = '&language=es';
     image = 'https://image.tmdb.org/t/p/original';
-    query = '&query=';
-    // discover = 'discover/';
     searchUrl = 'https://api.themoviedb.org/3/';
     credits = '&append_to_response=credits';
     tvURL = 'https://www.themoviedb.org/tv/';
 
+    query = '&query=';
+    search = 'search/tv';
     name: string;
+
+    discover = 'discover/tv';
+    genres = '&with_genres=';
+    wGenres = '&without_genres=';
+    firstAirDate = '&first_air_date.gte=';
+    voteAverage = '&vote_average.gte=';
+    orderBy = '&sort_by=';
+    first_air_date: string;
+    vote_average: string;
+    selectedGenres: string[] = [];
+    selectedWGenres: string[] = [];
+    order_by: string;
 
     tv: TvShow;
     selectedtv;
@@ -27,14 +40,51 @@ export class TvListDialogComponent implements OnInit {
 
     constructor(private dialogRef: MatDialogRef<TvListDialogComponent>,
         private http: HttpClient,
+        public functions: CommonFunctions,
         @Inject(MAT_DIALOG_DATA) public data: any) {
-        this.name = data;
+        if (typeof this.data === 'string') {
+            this.name = data;
+        } else {
+            this.first_air_date = this.data.first_air_date;
+            this.vote_average = this.data.vote_average;
+            this.selectedGenres = this.data.genresSelected;
+            this.selectedWGenres = this.data.genresWSelected;
+            this.order_by = this.data.orderBy;
+        }
     }
 
     ngOnInit() {
-        const firstQuery = this.searchUrl + 'search/tv' + this.apiKey + this.query + this.name + this.language;
-        this.http.get(firstQuery).subscribe((data: any) => this.tvList = data.results,
-            error => console.log(error));
+        if (typeof this.data === 'string') {
+            const firstQuery = this.searchUrl + this.search + this.apiKey + this.query + this.name + this.language;
+            this.http.get(firstQuery).subscribe((data: any) => this.tvList = data.results,
+                error => console.log(error));
+        } else {
+            let firstQuery = this.searchUrl + this.discover + this.apiKey;
+
+            if (this.first_air_date) {
+                firstQuery += this.firstAirDate + this.first_air_date;
+            }
+
+            if (this.vote_average) {
+                firstQuery += this.voteAverage + this.vote_average;
+            }
+
+            if (this.selectedGenres) {
+                firstQuery += this.genres + this.selectedGenres.join(',');
+            }
+
+            if (this.selectedWGenres) {
+                firstQuery += this.wGenres + this.selectedWGenres.join(',');
+            }
+
+            if (this.order_by) {
+                firstQuery += this.orderBy + this.order_by;
+            }
+
+            this.http.get(firstQuery + this.language).subscribe((data: any) => this.tvList = data.results,
+                error => console.log(error));
+        }
+
     }
 
     setTv(event) {
@@ -121,6 +171,7 @@ export class TvListDialogComponent implements OnInit {
                     cast,
                     crew,
                 };
+                this.tv = this.functions.checkKeys(this.tv);
                 this.onClose();
             },
                 error => console.log(error)

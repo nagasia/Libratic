@@ -24,7 +24,7 @@ export class BookDialogComponent implements OnDestroy {
     addOnBlur = true;
 
     form: FormGroup;
-    isbn: number;
+    isbn: string;
     cdu: string;
     publishers: string[] = [];
     title: string;

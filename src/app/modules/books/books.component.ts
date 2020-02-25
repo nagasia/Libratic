@@ -75,7 +75,7 @@ export class BooksComponent implements OnInit, OnDestroy {
             error => console.log(error));
     }
 
-    deleteBook(isbn: number) {
+    deleteBook(isbn: string) {
         this.db.deleteBook(isbn)
             .then(() => {
                 _.remove(this.books, b => b.isbn === isbn);
@@ -107,13 +107,22 @@ export class BooksComponent implements OnInit, OnDestroy {
             error => console.log(error));
     }
 
-    addBookFavourite(isbn: number) {
+    addBookFavourite(isbn: string) {
         this.db.saveBookFavourited(isbn)
-        .then(() => this.snackBar.open('Libro añadido a favoritos', '', { duration: 2000 }))
-        .catch(error => {
-            console.log(error);
-            this.snackBar.open('Problema al guardar libro en favoritos', '', { duration: 2000 });
-        });
+            .then(() => this.snackBar.open('Libro añadido a favoritos', '', { duration: 2000 }))
+            .catch(error => {
+                console.log(error);
+                this.snackBar.open('Problema al guardar libro en favoritos', '', { duration: 2000 });
+            });
+    }
+
+    addBookWished(isbn: string) {
+        this.db.saveUserBookWished(isbn)
+            .then(() => this.snackBar.open('Libro añadido a deseados', '', { duration: 2000 }))
+            .catch(error => {
+                console.log(error);
+                this.snackBar.open('Problema al guardar libro en deseados', '', { duration: 2000 });
+            });
     }
 
     ngOnDestroy() {

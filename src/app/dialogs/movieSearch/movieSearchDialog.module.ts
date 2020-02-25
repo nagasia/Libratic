@@ -1,19 +1,19 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MovieDialogComponent } from './movieDialog.component';
-import { CommonMaterialModules } from 'src/app/common/commonMaterialModules';
+import { MovieSearchDialogComponent } from './movieSearchDialog.component';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MoviesListDialogModule } from '../moviesList/moviesListDialog.module';
+import { CommonMaterialModules } from '../../common/commonMaterialModules';
 import { MoviesListDialogComponent } from '../moviesList/moviesListDialog.component';
+import { MoviesListDialogModule } from '../moviesList/moviesListDialog.module';
 
 @NgModule({
     imports: [
         CommonModule,
-        CommonMaterialModules,
         ReactiveFormsModule,
+        CommonMaterialModules,
         MoviesListDialogModule
     ],
-    declarations: [MovieDialogComponent],
+    declarations: [MovieSearchDialogComponent],
     entryComponents: [MoviesListDialogComponent]
 })
-export class MovieDialogModule { }
+export class MovieSearchDialogModule { }

@@ -44,3 +44,13 @@ export class OpenLibraryLong {
     publish_date: string;
     publish_places: [{ name: string; }];
 }
+
+export class OpenLibraryRequest {
+    docs: [{
+        cover_i: number;
+        author_name: string;
+        title: string;
+        first_publish_year: number;
+        isbn: string[];
+    }];
+}

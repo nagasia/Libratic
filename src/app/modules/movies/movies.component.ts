@@ -87,7 +87,7 @@ export class MoviesComponent implements OnInit, OnDestroy {
 
     deleteMovie(id: number) {
         this.db.deleteMovie(id).then(() => {
-            this.movies = _.remove(this.movies, b => b.id === id);
+            _.remove(this.movies, b => b.id === id);
             this.snackBar.open('Película borrada', '', { duration: 2000 });
         }).catch(error => {
             console.log(error);
@@ -101,6 +101,15 @@ export class MoviesComponent implements OnInit, OnDestroy {
             .catch(error => {
                 console.log(error);
                 this.snackBar.open('Problema al guardar película en favoritos', '', { duration: 2000 });
+            });
+    }
+
+    addMovieWished(id: number) {
+        this.db.saveUserMovieWished(id)
+            .then(() => this.snackBar.open('Película añadida a deseados', '', { duration: 2000 }))
+            .catch(error => {
+                console.log(error);
+                this.snackBar.open('Problema al guardar película en deseados', '', { duration: 2000 });
             });
     }
 

@@ -19,18 +19,23 @@
                     <span>{{item.first_air_date}}</span>
                 </mat-panel-title>
 
-                <button mat-icon-button matTooltip="Añadir favorito" (click)="addTvFavoutire(item.id)"
-                    color="primary" *ngIf="isLoged && !isAdmin">
+                <button mat-icon-button matTooltip="Añadir deseado"
+                    (click)="addTVWished(item.id); $event.stopPropagation()" color="primary"
+                    *ngIf="isLoged && !isAdmin">
+                    <i class="fas fa-hand-holding-heart"></i>
+                </button>
+                <button mat-icon-button matTooltip="Añadir favorito"
+                    (click)="addTvFavoutire(item.id); $event.stopPropagation()" color="primary"
+                    *ngIf="isLoged && !isAdmin">
                     <i class="fas fa-heart"></i>
                 </button>
-                <button mat-icon-button matTooltip="Editar" (click)="editTv(item)" color="primary" *ngIf="isAdmin">
+                <button mat-icon-button matTooltip="Editar" (click)="editTv(item); $event.stopPropagation()"
+                    color="primary" *ngIf="isAdmin">
                     <i class="fas fa-pen"></i>
-                    <i class="fas fa-tv"></i>
                 </button>
-                <button mat-icon-button matTooltip="Eliminar" (click)="deleteTv(item.id)" color="primary"
-                    *ngIf="isAdmin">
+                <button mat-icon-button matTooltip="Eliminar" (click)="deleteTv(item.id); $event.stopPropagation()"
+                    color="primary" *ngIf="isAdmin">
                     <i class="fas fa-minus"></i>
-                    <i class="fas fa-tv"></i>
                 </button>
             </mat-expansion-panel-header>
 
@@ -69,7 +74,8 @@
                             </div>
                         </div>
 
-                        <div class="row mt-2" *ngIf="item.first_air_date || item.number_of_seasons || item.number_of_episodes || item.vote_average">
+                        <div class="row mt-2"
+                            *ngIf="item.first_air_date || item.number_of_seasons || item.number_of_episodes || item.vote_average">
                             <div class="col-auto" *ngIf="item.first_air_date">
                                 <b>Fecha de estreno: </b>
                                 <span>{{item.first_air_date}}</span>

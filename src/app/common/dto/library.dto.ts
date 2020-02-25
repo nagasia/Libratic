@@ -5,13 +5,13 @@ export interface Library {
     city?: string;
     adminIDs: string[];
     usersIDs?: string[];
-    booksIDs?: number[];
+    booksIDs?: string[];
     moviesIDs?: number[];
     tvsIDs?: number[];
     bookLendings?: Lending[];
     movieLendings?: Lending[];
     tvLendings?: Lending[];
-    bookWished?: number[];
+    bookWished?: string[];
     moviesWished?: number[];
     tvsWished?: number[];
 }

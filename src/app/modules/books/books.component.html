@@ -20,18 +20,20 @@
                 </mat-panel-title>
                 <mat-panel-description>{{item.authors}}</mat-panel-description>
 
-                <button mat-icon-button matTooltip="Añadir favorito" (click)="addBookFavourite(item.isbn)"
+                <button mat-icon-button matTooltip="Añadir deseado" (click)="addBookWished(item.isbn); $event.stopPropagation()" color="primary"
+                    *ngIf="isLoged && !isAdmin">
+                    <i class="fas fa-hand-holding-heart"></i>
+                </button>
+                <button mat-icon-button matTooltip="Añadir favorito" (click)="addBookFavourite(item.isbn); $event.stopPropagation()"
                     color="primary" *ngIf="isLoged && !isAdmin">
                     <i class="fas fa-heart"></i>
                 </button>
-                <button mat-icon-button matTooltip="Editar" (click)="editBook(item)" color="primary" *ngIf="isAdmin">
+                <button mat-icon-button matTooltip="Editar" (click)="editBook(item); $event.stopPropagation()" color="primary" *ngIf="isAdmin">
                     <i class="fas fa-pen"></i>
-                    <i class="fas fa-book"></i>
                 </button>
-                <button mat-icon-button matTooltip="Eliminar" (click)="deleteBook(item.isbn)" color="primary"
+                <button mat-icon-button matTooltip="Eliminar" (click)="deleteBook(item.isbn); $event.stopPropagation()" color="primary"
                     *ngIf="isAdmin">
                     <i class="fas fa-minus"></i>
-                    <i class="fas fa-book"></i>
                 </button>
             </mat-expansion-panel-header>
 

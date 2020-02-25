@@ -7,7 +7,7 @@
             <div class="row">
                 <div class="col-auto">
                     <mat-form-field>
-                        <input matInput placeholder="ISBN" type="number" formControlName="isbn" required>
+                        <input matInput placeholder="ISBN" type="text" formControlName="isbn" required>
                         <mat-error *ngIf="!form.controls.isbn.hasError('required')">El ISBN contiene entre 10 y 13
                             digitos
                         </mat-error>

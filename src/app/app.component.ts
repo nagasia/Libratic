@@ -4,23 +4,24 @@ import { AuthenticationService } from './services/authentication.service';
 import { LoginDialogComponent } from './dialogs/login/loginDialog.component';
 import { LibraryDialogComponent } from './dialogs/library/libraryDialog.component';
 import { Router } from '@angular/router';
+import { CommonFunctions } from './common/commonFunctions';
 
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
 })
 export class AppComponent implements OnDestroy {
-    isLoged: boolean;
-    isAdmin: boolean;
+    isLoged = false;
+    isAdmin = false;
     libraryDialog$;
     loginDialog$;
 
     constructor(private dialog: MatDialog,
         private authService: AuthenticationService,
         private router: Router,
-        private snackBar: MatSnackBar) {
-        this.isLoged = false;
-        this.isAdmin = false;
+        private snackBar: MatSnackBar,
+        private functions: CommonFunctions) {
+        this.authenticate();
 
         if (!this.isLoged) {
             this.router.navigate(['']);
@@ -37,6 +38,7 @@ export class AppComponent implements OnDestroy {
                 if (result.done) {
                     this.snackBar.open(result.motive, '', { duration: 2000 });
                     this.authenticate();
+                    this.router.navigate(['books']);
                 } else {
                     this.snackBar.open(result, '', { duration: 2000 });
                 }
@@ -67,6 +69,7 @@ export class AppComponent implements OnDestroy {
                 if (result.user) {
                     this.snackBar.open(result.motive, '', { duration: 2000 });
                     this.authenticate();
+                    this.router.navigate(['books']);
                 } else {
                     this.snackBar.open(result, '', { duration: 2000 });
                 }
@@ -76,14 +79,9 @@ export class AppComponent implements OnDestroy {
     }
 
     private authenticate() {
-        if (this.authService.authUser) {
-            this.isLoged = true;
-
-            if (this.authService.authUser.userLevel === 'admin') {
-                this.isAdmin = true;
-            }
-
-            this.router.navigate(['books']);
+        this.isLoged = this.functions.isLoged(this.authService.authUser);
+        if (this.isLoged) {
+            this.isAdmin = this.functions.isAdmin(this.authService.authUser);
         }
     }
 
@@ -101,6 +99,6 @@ export class AppComponent implements OnDestroy {
         if (this.loginDialog$) {
             this.loginDialog$.unsubscribe();
         }
-        this.authService.logout();
+        //this.authService.logout();
     }
 }

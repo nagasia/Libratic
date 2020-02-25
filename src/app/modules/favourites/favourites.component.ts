@@ -80,7 +80,7 @@ export class FavouritesComponent implements OnInit, OnDestroy {
         }
     }
 
-    deleteBook(isbn: number) {
+    deleteBook(isbn: string) {
         this.db.deleteBookFavourited(isbn)
             .then(() => _.remove(this.bookList, b => b.isbn === isbn));
     }

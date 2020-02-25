@@ -85,7 +85,7 @@ export class TvshowsComponent implements OnInit, OnDestroy {
 
     deleteTv(id: number) {
         this.db.deleteTV(id).then(() => {
-            this.tvShows = _.remove(this.tvShows, b => b.id === id);
+            _.remove(this.tvShows, b => b.id === id);
             this.snackBar.open('Serie borrada', '', { duration: 2000 });
         }).catch(error => {
             console.log(error);
@@ -99,6 +99,15 @@ export class TvshowsComponent implements OnInit, OnDestroy {
             .catch(error => {
                 console.log(error);
                 this.snackBar.open('Problema al guardar la serie en favoritos', '', { duration: 2000 });
+            });
+    }
+
+    addTVWished(id: number) {
+        this.db.saveUserTVWished(id)
+            .then(() => this.snackBar.open('Serie añadida a deseados', '', { duration: 2000 }))
+            .catch(error => {
+                console.log(error);
+                this.snackBar.open('Problema al guardar la serie en deseados', '', { duration: 2000 });
             });
     }
 

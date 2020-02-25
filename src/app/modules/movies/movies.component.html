@@ -19,18 +19,23 @@
                     <span>{{item.release_date}}</span>
                 </mat-panel-title>
 
-                <button mat-icon-button matTooltip="Añadir favorito" (click)="addMovieFavoutire(item.id)"
-                    color="primary" *ngIf="isLoged && !isAdmin">
+                <button mat-icon-button matTooltip="Añadir deseado"
+                    (click)="addMovieWished(item.id); $event.stopPropagation()" color="primary"
+                    *ngIf="isLoged && !isAdmin">
+                    <i class="fas fa-hand-holding-heart"></i>
+                </button>
+                <button mat-icon-button matTooltip="Añadir favorito"
+                    (click)="addMovieFavoutire(item.id); $event.stopPropagation()" color="primary"
+                    *ngIf="isLoged && !isAdmin">
                     <i class="fas fa-heart"></i>
                 </button>
-                <button mat-icon-button matTooltip="Editar" (click)="editMovie(item)" color="primary" *ngIf="isAdmin">
+                <button mat-icon-button matTooltip="Editar" (click)="editMovie(item); $event.stopPropagation()"
+                    color="primary" *ngIf="isAdmin">
                     <i class="fas fa-pen"></i>
-                    <i class="fas fa-film"></i>
                 </button>
-                <button mat-icon-button matTooltip="Eliminar" (click)="deleteMovie(item.id)" color="primary"
-                    *ngIf="isAdmin">
+                <button mat-icon-button matTooltip="Eliminar" (click)="deleteMovie(item.id); $event.stopPropagation()"
+                    color="primary" *ngIf="isAdmin">
                     <i class="fas fa-minus"></i>
-                    <i class="fas fa-film"></i>
                 </button>
             </mat-expansion-panel-header>
 

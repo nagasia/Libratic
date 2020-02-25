@@ -111,7 +111,7 @@ export class FireDBService {
         return this.save('/books/' + book.isbn, book);
     }
 
-    deleteBook(isbn: number) {
+    deleteBook(isbn: string) {
         _.remove(this.authService.authLibrary.booksIDs, id => id === isbn);
 
         return this.set('/libraries/' + this.authService.authLibrary.id + '/booksIDs/',
@@ -150,7 +150,7 @@ export class FireDBService {
         return this.set('/users/' + user.id + '/bookLendings/', user.bookLendings);
     }
 
-    saveBookFavourited(isbn: number) {
+    saveBookFavourited(isbn: string) {
         if (this.authService.authUser.bookFavourited) {
             this.authService.authUser.bookFavourited.push(isbn);
         } else {
@@ -161,43 +161,49 @@ export class FireDBService {
             this.authService.authUser.bookFavourited);
     }
 
-    deleteBookFavourited(isbn: number) {
+    deleteBookFavourited(isbn: string) {
         _.remove(this.authService.authUser.bookFavourited, id => id === isbn);
 
         return this.set('/users/' + this.authService.authUser.id + '/bookFavourited/',
             this.authService.authUser.bookFavourited);
     }
 
-    saveUserBookWished(isbn: number) {
+    saveUserBookWished(isbn: string, book?: Book) {
         if (this.authService.authUser.bookWished) {
             this.authService.authUser.bookWished.push(isbn);
         } else {
             this.authService.authUser.bookWished = [isbn];
         }
 
+        if (book) {
+            this.save('/books/' + book.isbn, book);
+        }
+
         return this.set('/users/' + this.authService.authUser.id + '/bookWished/',
             this.authService.authUser.bookWished);
     }
 
-    deleteUserBookWished(isbn: number) {
+    deleteUserBookWished(isbn: string) {
         _.remove(this.authService.authUser.bookWished, id => id === isbn);
 
         return this.set('/users/' + this.authService.authUser.id + '/bookWished/',
             this.authService.authUser.bookWished);
     }
 
-    saveLibraryBookWished(isbn: number) {
+    saveLibraryBookWished(book: Book) {
+        this.save('/books/' + book.isbn, book);
+
         if (this.authService.authLibrary.bookWished) {
-            this.authService.authLibrary.bookWished.push(isbn);
+            this.authService.authLibrary.bookWished.push(book.isbn);
         } else {
-            this.authService.authLibrary.bookWished = [isbn];
+            this.authService.authLibrary.bookWished = [book.isbn];
         }
 
         return this.set('/libraries/' + this.authService.authLibrary.id + '/bookWished/',
             this.authService.authLibrary.bookWished);
     }
 
-    deleteLibraryBookWished(isbn: number) {
+    deleteLibraryBookWished(isbn: string) {
         _.remove(this.authService.authLibrary.bookWished, id => id === isbn);
 
         return this.set('/libraries/' + this.authService.authLibrary.id + '/bookWished/',
@@ -279,11 +285,15 @@ export class FireDBService {
             this.authService.authUser.moviesFavourited);
     }
 
-    saveUserMovieWished(id: number) {
+    saveUserMovieWished(id: number, movie?: Movie) {
         if (this.authService.authUser.moviesWished) {
             this.authService.authUser.moviesWished.push(id);
         } else {
             this.authService.authUser.moviesWished = [id];
+        }
+
+        if (movie) {
+            this.save('/movies/' + movie.id, movie);
         }
 
         return this.set('/users/' + this.authService.authUser.id + '/moviesWished/',
@@ -297,11 +307,13 @@ export class FireDBService {
             this.authService.authUser.moviesWished);
     }
 
-    saveLibraryMovieWished(id: number) {
+    saveLibraryMovieWished(movie?: Movie) {
+        this.save('/movies/' + movie.id, movie);
+
         if (this.authService.authLibrary.moviesWished) {
-            this.authService.authLibrary.moviesWished.push(id);
+            this.authService.authLibrary.moviesWished.push(movie.id);
         } else {
-            this.authService.authLibrary.moviesWished = [id];
+            this.authService.authLibrary.moviesWished = [movie.id];
         }
 
         return this.set('/libraries/' + this.authService.authLibrary.id + '/moviesWished/',
@@ -389,11 +401,15 @@ export class FireDBService {
             this.authService.authUser.tvsFavourited);
     }
 
-    saveUserTVWished(id: number) {
+    saveUserTVWished(id: number, tv?: TvShow) {
         if (this.authService.authUser.tvsWished) {
             this.authService.authUser.tvsWished.push(id);
         } else {
             this.authService.authUser.tvsWished = [id];
+        }
+
+        if (tv) {
+            this.save('/tvs/' + tv.id, tv);
         }
 
         return this.set('/users/' + this.authService.authUser.id + '/tvsWished/',
@@ -407,14 +423,16 @@ export class FireDBService {
             this.authService.authUser.tvsWished);
     }
 
-    saveLibraryTVWished(id: number) {
+    saveLibraryTVWished(tv: TvShow) {
+        this.save('/tvs/' + tv.id, tv);
+
         if (this.authService.authLibrary.tvsWished) {
-            this.authService.authLibrary.tvsWished.push(id);
+            this.authService.authLibrary.tvsWished.push(tv.id);
         } else {
-            this.authService.authLibrary.tvsWished = [id];
+            this.authService.authLibrary.tvsWished = [tv.id];
         }
 
-        this.set('/libraries/' + this.authService.authLibrary.id + '/tvsWished/',
+        return this.set('/libraries/' + this.authService.authLibrary.id + '/tvsWished/',
             this.authService.authLibrary.tvsWished);
     }
 

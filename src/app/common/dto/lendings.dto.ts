@@ -1,5 +1,5 @@
 export interface Lending {
-    itemId: number;
+    itemId: any;
     userId: string;
     startDate: string;
     endDate: string;

@@ -1,5 +1,5 @@
-export interface Book{
-    isbn: number;
+export interface Book {
+    isbn: string;
     cdu?: string;
     publishers: string[];
     title: string;

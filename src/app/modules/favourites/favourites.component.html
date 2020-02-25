@@ -13,9 +13,9 @@
                     </mat-panel-title>
                     <mat-panel-description>{{item.authors}}</mat-panel-description>
 
-                    <button mat-icon-button matTooltip="Añadir favorito" (click)="deleteBook(item.isbn)"
-                        color="primary">
-                        <i class="fas fa-heart"></i>
+                    <button mat-icon-button matTooltip="Añadir favorito"
+                        (click)="deleteBook(item.isbn); $event.stopPropagation()" color="primary">
+                        <i class="fas fa-minus"></i>
                     </button>
                 </mat-expansion-panel-header>
 
@@ -118,9 +118,9 @@
                         <span>{{item.release_date}}</span>
                     </mat-panel-title>
 
-                    <button mat-icon-button matTooltip="Eliminar favorito" (click)="deleteMovie(item.id)"
-                        color="primary">
-                        <i class="fas fa-heart"></i>
+                    <button mat-icon-button matTooltip="Eliminar favorito"
+                        (click)="deleteMovie(item.id); $event.stopPropagation()" color="primary">
+                        <i class="fas fa-minus"></i>
                     </button>
                 </mat-expansion-panel-header>
 
@@ -250,8 +250,9 @@
                         <span>{{item.first_air_date}}</span>
                     </mat-panel-title>
 
-                    <button mat-icon-button matTooltip="Eliminar favorito" (click)="deleteTV(item.id)" color="primary">
-                        <i class="fas fa-heart"></i>
+                    <button mat-icon-button matTooltip="Eliminar favorito"
+                        (click)="deleteTV(item.id); $event.stopPropagation()" color="primary">
+                        <i class="fas fa-minus"></i>
                     </button>
                 </mat-expansion-panel-header>
 

@@ -1,3 +1,401 @@
-<p>
-  wished works!
-</p>
+<ng-container *ngIf="isLoged">
+    <div class="container-fluid mt-2">
+        <mat-toolbar>
+            <span>Libros</span>
+            <div class="spacer"></div>
+            <button mat-icon-button matTooltip="Añadir favorito" (click)="addBook()" color="primary">
+                <i class="fas fa-plus"></i>
+            </button>
+        </mat-toolbar>
+
+        <mat-toolbar *ngIf="bookList.length === 0">
+            <span>Aun no hay elementos deseados añadidos</span>
+        </mat-toolbar>
+
+        <mat-accordion *ngIf="bookList.length >= 1">
+            <mat-expansion-panel *ngFor="let item of bookList">
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        <span class="mr-2"><b>{{item.title}}</b></span>
+                        <span>{{item.subtitle}}</span>
+                    </mat-panel-title>
+                    <mat-panel-description>{{item.authors}}</mat-panel-description>
+
+                    <button mat-icon-button matTooltip="Añadir favorito"
+                        (click)="deleteBook(item.isbn); $event.stopPropagation()" color="primary">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                </mat-expansion-panel-header>
+
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-2">
+                            <span *ngIf="item.cover">
+                                <img [src]="item.cover" class="w-100">
+                            </span>
+
+                            <span *ngIf="!item.cover" class="content-fluid">
+                                <i class="fas fa-book fa-4x"></i>
+                            </span>
+                        </div>
+
+                        <div class="col">
+                            <div class="row">
+                                <div class="col-auto">
+                                    <b>ISBN:</b>
+                                    <span> {{item.isbn}}</span>
+                                </div>
+
+                                <div class="col-auto" *ngIf="item.cdu">
+                                    <b>CDU:</b>
+                                    <span> {{item.cdu}}</span>
+                                </div>
+                            </div>
+
+                            <div class="row mt-2">
+                                <div class="col-auto" *ngIf="item.publishers">
+                                    <b>Editorial:</b>
+                                    <span> {{item.publishers}}</span>
+                                </div>
+
+                                <div class="col-auto" *ngIf="item.publish_date">
+                                    <b>Fecha de publicación:</b>
+                                    <span> {{item.publish_date}}</span>
+                                </div>
+
+                                <div class="col-auto" *ngIf="item.publish_places">
+                                    <b>Lugar de publicación:</b>
+                                    <span> {{item.publish_places}}</span>
+                                </div>
+                            </div>
+
+                            <div class="row mt-2">
+                                <div class="col-auto" *ngIf="item.physical_format">
+                                    <b>Formato:</b>
+                                    <span> {{item.physical_format}}</span>
+                                </div>
+
+                                <div class="col-auto" *ngIf="item.number_of_pages">
+                                    <b>Páginas:</b>
+                                    <span> {{item.number_of_pages}}</span>
+                                </div>
+                            </div>
+
+                            <div class="row mt-2" *ngIf="item.subjects">
+                                <div class="col-auto">
+                                    <b>Temas:</b>
+                                    <mat-chip-list>
+                                        <mat-chip *ngFor="let subject of item.subjects">{{subject}}</mat-chip>
+                                    </mat-chip-list>
+                                </div>
+                            </div>
+
+                            <div class="row mt-2" *ngIf="item.description">
+                                <div class="col-auto">
+                                    <b>Resumen:</b>
+                                    <p> {{item.description}}</p>
+                                </div>
+                            </div>
+
+                            <div class="row mt-2 justify-content-end" *ngIf="item.url">
+                                <div class="col-auto">
+                                    <a [href]="item.url" target="_blank">
+                                        <button mat-raised-button color="primary">Entrada en OpenLibrary</button>
+                                    </a>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </mat-expansion-panel>
+        </mat-accordion>
+    </div>
+
+    <div class="container-fluid mt-2">
+        <mat-toolbar>
+            <span>Películas</span>
+            <div class="spacer"></div>
+            <button mat-icon-button matTooltip="Añadir favorito" (click)="addMovie()" color="primary">
+                <i class="fas fa-plus"></i>
+            </button>
+        </mat-toolbar>
+
+        <mat-toolbar *ngIf="movieList.length === 0">
+            <span>Aun no hay elementos deseados añadidos</span>
+        </mat-toolbar>
+
+        <mat-accordion *ngIf="movieList.length >= 1">
+            <mat-expansion-panel *ngFor="let item of movieList">
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        <span class="mr-2"><b>{{item.title}}</b></span>
+                        <span>{{item.release_date}}</span>
+                    </mat-panel-title>
+
+                    <button mat-icon-button matTooltip="Eliminar favorito"
+                        (click)="deleteMovie(item.id); $event.stopPropagation()" color="primary">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                </mat-expansion-panel-header>
+
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-2">
+                            <div class="row">
+                                <span *ngIf="item.poster_path">
+                                    <img [src]="item.poster_path" class="w-100">
+                                </span>
+
+                                <span *ngIf="!item.poster_path" class="content-fluid">
+                                    <i class="fas fa-film fa-4x"></i>
+                                </span>
+                            </div>
+
+                            <div class="row justify-content-end mt-2" *ngIf="item.homepage">
+                                <a [href]="item.homepage" target="_blank">
+                                    <button mat-raised-button type="button" color="primary">Web oficial</button>
+                                </a>
+                            </div>
+
+                            <div class="row justify-content-end mt-2" *ngIf="item.url">
+                                <a [href]="item.url" target="_blank">
+                                    <button mat-raised-button type="button" color="primary">Entrada en The Movie
+                                        DB</button>
+                                </a>
+                            </div>
+
+                        </div>
+
+                        <div class="col">
+                            <div class="row" *ngIf="item.title">
+                                <div class="col">
+                                    <b>Título: </b>
+                                    <span>{{item.title}}</span>
+                                </div>
+                            </div>
+
+                            <div class="row mt-2" *ngIf="item.tagline">
+                                <div class="col">
+                                    <b>Lema: </b>
+                                    <span>{{item.tagline}}</span>
+                                </div>
+                            </div>
+
+                            <div class="row mt-2" *ngIf="item.release_date || item.runtime || item.vote_average">
+                                <div class="col-auto" *ngIf="item.release_date">
+                                    <b>Fecha de estreno: </b>
+                                    <span>{{item.release_date}}</span>
+                                </div>
+
+                                <div class="col-auto" *ngIf="item.runtime">
+                                    <b>Duración: </b>
+                                    <span>{{item.runtime}}</span>
+                                </div>
+
+                                <div class="col-auto" *ngIf="item.vote_average">
+                                    <b>Puntuación: </b>
+                                    <span>{{item.vote_average}}</span>
+                                </div>
+                            </div>
+
+                            <div class="row mt-2" *ngIf="item.overview">
+                                <div class="col">
+                                    <b>Resumen: </b>
+                                    <span>{{item.overview}}</span>
+                                </div>
+                            </div>
+
+                            <div class="row mt-2" *ngIf="item.genres">
+                                <div class="col">
+                                    <b>Géneros: </b>
+                                    <mat-chip-list>
+                                        <mat-chip *ngFor="let genre of item.genres">{{genre}}</mat-chip>
+                                    </mat-chip-list>
+                                </div>
+                            </div>
+
+                            <div class="row mt-2" *ngIf="item.production_companies">
+                                <div class="col">
+                                    <b>Productoras: </b>
+                                    <mat-chip-list>
+                                        <mat-chip *ngFor="let company of item.production_companies">{{company}}
+                                        </mat-chip>
+                                    </mat-chip-list>
+                                </div>
+                            </div>
+
+                            <div class="row mt-2" *ngIf="item.cast">
+                                <div class="col">
+                                    <b>Actores: </b>
+                                    <mat-chip-list>
+                                        <mat-chip *ngFor="let actor of item.cast">{{actor.character}}: {{actor.name}}
+                                        </mat-chip>
+                                    </mat-chip-list>
+                                </div>
+                            </div>
+
+                            <div class="row mt-2" *ngIf="item.crew">
+                                <div class="col">
+                                    <b>Personal: </b>
+                                    <mat-chip-list>
+                                        <mat-chip *ngFor="let employee of item.crew">{{employee.job}}: {{employee.name}}
+                                        </mat-chip>
+                                    </mat-chip-list>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </mat-expansion-panel>
+        </mat-accordion>
+    </div>
+
+    <div class="container-fluid mt-2">
+        <mat-toolbar>
+            <span>Series</span>
+            <div class="spacer"></div>
+            <button mat-icon-button matTooltip="Añadir favorito" (click)="addTV()" color="primary">
+                <i class="fas fa-plus"></i>
+            </button>
+        </mat-toolbar>
+
+        <mat-toolbar *ngIf="tvList.length === 0">
+            <span>Aun no hay elementos deseados añadidos</span>
+        </mat-toolbar>
+
+        <mat-accordion *ngIf="tvList.length >= 1">
+            <mat-expansion-panel *ngFor="let item of tvList">
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        <span class="mr-2"><b>{{item.name}}</b></span>
+                        <span>{{item.first_air_date}}</span>
+                    </mat-panel-title>
+
+                    <button mat-icon-button matTooltip="Eliminar favorito"
+                        (click)="deleteTV(item.id); $event.stopPropagation()" color="primary">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                </mat-expansion-panel-header>
+
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-2">
+                            <div class="row">
+                                <span *ngIf="item.poster_path">
+                                    <img [src]="item.poster_path" class="w-100">
+                                </span>
+
+                                <span *ngIf="!item.poster_path" class="content-fluid">
+                                    <i class="fas fa-tv fa-4x"></i>
+                                </span>
+                            </div>
+
+                            <div class="row justify-content-end mt-2" *ngIf="item.homepage">
+                                <a [href]="item.homepage" target="_blank">
+                                    <button mat-raised-button type="button" color="primary">Web oficial</button>
+                                </a>
+                            </div>
+
+                            <div class="row justify-content-end mt-2" *ngIf="item.url">
+                                <a [href]="item.url" target="_blank">
+                                    <button mat-raised-button type="button" color="primary">Entrada en The Movie
+                                        DB</button>
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="col">
+                            <div class="row" *ngIf="item.name">
+                                <div class="col">
+                                    <b>Título: </b>
+                                    <span>{{item.name}}</span>
+                                </div>
+                            </div>
+
+                            <div class="row mt-2"
+                                *ngIf="item.first_air_date || item.number_of_seasons || item.number_of_episodes || item.vote_average">
+                                <div class="col-auto" *ngIf="item.first_air_date">
+                                    <b>Fecha de estreno: </b>
+                                    <span>{{item.first_air_date}}</span>
+                                </div>
+
+                                <div class="col-auto" *ngIf="item.number_of_seasons">
+                                    <b>Nº de temporadas: </b>
+                                    <span>{{item.number_of_seasons}}</span>
+                                </div>
+
+                                <div class="col-auto" *ngIf="item.number_of_episodes">
+                                    <b>Nº de episodios: </b>
+                                    <span>{{item.number_of_episodes}}</span>
+                                </div>
+
+                                <div class="col-auto" *ngIf="item.vote_average">
+                                    <b>Puntuación: </b>
+                                    <span>{{item.vote_average}}</span>
+                                </div>
+                            </div>
+
+                            <div class="row mt-2" *ngIf="item.overview">
+                                <div class="col">
+                                    <b>Resumen: </b>
+                                    <span>{{item.overview}}</span>
+                                </div>
+                            </div>
+
+                            <div class="row mt-2" *ngIf="item.created_by">
+                                <div class="col">
+                                    <b>Autores: </b>
+                                    <mat-chip-list>
+                                        <mat-chip *ngFor="let author of item.genres">{{author}}</mat-chip>
+                                    </mat-chip-list>
+                                </div>
+                            </div>
+
+                            <div class="row mt-2" *ngIf="item.genres">
+                                <div class="col">
+                                    <b>Géneros: </b>
+                                    <mat-chip-list>
+                                        <mat-chip *ngFor="let genre of item.genres">{{genre}}</mat-chip>
+                                    </mat-chip-list>
+                                </div>
+                            </div>
+
+                            <div class="row mt-2" *ngIf="item.production_companies">
+                                <div class="col">
+                                    <b>Productoras: </b>
+                                    <mat-chip-list>
+                                        <mat-chip *ngFor="let company of item.production_companies">{{company}}
+                                        </mat-chip>
+                                    </mat-chip-list>
+                                </div>
+                            </div>
+
+                            <div class="row mt-2" *ngIf="item.cast">
+                                <div class="col">
+                                    <b>Actores: </b>
+                                    <mat-chip-list>
+                                        <mat-chip *ngFor="let actor of item.cast">{{actor.character}}: {{actor.name}}
+                                        </mat-chip>
+                                    </mat-chip-list>
+                                </div>
+                            </div>
+
+                            <div class="row mt-2" *ngIf="item.crew">
+                                <div class="col">
+                                    <b>Personal: </b>
+                                    <mat-chip-list>
+                                        <mat-chip *ngFor="let employee of item.crew">{{employee.job}}: {{employee.name}}
+                                        </mat-chip>
+                                    </mat-chip-list>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </mat-expansion-panel>
+        </mat-accordion>
+    </div>
+</ng-container>
