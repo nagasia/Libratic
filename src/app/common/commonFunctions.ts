@@ -74,4 +74,9 @@ export class CommonFunctions {
             return null;
         }
     }
+
+    translateDate(time: number): string {
+        const date = new Date(time);
+        return date.getDate() + '/' + date.getMonth() + '/' + date.getFullYear();
+    }
 }

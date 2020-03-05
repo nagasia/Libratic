@@ -15,46 +15,19 @@
       ]
     },
     "books": {
-      "$bookId": {
         ".indexOn": [
           "title"
-        ],
-        "owned": {
-          "$uid": {
-            ".indexOn": [
-              "id"
-            ]
-          }
-        }
-      }
+        ]
     },
     "movies": {
-      "$movieId": {
         ".indexOn": [
           "title"
-        ],
-        "owned": {
-          "$uid": {
-            ".indexOn": [
-              "id"
-            ]
-          }
-        }
-      }
+        ]
     },
     "tvs": {
-      "$tvId": {
         ".indexOn": [
           "name"
-        ],
-        "owned": {
-          "$uid": {
-            ".indexOn": [
-              "id"
-            ]
-          }
-        }
-      }
+        ]
     },
     "lendings": {}
   }

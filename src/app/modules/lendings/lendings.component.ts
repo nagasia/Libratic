@@ -25,7 +25,7 @@ export class LendingsComponent implements OnInit, OnDestroy {
 
     constructor(private authService: AuthenticationService,
         private db: FireDBService,
-        private functions: CommonFunctions,
+        public functions: CommonFunctions,
         private dialog: MatDialog,
         private snackBar: MatSnackBar) {
         this.isLoged = this.functions.isLoged(this.authService.authUser);
@@ -145,18 +145,25 @@ export class LendingsComponent implements OnInit, OnDestroy {
         list[bookIndex] = item;
     }
 
+    private removeFromList(list: Lending[], item: Lending) {
+        const bookIndex = _.findIndex(list,
+            { itemId: item.itemId, userId: item.userId, startDate: item.startDate });
+        list[bookIndex] = item;
+        _.remove(list, item);
+    }
+
     returnLending(item: Lending, type: string) {
         item.active = false;
 
         switch (type) {
             case 'book':
-                this.updateList(this.bookList, item);
+                this.removeFromList(this.bookList, item);
                 break;
             case 'movie':
-                this.updateList(this.movieList, item);
+                this.removeFromList(this.movieList, item);
                 break;
             case 'tv':
-                this.updateList(this.tvList, item);
+                this.removeFromList(this.tvList, item);
                 break;
         }
 
@@ -168,9 +175,9 @@ export class LendingsComponent implements OnInit, OnDestroy {
     }
 
     private checkPunishments(item: Lending) {
-        const books = _.filter(this.bookList, { active: true, userId: item.userId, late: true });
-        const movies = _.filter(this.movieList, { active: true, userId: item.userId, late: true });
-        const tvs = _.filter(this.tvList, { active: true, userId: item.userId, late: true });
+        const books = _.find(this.bookList, { active: true, userId: item.userId, late: true });
+        const movies = _.find(this.movieList, { active: true, userId: item.userId, late: true });
+        const tvs = _.find(this.tvList, { active: true, userId: item.userId, late: true });
 
         if (!books && !movies && !tvs) {
             this.db.changePunishment(item.userId, false);
@@ -184,11 +191,6 @@ export class LendingsComponent implements OnInit, OnDestroy {
                 console.log(error);
                 this.snackBar.open('Problema con la operación', '', { duration: 2000 });
             });
-    }
-
-    translateDate(time: number): string {
-        const date = new Date(time);
-        return date.getDate() + '/' + date.getMonth() + '/' + date.getFullYear();
     }
 
     ngOnDestroy() {

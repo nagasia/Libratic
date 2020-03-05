@@ -24,8 +24,8 @@ export class LendingDialogComponent implements OnInit, OnDestroy {
     newLending: Lending;
     itemList$;
     userList$;
-    lendingList$;
-    itemRef$;
+    myItems$;
+    myLended$;
 
     constructor(private dialogRef: MatDialogRef<LendingDialogComponent>,
         private authService: AuthenticationService,
@@ -63,116 +63,105 @@ export class LendingDialogComponent implements OnInit, OnDestroy {
     }
 
     private caseBook() {
-        //todos los libros que puedo prestar
-
-        //obtener todos los libros que tengo
-        let myItems$ = this.db.getListFiltered('books/', 'owned/' + this.authService.authLibrary.id,
+        this.myItems$ = this.db.getListFiltered('books/', 'owned/' + this.authService.authLibrary.id + '/id',
             this.authService.authLibrary.id).subscribe((books: Book[]) => {
-                if (books) {
-                    //obtener todos los libros prestados
-                    let myLended = this.db.getListFiltered('lendings/' + this.authService.authLibrary.id, 'active', true)
+                if (books.length > 0) {
+                    this.myLended$ = this.db.getListFiltered('lendings/' + this.authService.authLibrary.id, 'active', true)
                         .subscribe((lendings: Lending[]) => {
-                            //ids de libros que no tengo prestados
+                            if (lendings.length > 0) {
+                                const booksIds: string[] = [];
+                                books.forEach(element => booksIds.push(element.isbn));
 
-                            //libros no prestados
+                                const lendingIds: string[] = [];
+                                lendings.forEach(element => lendingIds.push(element.itemId));
+
+                                let noLended = _.difference(booksIds, lendingIds);
+
+                                const lendedIds = _.intersection(booksIds, lendingIds);
+                                const lendedBooks = _.filter(books, b => lendedIds.includes(b.isbn));
+                                lendedBooks.forEach(book => {
+                                    const countLended = _.filter(lendings, { itemId: book.isbn }).length;
+                                    if (book.owned[this.authService.authLibrary.id].nEjemplares > countLended) {
+                                        noLended.push(book.isbn);
+                                    }
+                                });
+
+                                this.itemList = _.filter(books, b => noLended.includes(b.isbn));
+                            } else {
+                                this.itemList = books;
+                            }
+                            this.itemList = _.sortBy(this.itemList, 'title');
                         }, error => console.log(error));
                 }
-
             }, error => console.log(error));
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        //obtener todos los libros prestados alguna vez
-        this.lendingList$ = this.db.getList('libraries/' + this.authService.authLibrary.id + '/bookLendings/')
-            .subscribe(data => {
-                //obtener los ids de los libros prestados activos
-                let lendedIds = [];
-                if (data) {
-                    const lendedList = _.filter(data, { active: true });
-                    lendedList.forEach((element: Lending) => lendedIds.push(element.itemId));
-                }
-
-                //obtener todos los ids de los libros q tengo
-                this.itemList$ = this.db.getList('libraries/' + this.authService.authLibrary.id + '/booksIDs')
-                    .subscribe(list => {
-                        if (list) {
-                            //obtener los ids de los libros que no tengo prestados
-                            const freeItems = _.difference(list, lendedIds);
-
-                            //obtener los libros no prestados
-                            freeItems.forEach(element => {
-                                this.itemRef$ = this.db.getOne('books/' + element).subscribe((book: Book) => {
-                                    this.itemList.push(book);
-                                    this.itemList = _.sortBy(this.itemList, 'title');
-                                });
-                            });
-                        }
-                    },
-                        error => console.log(error));
-            });
     }
 
     private caseMovie() {
-        this.lendingList$ = this.db.getList('libraries/' + this.authService.authLibrary.id + '/movieLendings/')
-            .subscribe(data => {
-                let lendedIds = [];
-                if (data) {
-                    const lendedList = _.filter(data, { active: true });
-                    lendedList.forEach((element: Lending) => lendedIds.push(element.itemId));
-                }
+        this.myItems$ = this.db.getListFiltered('movies/', 'owned/' + this.authService.authLibrary.id + '/id',
+            this.authService.authLibrary.id).subscribe((movies: Movie[]) => {
+                if (movies.length > 0) {
+                    this.myLended$ = this.db.getListFiltered('lendings/' + this.authService.authLibrary.id, 'active', true)
+                        .subscribe((lendings: Lending[]) => {
+                            if (lendings.length > 0) {
+                                const moviesIds: number[] = [];
+                                movies.forEach(element => moviesIds.push(element.id));
 
-                this.itemList$ = this.db.getList('libraries/' + this.authService.authLibrary.id + '/moviesIDs')
-                    .subscribe(list => {
-                        if (list) {
-                            const freeItems = _.difference(list, lendedIds);
+                                const lendingIds: number[] = [];
+                                lendings.forEach(element => lendingIds.push(element.itemId));
 
-                            freeItems.forEach(element => {
-                                this.itemRef$ = this.db.getOne('movies/' + element).subscribe((movie: Movie) => {
-                                    this.itemList.push(movie);
-                                    this.itemList = _.sortBy(this.itemList, 'title');
+                                let noLended = _.difference(moviesIds, lendingIds);
+
+                                const lendedIds = _.intersection(moviesIds, lendingIds);
+                                const lendedMovies = _.filter(movies, b => lendedIds.includes(b.id));
+                                lendedMovies.forEach(movie => {
+                                    const countLended = _.filter(lendings, { itemId: movie.id }).length;
+                                    if (movie.owned[this.authService.authLibrary.id].nEjemplares > countLended) {
+                                        noLended.push(movie.id);
+                                    }
                                 });
-                            });
-                        }
-                    },
-                        error => console.log(error));
-            });
+
+                                this.itemList = _.filter(movies, b => noLended.includes(b.id));
+                            } else {
+                                this.itemList = movies;
+                            }
+                            this.itemList = _.sortBy(this.itemList, 'title');
+                        }, error => console.log(error));
+                }
+            }, error => console.log(error));
     }
 
     private caseTv() {
-        this.lendingList$ = this.db.getList('libraries/' + this.authService.authLibrary.id + '/tvLendings/')
-            .subscribe(data => {
-                let lendedIds = [];
-                if (data) {
-                    const lendedList = _.filter(data, { active: true });
-                    lendedList.forEach((element: Lending) => lendedIds.push(element.itemId));
-                }
+        this.myItems$ = this.db.getListFiltered('tvs/', 'owned/' + this.authService.authLibrary.id + '/id',
+            this.authService.authLibrary.id).subscribe((tvs: TvShow[]) => {
+                if (tvs.length > 0) {
+                    this.myLended$ = this.db.getListFiltered('lendings/' + this.authService.authLibrary.id, 'active', true)
+                        .subscribe((lendings: Lending[]) => {
+                            if (lendings.length > 0) {
+                                const tvsIds: number[] = [];
+                                tvs.forEach(element => tvsIds.push(element.id));
 
-                this.itemList$ = this.db.getList('libraries/' + this.authService.authLibrary.id + '/tvsIDs')
-                    .subscribe(list => {
-                        if (list) {
-                            const freeItems = _.difference(list, lendedIds);
+                                const lendingIds: number[] = [];
+                                lendings.forEach(element => lendingIds.push(element.itemId));
 
-                            freeItems.forEach(element => {
-                                this.itemRef$ = this.db.getOne('tvs/' + element).subscribe((tv: TvShow) => {
-                                    this.itemList.push(tv);
-                                    this.itemList = _.sortBy(this.itemList, 'name');
+                                let noLended = _.difference(tvsIds, lendingIds);
+
+                                const lendedIds = _.intersection(tvsIds, lendingIds);
+                                const lendedTvs = _.filter(tvs, b => lendedIds.includes(b.id));
+                                lendedTvs.forEach(movie => {
+                                    const countLended = _.filter(lendings, { itemId: movie.id }).length;
+                                    if (movie.owned[this.authService.authLibrary.id].nEjemplares > countLended) {
+                                        noLended.push(movie.id);
+                                    }
                                 });
-                            });
-                        }
-                    },
-                        error => console.log(error));
-            });
+
+                                this.itemList = _.filter(tvs, b => noLended.includes(b.id));
+                            } else {
+                                this.itemList = tvs;
+                            }
+                            this.itemList = _.sortBy(this.itemList, 'name');
+                        }, error => console.log(error));
+                }
+            }, error => console.log(error));
     }
 
     getData() {
@@ -225,21 +214,22 @@ export class LendingDialogComponent implements OnInit, OnDestroy {
     }
 
     onClose(motive?: string) {
-        this.dialogRef.close();
+        if (motive) {
+            this.dialogRef.close(motive);
+        } else {
+            this.dialogRef.close();
+        }
     }
 
     ngOnDestroy() {
-        if (this.itemList$) {
-            this.itemList$.unsubscribe();
-        }
         if (this.userList$) {
             this.userList$.unsubscribe();
         }
-        if (this.lendingList$) {
-            this.lendingList$.unsubscribe();
+        if (this.myItems$) {
+            this.myItems$.unsubscribe();
         }
-        if (this.itemRef$) {
-            this.itemRef$.unsubscribe();
+        if (this.myLended$) {
+            this.myLended$.unsubscribe();
         }
     }
 }
