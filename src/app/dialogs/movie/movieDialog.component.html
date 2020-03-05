@@ -16,11 +16,12 @@
 
             <div class="row justify-content-end mt-2">
                 <div class="col-auto">
-                    <button mat-raised-button type="button" color="primary" (click)="searchTMDB()">Buscar en The Movie DB</button>
+                    <button mat-raised-button type="button" color="primary" (click)="searchTMDB()">Buscar en The Movie
+                        DB</button>
                 </div>
             </div>
 
-            <div class="row row-cols-3 mt-2">
+            <div class="row mt-2">
                 <div class="col">
                     <mat-form-field>
                         <input matInput placeholder="Fecha de estreno" type="text" formControlName="release_date"
@@ -35,10 +36,21 @@
                         <input matInput placeholder="Duración" type="number" formControlName="runtime">
                     </mat-form-field>
                 </div>
+            </div>
 
+            <div class="row mt-2">
                 <div class="col">
                     <mat-form-field>
                         <input matInput placeholder="Puntuación" type="number" formControlName="vote_average">
+                    </mat-form-field>
+                </div>
+
+                <div class="col">
+                    <mat-form-field>
+                        <input matInput placeholder="Nº de ejemplares" type="number" formControlName="nEjemplares"
+                            required>
+                        <mat-error *ngIf="form.controls.nEjemplares.hasError('required')">Por favor indique un número
+                        </mat-error>
                     </mat-form-field>
                 </div>
             </div>
@@ -46,8 +58,8 @@
             <div class="row mt-2">
                 <div class="col">
                     <div class="col-2">
-                            <img [src]="poster_path" class="w-100" *ngIf="poster_path">
-                            <i class="fas fa-film fa-4x" *ngIf="!poster_path"></i>
+                        <img [src]="poster_path" class="w-100" *ngIf="poster_path">
+                        <i class="fas fa-film fa-4x" *ngIf="!poster_path"></i>
                     </div>
 
                     <div class="col align-self-center mt-2">
@@ -86,8 +98,8 @@
                 <div class="col">
                     <mat-form-field class="w-100">
                         <mat-chip-list #castList aria-label="Actores">
-                            <mat-chip *ngFor="let item of cast" [selectable]="selectable"
-                                [removable]="removable" (removed)="removeItem(item,'cast')">
+                            <mat-chip *ngFor="let item of cast" [selectable]="selectable" [removable]="removable"
+                                (removed)="removeItem(item,'cast')">
                                 {{item.character}}: {{item.name}}
                                 <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
                             </mat-chip>
@@ -95,7 +107,8 @@
                                 [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="addOnBlur"
                                 (matChipInputTokenEnd)="addItem($event,'cast')">
                         </mat-chip-list>
-                        <mat-hint align="start">Personaje: Actor Si añade más de un actor, pulse intro entre ellos</mat-hint>
+                        <mat-hint align="start">Personaje: Actor Si añade más de un actor, pulse intro entre ellos
+                        </mat-hint>
                     </mat-form-field>
                 </div>
             </div>
@@ -104,8 +117,8 @@
                 <div class="col">
                     <mat-form-field class="w-100">
                         <mat-chip-list #crewList aria-label="Personal">
-                            <mat-chip *ngFor="let item of crew" [selectable]="selectable"
-                                [removable]="removable" (removed)="removeItem(item,'crew')">
+                            <mat-chip *ngFor="let item of crew" [selectable]="selectable" [removable]="removable"
+                                (removed)="removeItem(item,'crew')">
                                 {{item.job}}: {{item.name}}
                                 <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
                             </mat-chip>
@@ -113,7 +126,8 @@
                                 [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="addOnBlur"
                                 (matChipInputTokenEnd)="addItem($event,'crew')">
                         </mat-chip-list>
-                        <mat-hint align="start">Puesto: Nombre Si añade más de una persona, pulse intro entre ellas</mat-hint>
+                        <mat-hint align="start">Puesto: Nombre Si añade más de una persona, pulse intro entre ellas
+                        </mat-hint>
                     </mat-form-field>
                 </div>
             </div>

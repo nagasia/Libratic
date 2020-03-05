@@ -425,21 +425,25 @@ export class BookSearchDialogComponent {
     }
 
     save() {
-        if (this.functions.isAdmin(this.authService.authUser)) {
-            this.db.saveLibraryBookWished(this.book)
-                .then(() => this.onClose('Libro deseado agregado'))
-                .catch(error => {
-                    console.log(error);
-                    this.onClose('Problema al guardar el libro deseado');
-                });
-        } else {
-            this.db.saveUserBookWished(this.book.isbn, this.book)
-                .then(() => this.onClose('Libro deseado agregado'))
-                .catch(error => {
-                    console.log(error);
-                    this.onClose('Problema al guardar el libro deseado');
-                });
-        }
+        this.db.updateBook(this.book)
+            .then(() => {
+                if (this.functions.isAdmin(this.authService.authUser)) {
+                    this.db.saveBookWished(this.book.isbn, this.authService.authLibrary.id)
+                        .then(() => this.onClose('Libro deseado agregado'))
+                        .catch(error => {
+                            console.log(error);
+                            this.onClose('Problema al guardar el libro deseado');
+                        });
+                } else {
+                    this.db.saveBookWished(this.book.isbn, this.authService.authUser.id)
+                        .then(() => this.onClose('Libro deseado agregado'))
+                        .catch(error => {
+                            console.log(error);
+                            this.onClose('Problema al guardar el libro deseado');
+                        });
+                }
+            })
+            .catch(error => console.log(error));
     }
 
     onClose(motive?: string) {

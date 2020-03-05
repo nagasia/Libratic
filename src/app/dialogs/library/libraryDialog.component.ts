@@ -15,7 +15,9 @@ export class LibraryDialogComponent implements OnDestroy {
     name: string;
     adress: string;
     city: string;
-    email: string;
+    phone: number;
+    emailLibrary: string;
+    emailAdmin: string;
     password: string;
     date: string;
     user: User;
@@ -28,21 +30,27 @@ export class LibraryDialogComponent implements OnDestroy {
         public authService: AuthenticationService,
         @Inject(MAT_DIALOG_DATA) public isEditting: boolean) {
         if (isEditting) {
-            this.name = this.authService.authLibrary.id;
+            this.name = this.authService.authLibrary.name;
             this.adress = this.authService.authLibrary.adress;
             this.city = this.authService.authLibrary.city;
+            this.phone = this.authService.authLibrary.phone;
+            this.emailLibrary = this.authService.authLibrary.email;
 
             this.form = this.formBuilder.group({
                 name: [this.name, [Validators.required, Validators.minLength(6)]],
                 adress: this.adress,
                 city: this.city,
+                emailLibrary: this.emailLibrary,
+                phone: this.phone,
             });
         } else {
             this.form = this.formBuilder.group({
                 name: [this.name, [Validators.required, Validators.minLength(6)]],
                 adress: this.adress,
                 city: this.city,
-                email: [this.email, [Validators.required, Validators.email]],
+                emailLibrary: [this.emailLibrary, [Validators.email]],
+                phone: this.phone,
+                emailAdmin: [this.emailAdmin, [Validators.required, Validators.email]],
                 password: [this.password, [Validators.required, Validators.minLength(6)]],
             });
         }
@@ -52,16 +60,18 @@ export class LibraryDialogComponent implements OnDestroy {
         this.name = Object.assign({}, this.form.value).name;
         this.adress = Object.assign({}, this.form.value).adress;
         this.city = Object.assign({}, this.form.value).city;
-        this.email = Object.assign({}, this.form.value).email;
+        this.phone = Object.assign({}, this.form.value).phone;
+        this.emailLibrary = Object.assign({}, this.form.value).emailLibrary;
+        this.emailAdmin = Object.assign({}, this.form.value).emailAdmin;
         this.password = Object.assign({}, this.form.value).password;
         this.date = new Date().getTime().toString();
 
         if (this.isEditting) {
             this.saveLibrary();
         } else {
-            this.library$ = this.db.getOne('libraries/' + this.name)
+            this.library$ = this.db.getListFiltered('libraries/', 'name', this.name)
                 .subscribe(library => {
-                    if (!library) {
+                    if (library.length === 0) {
                         this.processMethod();
                     } else {
                         this.onClose('La biblioteca ya existe');
@@ -78,7 +88,7 @@ export class LibraryDialogComponent implements OnDestroy {
             this.library$.unsubscribe();
         }
 
-        await this.authService.newUser(this.email, this.password)
+        await this.authService.newUser(this.emailAdmin, this.password)
             .then((data: any) => {
                 const uid = data.user.uid;
 
@@ -104,10 +114,10 @@ export class LibraryDialogComponent implements OnDestroy {
 
         this.user = {
             id: uid,
-            email: this.email,
+            email: this.emailAdmin,
             name: 'Admin',
             userLevel: 'admin',
-            libraryID: this.name,
+            libraryID: '',
         };
 
         this.saveLibrary();
@@ -115,9 +125,11 @@ export class LibraryDialogComponent implements OnDestroy {
 
     private saveLibrary() {
         if (this.isEditting) {
-            this.authService.authLibrary.id = this.name;
+            this.authService.authLibrary.name = this.name;
             this.authService.authLibrary.adress = this.adress;
             this.authService.authLibrary.city = this.city;
+            this.authService.authLibrary.phone = this.phone;
+            this.authService.authLibrary.email = this.emailLibrary;
 
             this.db.updateLibrary(this.authService.authLibrary)
                 .then(() => {
@@ -128,13 +140,16 @@ export class LibraryDialogComponent implements OnDestroy {
                     this.onClose();
                 });
         } else {
-            console.log(this.name, this.adress, this.city);
+            const id = this.db.getNewRefKey('libraries');
             const library: Library = {
-                id: this.name,
+                id,
+                name: this.name,
                 adress: this.adress,
                 city: this.city,
-                adminIDs: [this.user.id],
+                phone: this.phone,
+                email: this.emailLibrary,
             };
+            this.user.libraryID = id;
 
             this.db.saveLibrary(this.user, library)
                 .then(() => {

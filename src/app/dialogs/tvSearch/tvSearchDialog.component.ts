@@ -110,21 +110,25 @@ export class TvSearchDialogComponent {
     }
 
     save() {
-        if (this.functions.isAdmin(this.authService.authUser)) {
-            this.db.saveLibraryTVWished(this.tv)
-                .then(() => this.onClose('Serie deseada agregada'))
-                .catch(error => {
-                    console.log(error);
-                    this.onClose('Problema al guardar la serie deseada');
-                });
-        } else {
-            this.db.saveUserTVWished(this.tv.id, this.tv)
-                .then(() => this.onClose('Serie deseada agregada'))
-                .catch(error => {
-                    console.log(error);
-                    this.onClose('Problema al guardar la serie deseada');
-                });
-        }
+        this.db.updateTv(this.tv)
+            .then(() => {
+                if (this.functions.isAdmin(this.authService.authUser)) {
+                    this.db.saveTvWished(this.tv.id, this.authService.authLibrary.id)
+                        .then(() => this.onClose('Serie deseada agregada'))
+                        .catch(error => {
+                            console.log(error);
+                            this.onClose('Problema al guardar la serie deseada');
+                        });
+                } else {
+                    this.db.saveTvWished(this.tv.id, this.authService.authUser.id)
+                        .then(() => this.onClose('Serie deseada agregada'))
+                        .catch(error => {
+                            console.log(error);
+                            this.onClose('Problema al guardar la serie deseada');
+                        });
+                }
+            })
+            .catch(error => console.log(error));
     }
 
     onClose(motive?: string) {

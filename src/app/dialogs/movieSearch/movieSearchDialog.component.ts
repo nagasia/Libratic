@@ -108,21 +108,25 @@ export class MovieSearchDialogComponent {
     }
 
     save() {
-        if (this.functions.isAdmin(this.authService.authUser)) {
-            this.db.saveLibraryMovieWished(this.movie)
-                .then(() => this.onClose('Película deseada agregada'))
-                .catch(error => {
-                    console.log(error);
-                    this.onClose('Problema al guardar la película deseada');
-                });
-        } else {
-            this.db.saveUserMovieWished(this.movie.id, this.movie)
-                .then(() => this.onClose('Película deseada agregada'))
-                .catch(error => {
-                    console.log(error);
-                    this.onClose('Problema al guardar la película deseada');
-                });
-        }
+        this.db.updateMovie(this.movie)
+            .then(() => {
+                if (this.functions.isAdmin(this.authService.authUser)) {
+                    this.db.saveMovieWished(this.movie.id, this.authService.authLibrary.id)
+                        .then(() => this.onClose('Película deseada agregada'))
+                        .catch(error => {
+                            console.log(error);
+                            this.onClose('Problema al guardar la película deseada');
+                        });
+                } else {
+                    this.db.saveMovieWished(this.movie.id, this.authService.authUser.id)
+                        .then(() => this.onClose('Película deseada agregada'))
+                        .catch(error => {
+                            console.log(error);
+                            this.onClose('Problema al guardar la película deseada');
+                        });
+                }
+            })
+            .catch(error => console.log(error));
     }
 
     onClose(motive?: string) {

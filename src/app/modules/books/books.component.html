@@ -10,29 +10,44 @@
     </button>
 </mat-toolbar>
 
-<div class="container-fluid mt-3">
+<div class="container-fluid mb-3" *ngIf="books.length > 0">
     <mat-accordion>
         <mat-expansion-panel *ngFor="let item of books">
             <mat-expansion-panel-header>
-                <mat-panel-title>
+                <mat-panel-title class="align-items-center">
                     <span class="mr-2"><b>{{item.title}}</b></span>
                     <span>{{item.subtitle}}</span>
                 </mat-panel-title>
-                <mat-panel-description>{{item.authors}}</mat-panel-description>
+                <mat-panel-description class="align-items-center">{{item.authors}}</mat-panel-description>
 
-                <button mat-icon-button matTooltip="Añadir deseado" (click)="addBookWished(item.isbn); $event.stopPropagation()" color="primary"
-                    *ngIf="isLoged && !isAdmin">
-                    <i class="fas fa-hand-holding-heart"></i>
+                <button mat-icon-button matTooltip="Añadir deseado"
+                    (click)="addBookWished(item.isbn); $event.stopPropagation()" color="primary"
+                    *ngIf="isLoged && !isAdmin && !checkExists(item, 'wishes')">
+                    <i class="far fa-list-alt"></i>
                 </button>
-                <button mat-icon-button matTooltip="Añadir favorito" (click)="addBookFavourite(item.isbn); $event.stopPropagation()"
-                    color="primary" *ngIf="isLoged && !isAdmin">
+                <button mat-icon-button matTooltip="Eliminar deseado"
+                    (click)="removeBookWished(item); $event.stopPropagation()" color="primary"
+                    *ngIf="isLoged && !isAdmin && checkExists(item, 'wishes')">
+                    <i class="fas fa-list-alt"></i>
+                </button>
+
+                <button mat-icon-button matTooltip="Añadir favorito"
+                    (click)="addBookFavourite(item.isbn); $event.stopPropagation()" color="primary"
+                    *ngIf="isLoged && !isAdmin && !checkExists(item, 'favourites')">
+                    <i class="far fa-heart"></i>
+                </button>
+                <button mat-icon-button matTooltip="Eliminar favorito"
+                    (click)="removeBookFavourite(item); $event.stopPropagation()" color="primary"
+                    *ngIf="isLoged && !isAdmin && checkExists(item, 'favourites')">
                     <i class="fas fa-heart"></i>
                 </button>
-                <button mat-icon-button matTooltip="Editar" (click)="editBook(item); $event.stopPropagation()" color="primary" *ngIf="isAdmin">
+
+                <button mat-icon-button matTooltip="Editar" (click)="editBook(item); $event.stopPropagation()"
+                    color="primary" *ngIf="isAdmin">
                     <i class="fas fa-pen"></i>
                 </button>
-                <button mat-icon-button matTooltip="Eliminar" (click)="deleteBook(item.isbn); $event.stopPropagation()" color="primary"
-                    *ngIf="isAdmin">
+                <button mat-icon-button matTooltip="Eliminar" (click)="deleteBook(item); $event.stopPropagation()"
+                    color="primary" *ngIf="isAdmin">
                     <i class="fas fa-minus"></i>
                 </button>
             </mat-expansion-panel-header>
@@ -40,13 +55,20 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-2">
-                        <span *ngIf="item.cover">
-                            <img [src]="item.cover" class="w-100">
-                        </span>
+                        <div class="row">
+                            <div class="col">
+                                <img [src]="item.cover" class="w-100" *ngIf="item.cover">
+                                <i class="fas fa-book fa-4x" *ngIf="!item.cover"></i>
+                            </div>
+                        </div>
 
-                        <span *ngIf="!item.cover" class="content-fluid">
-                            <i class="fas fa-book fa-4x"></i>
-                        </span>
+                        <div class="row mt-2 justify-content-end" *ngIf="item.url">
+                            <div class="col-auto">
+                                <a [href]="item.url" target="_blank">
+                                    <button mat-raised-button color="primary">Entrada en OpenLibrary</button>
+                                </a>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="col">
@@ -89,6 +111,11 @@
                                 <b>Páginas:</b>
                                 <span> {{item.number_of_pages}}</span>
                             </div>
+
+                            <div class="col-auto" *ngIf="isLoged">
+                                <b>Nº de ejemplares: </b>
+                                <span>{{getNumberOfItems(item)}}</span>
+                            </div>
                         </div>
 
                         <div class="row mt-2" *ngIf="item.subjects">
@@ -106,15 +133,6 @@
                                 <p> {{item.description}}</p>
                             </div>
                         </div>
-
-                        <div class="row mt-2 justify-content-end" *ngIf="item.url">
-                            <div class="col-auto">
-                                <a [href]="item.url" target="_blank">
-                                    <button mat-raised-button color="primary">Entrada en OpenLibrary</button>
-                                </a>
-                            </div>
-                        </div>
-
                     </div>
                 </div>
             </div>

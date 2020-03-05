@@ -8,6 +8,7 @@ import { CommonFunctions } from 'src/app/common/commonFunctions';
 import { ENTER } from '@angular/cdk/keycodes';
 import * as _ from 'lodash';
 import { TvListDialogComponent } from '../tvList/tvListDialog.component';
+import { AuthenticationService } from '../../services/authentication.service';
 
 @Component({
     selector: 'app-tv-dialog',
@@ -35,6 +36,7 @@ export class TvDialogComponent {
     production_companies = [];
     cast: any = [];
     crew: any = [];
+    nEjemplares: number;
 
     tv: TvShow;
     form: FormGroup;
@@ -45,6 +47,7 @@ export class TvDialogComponent {
     constructor(private formBuilder: FormBuilder,
         private dialogRef: MatDialogRef<TvDialogComponent>,
         private storage: StorageService,
+        private authService: AuthenticationService,
         private db: FireDBService,
         private dialog: MatDialog,
         private functions: CommonFunctions,
@@ -60,10 +63,12 @@ export class TvDialogComponent {
             number_of_seasons: this.number_of_seasons,
             vote_average: this.vote_average,
             overview: this.overview,
+            nEjemplares: [this.nEjemplares, [Validators.required]],
         });
     }
 
     private setDataFromEdit() {
+        this.nEjemplares = this.editting.owned[this.authService.authLibrary.id].nEjemplares;
         this.first_air_date = this.editting.first_air_date;
         this.homepage = this.editting.homepage;
         this.url = this.editting.url;
@@ -74,6 +79,7 @@ export class TvDialogComponent {
         this.vote_average = this.editting.vote_average;
         this.overview = this.editting.overview;
         this.poster_path = this.editting.poster_path;
+
 
         if (this.editting.cast) {
             this.cast = this.editting.cast;
@@ -114,6 +120,7 @@ export class TvDialogComponent {
         this.number_of_seasons = Object.assign({}, this.form.value).number_of_seasons;
         this.vote_average = Object.assign({}, this.form.value).vote_average;
         this.overview = Object.assign({}, this.form.value).overview;
+        this.nEjemplares = Object.assign({}, this.form.value).nEjemplares;
 
         if (!this.founded && !this.editting) {
             this.id = new Date().getTime();
@@ -127,38 +134,57 @@ export class TvDialogComponent {
                 .catch(error => console.log(error));
         }
 
-        this.tv = {
-            created_by: this.created_by,
-            first_air_date: this.first_air_date,
-            genres: this.genres,
-            homepage: this.homepage,
-            url: this.url,
-            id: this.id,
-            name: this.name,
-            number_of_episodes: this.number_of_episodes,
-            number_of_seasons: this.number_of_seasons,
-            overview: this.overview,
-            poster_path: this.poster_path,
-            vote_average: this.vote_average,
-            production_companies: this.production_companies,
-            cast: this.cast,
-            crew: this.crew,
-        };
-        this.tv = this.functions.checkKeys(this.tv);
+
 
         this.save();
     }
 
     private save() {
         if (this.editting) {
-            this.db.updateTV(this.tv)
-                .then(() => this.onClose('Serie editada', this.tv))
+            this.editting.first_air_date = this.first_air_date;
+            this.editting.homepage = this.homepage;
+            this.editting.name = this.name;
+            this.editting.number_of_episodes = this.number_of_episodes;
+            this.editting.number_of_seasons = this.number_of_seasons;
+            this.editting.vote_average = this.vote_average;
+            this.editting.overview = this.overview;
+            this.editting.created_by = this.created_by;
+            this.editting.genres = this.genres;
+            this.editting.poster_path = this.poster_path;
+            this.editting.production_companies = this.production_companies;
+            this.editting.cast = this.cast;
+            this.editting.crew = this.crew;
+            this.editting.owned[this.authService.authLibrary.id].nEjemplares = this.nEjemplares;
+
+            this.editting = this.functions.checkKeys(this.editting);
+
+            this.db.updateTv(this.editting)
+                .then(() => this.onClose('Serie editada'))
                 .catch(error => {
                     console.log(error);
                     this.onClose('Problema al editar la serie');
                 });
         } else {
-            this.db.saveTV(this.tv)
+            this.tv = {
+                created_by: this.created_by,
+                first_air_date: this.first_air_date,
+                genres: this.genres,
+                homepage: this.homepage,
+                url: this.url,
+                id: this.id,
+                name: this.name,
+                number_of_episodes: this.number_of_episodes,
+                number_of_seasons: this.number_of_seasons,
+                overview: this.overview,
+                poster_path: this.poster_path,
+                vote_average: this.vote_average,
+                production_companies: this.production_companies,
+                cast: this.cast,
+                crew: this.crew,
+            };
+            this.tv = this.functions.checkKeys(this.tv);
+
+            this.db.saveTv(this.tv, this.nEjemplares)
                 .then(() => this.onClose('Serie guardada'))
                 .catch(error => {
                     console.log(error);
@@ -275,10 +301,8 @@ export class TvDialogComponent {
         this.newPoster = true;
     }
 
-    onClose(motive?: string, tv?: TvShow) {
-        if (tv) {
-            this.dialogRef.close({ motive, tv });
-        } else if (motive) {
+    onClose(motive?: string) {
+        if (motive) {
             this.dialogRef.close(motive);
         } else {
             this.dialogRef.close();

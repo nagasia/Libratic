@@ -19,6 +19,7 @@ export class UserDialogComponent implements OnDestroy {
     dni: number;
     userLevel: string;
     uid: string;
+    punishment: boolean;
     newUser$;
 
     constructor(private formBuilder: FormBuilder,
@@ -35,6 +36,7 @@ export class UserDialogComponent implements OnDestroy {
             this.dni = editting.dni;
             this.userLevel = editting.userLevel;
             this.uid = editting.id;
+            this.punishment = editting.punishment;
         }
 
         this.form = this.formBuilder.group({
@@ -44,7 +46,8 @@ export class UserDialogComponent implements OnDestroy {
             email: [this.email, [Validators.required, Validators.email]],
             phone: [this.phone, [Validators.required, Validators.minLength(9), Validators.maxLength(9)]],
             dni: [this.dni, [Validators.required, Validators.minLength(8), Validators.maxLength(8)]],
-            userLevel: [this.userLevel, [Validators.required]]
+            userLevel: [this.userLevel, [Validators.required]],
+            punishment: this.punishment,
         });
     }
 
@@ -56,6 +59,7 @@ export class UserDialogComponent implements OnDestroy {
         this.phone = Object.assign({}, this.form.value).phone;
         this.dni = Object.assign({}, this.form.value).dni;
         this.userLevel = Object.assign({}, this.form.value).userLevel;
+        this.punishment = Object.assign({}, this.form.value).punishment;
 
         if (this.editting) {
             this.editUser();
@@ -104,31 +108,19 @@ export class UserDialogComponent implements OnDestroy {
             dni: this.dni,
             userLevel: this.userLevel,
             libraryID: this.authService.authLibrary.id,
+            punishment: this.punishment,
         };
 
-        if (user.userLevel === 'admin') {
-            this.db.saveAdmin(user, this.authService.authLibrary)
-                .then(() => {
-                    this.authService.reestartPassword(this.email)
-                        .catch(error => console.log(error));
-                    this.onClose('Usuario guardado');
-                })
-                .catch(error => {
-                    console.log(error);
-                    this.onClose('Problema al guardar al usuario');
-                });
-        } else {
-            this.db.saveUser(user)
-                .then(() => {
-                    this.authService.reestartPassword(this.email)
-                        .catch(error => console.log(error));
-                    this.onClose('Usuario guardado');
-                })
-                .catch(error => {
-                    console.log(error);
-                    this.onClose('Problema al guardar al usuario');
-                });
-        }
+        this.db.saveUser(user)
+            .then(() => {
+                this.authService.reestartPassword(this.email)
+                    .catch(error => console.log(error));
+                this.onClose('Usuario guardado');
+            })
+            .catch(error => {
+                console.log(error);
+                this.onClose('Problema al guardar al usuario');
+            });
     }
 
     private editUser() {
@@ -142,9 +134,10 @@ export class UserDialogComponent implements OnDestroy {
             dni: this.dni,
             userLevel: this.userLevel,
             libraryID: this.authService.authLibrary.id,
+            punishment: this.punishment,
         };
 
-        this.db.updateUser(user)
+        this.db.saveUser(user)
             .then(() => this.onClose('Usuario editado'))
             .catch(error => {
                 console.log(error);

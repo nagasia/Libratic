@@ -1,28 +1,61 @@
 {
-    "rules": {
-        ".read": true,
-        ".write": "auth.uid != null",
-        "users": {
+  "rules": {
+    ".read": true,
+    ".write": "auth.uid != null",
+    "users": {
+      ".indexOn": [
+        "libraryID",
+        "userLevel"
+      ]
+    },
+    "libraries": {
+      ".indexOn": [
+        "id",
+        "name"
+      ]
+    },
+    "books": {
+      "$bookId": {
+        ".indexOn": [
+          "title"
+        ],
+        "owned": {
+          "$uid": {
             ".indexOn": [
-                "libraryID",
-                "userLevel"
+              "id"
             ]
-        },
-        "books": {
-            ".indexOn": [
-                "title"
-            ]
-        },
-        "libraries": {
-            ".indexOn": [
-                "id",
-                "booksIDs"
-            ]
-        },
-        "movies": {
-            ".indexOn": [
-                "title"
-            ]
+          }
         }
-    }
+      }
+    },
+    "movies": {
+      "$movieId": {
+        ".indexOn": [
+          "title"
+        ],
+        "owned": {
+          "$uid": {
+            ".indexOn": [
+              "id"
+            ]
+          }
+        }
+      }
+    },
+    "tvs": {
+      "$tvId": {
+        ".indexOn": [
+          "name"
+        ],
+        "owned": {
+          "$uid": {
+            ".indexOn": [
+              "id"
+            ]
+          }
+        }
+      }
+    },
+    "lendings": {}
+  }
 }

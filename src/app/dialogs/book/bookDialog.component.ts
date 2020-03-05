@@ -11,6 +11,7 @@ import { map } from 'rxjs/operators';
 import { OpenLibraryShort, OpenLibraryLong } from 'src/app/common/dto/openLibrary.dto';
 import { isNullOrUndefined } from 'util';
 import { CommonFunctions } from '../../common/commonFunctions';
+import { AuthenticationService } from '../../services/authentication.service';
 
 @Component({
     selector: 'app-book-dialog',
@@ -38,6 +39,7 @@ export class BookDialogComponent implements OnDestroy {
     description: string;
     physical_format: string;
     url: string;
+    nEjemplares: number;
 
     formats: string[] = ['Tapa dura', 'Tapa blanda', 'Electrónico', 'Libro de bolsillo', 'Encuadernado en espiral'];
     urlStart = 'https://openlibrary.org/api/books?bibkeys=ISBN:';
@@ -52,26 +54,14 @@ export class BookDialogComponent implements OnDestroy {
     constructor(private formBuilder: FormBuilder,
         private dialogRef: MatDialogRef<BookDialogComponent>,
         private storage: StorageService,
+        private authService: AuthenticationService,
         private db: FireDBService,
         private snackBar: MatSnackBar,
         private http: HttpClient,
         private functions: CommonFunctions,
         @Inject(MAT_DIALOG_DATA) public editting: Book) {
         if (editting) {
-            this.isbn = editting.isbn;
-            this.cdu = editting.cdu;
-            this.publishers = editting.publishers;
-            this.title = editting.title;
-            this.subtitle = editting.subtitle;
-            this.number_of_pages = editting.number_of_pages;
-            this.subjects = editting.subjects;
-            this.authors = editting.authors;
-            this.publish_date = editting.publish_date;
-            this.publish_places = editting.publish_places;
-            this.description = editting.description;
-            this.physical_format = editting.physical_format;
-            this.cover = editting.cover;
-            this.url = editting.url;
+            this.setData();
         }
         this.form = this.formBuilder.group({
             isbn: [this.isbn, [Validators.required, Validators.minLength(10), Validators.maxLength(13)]],
@@ -83,7 +73,26 @@ export class BookDialogComponent implements OnDestroy {
             description: this.description,
             physical_format: this.physical_format,
             url: this.url,
+            nEjemplares: [this.nEjemplares, [Validators.required]],
         });
+    }
+
+    private setData() {
+        this.isbn = this.editting.isbn;
+        this.cdu = this.editting.cdu;
+        this.publishers = this.editting.publishers;
+        this.title = this.editting.title;
+        this.subtitle = this.editting.subtitle;
+        this.number_of_pages = this.editting.number_of_pages;
+        this.subjects = this.editting.subjects;
+        this.authors = this.editting.authors;
+        this.publish_date = this.editting.publish_date;
+        this.publish_places = this.editting.publish_places;
+        this.description = this.editting.description;
+        this.physical_format = this.editting.physical_format;
+        this.cover = this.editting.cover;
+        this.url = this.editting.url;
+        this.nEjemplares = this.editting.owned[this.authService.authLibrary.id].nEjemplares;
     }
 
     save() {
@@ -96,6 +105,7 @@ export class BookDialogComponent implements OnDestroy {
         this.description = Object.assign({}, this.form.value).description;
         this.physical_format = Object.assign({}, this.form.value).physical_format;
         this.url = Object.assign({}, this.form.value).url;
+        this.nEjemplares = Object.assign({}, this.form.value).nEjemplares;
         this.asked = false;
 
         this.books$ = this.db.getOne('books/' + this.isbn).subscribe((books: Book) => {
@@ -148,22 +158,26 @@ export class BookDialogComponent implements OnDestroy {
                             .pipe(map(data => this.parseLongJson(data)))
                             .subscribe(async (resultLong: OpenLibraryLong) => {
                                 this.subtitle = resultShort.subtitle;
-                                this.physical_format = this.translatePhysicalFormat(resultShort.physical_format);
+                                this.physical_format = this.functions.translatePhysicalFormat(resultShort.physical_format);
                                 this.url = resultLong.url;
                                 this.title = resultShort.title;
 
                                 if (!isNullOrUndefined(resultShort.description)) {
-                                    this.description = this.returnDataIfNotUndefined(resultShort.description.value);
+                                    if (typeof resultShort.description === 'string') {
+                                        this.description = this.functions.returnDataIfNotUndefined(resultShort.description);
+                                    } else {
+                                        this.description = this.functions.returnDataIfNotUndefined(resultShort.description.value);
+                                    }
                                 }
 
                                 if (!isNullOrUndefined(resultLong.cover)) {
-                                    this.cover = this.returnDataIfNotUndefined(resultLong.cover.medium);
+                                    this.cover = this.functions.returnDataIfNotUndefined(resultLong.cover.medium);
                                 }
 
                                 if (resultShort.publishers) {
                                     this.publishers = resultShort.publishers.sort();
                                 } else if (resultLong.publishers) {
-                                    this.publishers = this.fillArray(resultLong.publishers).sort();
+                                    this.publishers = this.functions.fillArray(resultLong.publishers).sort();
                                 }
 
                                 if (resultShort.number_of_pages) {
@@ -179,16 +193,16 @@ export class BookDialogComponent implements OnDestroy {
                                 }
 
                                 if (resultShort.authors) {
-                                    this.authors = this.fillArray(resultShort.authors).sort();
+                                    this.authors = this.functions.fillArray(resultShort.authors).sort();
                                 } else if (resultLong.authors) {
-                                    this.authors = this.fillArray(resultLong.authors).sort();
+                                    this.authors = this.functions.fillArray(resultLong.authors).sort();
                                 }
 
                                 if (resultShort.subjects) {
                                     this.subjects = resultShort.subjects;
                                     this.subjects.forEach(element => element = element.toLowerCase());
                                     if (resultLong.subjects) {
-                                        const temporalList = this.fillArray(resultLong.subjects);
+                                        const temporalList = this.functions.fillArray(resultLong.subjects);
                                         temporalList.forEach(element => {
                                             element = element.toLowerCase();
                                             if (!this.subjects.includes(element)) {
@@ -198,13 +212,13 @@ export class BookDialogComponent implements OnDestroy {
                                     }
                                     this.subjects = this.subjects.sort();
                                 } else if (resultLong.subjects) {
-                                    this.subjects = this.fillArray(resultLong.subjects).sort();
+                                    this.subjects = this.functions.fillArray(resultLong.subjects).sort();
                                 }
 
                                 if (resultShort.publish_places) {
                                     this.publish_places = resultShort.publish_places.sort();
                                 } else if (resultLong.publish_places) {
-                                    this.publish_places = this.fillArray(resultShort.publish_places).sort();
+                                    this.publish_places = this.functions.fillArray(resultShort.publish_places).sort();
                                 }
 
                                 this.form.patchValue({
@@ -248,18 +262,23 @@ export class BookDialogComponent implements OnDestroy {
         }
 
         if (this.editting) {
-            this.book.cdu = this.cdu;
-            this.book.title = this.title;
-            this.book.subtitle = this.subtitle;
-            this.book.number_of_pages = this.number_of_pages;
-            this.book.publish_date = this.publish_date;
-            this.book.description = this.description;
-            this.book.physical_format = this.physical_format;
-            this.book.url = this.url;
-            this.book = this.functions.checkKeys(this.book);
+            this.editting.cdu = this.cdu;
+            this.editting.title = this.title;
+            this.editting.subtitle = this.subtitle;
+            this.editting.number_of_pages = this.number_of_pages;
+            this.editting.publish_date = this.publish_date;
+            this.editting.description = this.description;
+            this.editting.physical_format = this.physical_format;
+            this.editting.url = this.url;
+            this.editting.publishers = this.publishers;
+            this.editting.subjects = this.subjects;
+            this.editting.authors = this.authors;
+            this.editting.owned[this.authService.authLibrary.id].nEjemplares = this.nEjemplares;
 
-            this.db.updateBook(this.book)
-                .then(() => this.onClose('Libro editado', this.book))
+            this.editting = this.functions.checkKeys(this.editting);
+
+            this.db.updateBook(this.editting)
+                .then(() => this.onClose('Libro editado'))
                 .catch(error => {
                     console.log(error);
                     this.onClose('Problema al editar el libro');
@@ -267,7 +286,7 @@ export class BookDialogComponent implements OnDestroy {
         } else {
             this.book = this.functions.checkKeys(this.book);
 
-            this.db.saveBook(this.book)
+            this.db.saveBook(this.book, this.nEjemplares)
                 .then(() => this.onClose('Libro guardado'))
                 .catch(error => {
                     console.log(error);
@@ -278,47 +297,18 @@ export class BookDialogComponent implements OnDestroy {
 
     private parseShortJson(data: any): OpenLibraryShort {
         const dataKeys = Object.keys(data);
-        const [firstKey] = dataKeys;
-        return data[firstKey].details;
+        if (dataKeys.length > 0) {
+            const [firstKey] = dataKeys;
+            return data[firstKey].details;
+        } else {
+            return null;
+        }
     }
 
     private parseLongJson(data: any): OpenLibraryLong {
         const dataKeys = Object.keys(data);
         const [firstKey] = dataKeys;
         return data[firstKey];
-    }
-
-    private fillArray(data: any) {
-        let result;
-        if (data !== undefined) {
-            result = [];
-            data.forEach(element => result.push(element.name));
-        }
-        return result;
-    }
-
-    private returnDataIfNotUndefined(data: any) {
-        if (!isNullOrUndefined(data)) {
-            return data;
-        } else {
-            return null;
-        }
-    }
-
-    private translatePhysicalFormat(fortmat: string): string {
-        let result;
-        switch (fortmat) {
-            case 'Paperback': case 'Mass Market Paperback':
-                result = this.formats[3];
-                break;
-            case 'Hardcover':
-                result = this.formats[0];
-                break;
-            case 'Spiral-bound':
-                result = this.formats[4];
-                break;
-        }
-        return result;
     }
 
     addItem(event: MatChipInputEvent, list: string) {
@@ -365,12 +355,10 @@ export class BookDialogComponent implements OnDestroy {
         }
     }
 
-    onClose(motive?: string, book?: Book) {
+    onClose(motive?: string) {
         this.newCover = false;
         this.asked = false;
-        if (book) {
-            this.dialogRef.close({ motive, book });
-        } else if (motive) {
+        if (motive) {
             this.dialogRef.close(motive);
         } else {
             this.dialogRef.close();

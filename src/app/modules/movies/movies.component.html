@@ -10,30 +10,42 @@
     </button>
 </mat-toolbar>
 
-<div class="container-fluid mt-3">
+<div class="container-fluid mb-3" *ngIf="movies.length > 0">
     <mat-accordion>
         <mat-expansion-panel *ngFor="let item of movies">
             <mat-expansion-panel-header>
-                <mat-panel-title>
+                <mat-panel-title class="align-items-center">
                     <span class="mr-2"><b>{{item.title}}</b></span>
                     <span>{{item.release_date}}</span>
                 </mat-panel-title>
 
                 <button mat-icon-button matTooltip="Añadir deseado"
                     (click)="addMovieWished(item.id); $event.stopPropagation()" color="primary"
-                    *ngIf="isLoged && !isAdmin">
-                    <i class="fas fa-hand-holding-heart"></i>
+                    *ngIf="isLoged && !isAdmin && !checkExists(item, 'wishes')">
+                    <i class="far fa-list-alt"></i>
                 </button>
+                <button mat-icon-button matTooltip="Eliminar deseado"
+                    (click)="removeMovieWished(item); $event.stopPropagation()" color="primary"
+                    *ngIf="isLoged && !isAdmin && checkExists(item, 'wishes')">
+                    <i class="fas fa-list-alt"></i>
+                </button>
+
                 <button mat-icon-button matTooltip="Añadir favorito"
                     (click)="addMovieFavoutire(item.id); $event.stopPropagation()" color="primary"
-                    *ngIf="isLoged && !isAdmin">
+                    *ngIf="isLoged && !isAdmin && !checkExists(item, 'favourites')">
+                    <i class="far fa-heart"></i>
+                </button>
+                <button mat-icon-button matTooltip="Eliminar favorito"
+                    (click)="removeMovieFavoutire(item); $event.stopPropagation()" color="primary"
+                    *ngIf="isLoged && !isAdmin && checkExists(item, 'favourites')">
                     <i class="fas fa-heart"></i>
                 </button>
+
                 <button mat-icon-button matTooltip="Editar" (click)="editMovie(item); $event.stopPropagation()"
                     color="primary" *ngIf="isAdmin">
                     <i class="fas fa-pen"></i>
                 </button>
-                <button mat-icon-button matTooltip="Eliminar" (click)="deleteMovie(item.id); $event.stopPropagation()"
+                <button mat-icon-button matTooltip="Eliminar" (click)="deleteMovie(item); $event.stopPropagation()"
                     color="primary" *ngIf="isAdmin">
                     <i class="fas fa-minus"></i>
                 </button>
@@ -81,7 +93,7 @@
                             </div>
                         </div>
 
-                        <div class="row mt-2" *ngIf="item.release_date || item.runtime || item.vote_average">
+                        <div class="row mt-2" *ngIf="item.release_date || item.runtime || item.vote_average || isLoged">
                             <div class="col-auto" *ngIf="item.release_date">
                                 <b>Fecha de estreno: </b>
                                 <span>{{item.release_date}}</span>
@@ -95,6 +107,11 @@
                             <div class="col-auto" *ngIf="item.vote_average">
                                 <b>Puntuación: </b>
                                 <span>{{item.vote_average}}</span>
+                            </div>
+
+                            <div class="col-auto" *ngIf="isLoged">
+                                <b>Nº de ejemplares: </b>
+                                <span>{{getNumberOfItems(item)}}</span>
                             </div>
                         </div>
 

@@ -18,7 +18,7 @@ export class UsersComponent implements OnInit, OnDestroy {
     isAdmin: boolean;
     isLoading: boolean;
     pictureURL: string;
-    usersList;
+    usersList = [];
     listFiltered$;
     newUser$;
 
@@ -29,7 +29,6 @@ export class UsersComponent implements OnInit, OnDestroy {
         public functions: CommonFunctions,
         private dialog: MatDialog,
         private snackBar: MatSnackBar) {
-
         this.isAdmin = this.functions.isAdmin(this.authService.authUser);
         if (!this.isAdmin) {
             this.form = this.formBuilder.group({
@@ -47,9 +46,11 @@ export class UsersComponent implements OnInit, OnDestroy {
 
             this.listFiltered$ = this.db.getListFiltered('users', 'libraryID', this.authService.authLibrary.id)
                 .subscribe(data => {
-                    this.usersList = data;
-                    this.isLoading = false;
-                    this.usersList = _.sortBy(this.usersList, 'name');
+                    if (data.length !== 0) {
+                        this.usersList = data;
+                        this.isLoading = false;
+                        this.usersList = _.sortBy(this.usersList, 'name');
+                    }
                 },
                     error => console.log(error));
         }
@@ -81,7 +82,7 @@ export class UsersComponent implements OnInit, OnDestroy {
     }
 
     update(user: User) {
-        this.db.updateUser(user)
+        this.db.saveUser(user)
             .then(() => this.snackBar.open('Usuario editado', '', { duration: 2000 }))
             .catch(error => {
                 console.log(error);

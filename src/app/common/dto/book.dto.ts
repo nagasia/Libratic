@@ -13,4 +13,7 @@ export interface Book {
     description: string;
     physical_format: string;
     url?: string;
+    owned?: any;
+    favourites?: any;
+    wishes?: any;
 }

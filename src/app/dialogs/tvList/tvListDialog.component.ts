@@ -35,6 +35,8 @@ export class TvListDialogComponent implements OnInit {
     order_by: string;
 
     tv: TvShow;
+    isFinished = false;
+    isFounded = false;
     selectedtv;
     tvList;
 
@@ -56,7 +58,13 @@ export class TvListDialogComponent implements OnInit {
     ngOnInit() {
         if (typeof this.data === 'string') {
             const firstQuery = this.searchUrl + this.search + this.apiKey + this.query + this.name + this.language;
-            this.http.get(firstQuery).subscribe((data: any) => this.tvList = data.results,
+            this.http.get(firstQuery).subscribe((data: any) => {
+                if (data && data.results.length > 0) {
+                    this.tvList = data.results;
+                    this.isFounded = true;
+                }
+                this.isFinished = true;
+            },
                 error => console.log(error));
         } else {
             let firstQuery = this.searchUrl + this.discover + this.apiKey;
@@ -81,7 +89,13 @@ export class TvListDialogComponent implements OnInit {
                 firstQuery += this.orderBy + this.order_by;
             }
 
-            this.http.get(firstQuery + this.language).subscribe((data: any) => this.tvList = data.results,
+            this.http.get(firstQuery + this.language).subscribe((data: any) => {
+                if (data && data.results.length > 0) {
+                    this.tvList = data.results;
+                    this.isFounded = true;
+                }
+                this.isFinished = true;
+            },
                 error => console.log(error));
         }
 

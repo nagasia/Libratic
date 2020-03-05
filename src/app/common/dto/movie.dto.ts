@@ -19,4 +19,7 @@ export interface Movie {
         job: string;
         name: string;
     }];
+    owned?: any;
+    favourites?: any;
+    wishes?: any;
 }

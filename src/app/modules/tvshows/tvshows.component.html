@@ -10,30 +10,42 @@
     </button>
 </mat-toolbar>
 
-<div class="container-fluid mt-3">
+<div class="container-fluid mb-3" *ngIf="tvShows.length > 0">
     <mat-accordion>
         <mat-expansion-panel *ngFor="let item of tvShows">
             <mat-expansion-panel-header>
-                <mat-panel-title>
+                <mat-panel-title class="align-items-center">
                     <span class="mr-2"><b>{{item.name}}</b></span>
                     <span>{{item.first_air_date}}</span>
                 </mat-panel-title>
 
                 <button mat-icon-button matTooltip="Añadir deseado"
-                    (click)="addTVWished(item.id); $event.stopPropagation()" color="primary"
-                    *ngIf="isLoged && !isAdmin">
-                    <i class="fas fa-hand-holding-heart"></i>
+                    (click)="addTvWished(item.id); $event.stopPropagation()" color="primary"
+                    *ngIf="isLoged && !isAdmin && !checkExists(item, 'wishes')">
+                    <i class="far fa-list-alt"></i>
                 </button>
+                <button mat-icon-button matTooltip="Eliminar deseado"
+                    (click)="removeTvWished(item.id); $event.stopPropagation()" color="primary"
+                    *ngIf="isLoged && !isAdmin && checkExists(item, 'wishes')">
+                    <i class="fas fa-list-alt"></i>
+                </button>
+
                 <button mat-icon-button matTooltip="Añadir favorito"
                     (click)="addTvFavoutire(item.id); $event.stopPropagation()" color="primary"
-                    *ngIf="isLoged && !isAdmin">
+                    *ngIf="isLoged && !isAdmin && !checkExists(item, 'favourites')">
+                    <i class="far fa-heart"></i>
+                </button>
+                <button mat-icon-button matTooltip="Eliminar favorito"
+                    (click)="removeTvFavoutire(item.id); $event.stopPropagation()" color="primary"
+                    *ngIf="isLoged && !isAdmin && checkExists(item, 'favourites')">
                     <i class="fas fa-heart"></i>
                 </button>
+
                 <button mat-icon-button matTooltip="Editar" (click)="editTv(item); $event.stopPropagation()"
                     color="primary" *ngIf="isAdmin">
                     <i class="fas fa-pen"></i>
                 </button>
-                <button mat-icon-button matTooltip="Eliminar" (click)="deleteTv(item.id); $event.stopPropagation()"
+                <button mat-icon-button matTooltip="Eliminar" (click)="deleteTv(item); $event.stopPropagation()"
                     color="primary" *ngIf="isAdmin">
                     <i class="fas fa-minus"></i>
                 </button>
@@ -94,6 +106,11 @@
                             <div class="col-auto" *ngIf="item.vote_average">
                                 <b>Puntuación: </b>
                                 <span>{{item.vote_average}}</span>
+                            </div>
+
+                            <div class="col-auto" *ngIf="isLoged">
+                                <b>Nº de ejemplares: </b>
+                                <span>{{getNumberOfItems(item)}}</span>
                             </div>
                         </div>
 

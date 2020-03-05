@@ -1,0 +1,42 @@
+<h2 mat-dialog-title>Nuevo préstamo</h2>
+
+<form [formGroup]="form" (ngSubmit)="getData()">
+    <mat-dialog-content>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col">
+                    <mat-form-field class="w-100">
+                        <mat-label>Usuario</mat-label>
+                        <mat-select formControlName="users">
+                            <mat-option *ngFor="let item of userList" [value]="item">{{item.name}} {{item.dni}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <mat-form-field class="w-100" *ngIf="itemType !== 'tv'">
+                        <mat-label *ngIf="itemType === 'book'">Libro</mat-label>
+                        <mat-label *ngIf="itemType === 'movie'">Película</mat-label>
+                        <mat-select formControlName="items">
+                            <mat-option *ngFor="let item of itemList" [value]="item">{{item.title}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    
+                    <mat-form-field class="w-100" *ngIf="itemType === 'tv'">
+                        <mat-label>Serie</mat-label>
+                        <mat-select formControlName="items">
+                            <mat-option *ngFor="let item of itemList" [value]="item">{{item.name}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+        </div>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="center">
+        <button mat-raised-button type="submit" [disabled]="!form.valid" color="primary">Guardar</button>
+    </mat-dialog-actions>
+</form>

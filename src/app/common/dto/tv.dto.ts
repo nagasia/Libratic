@@ -20,4 +20,7 @@ export interface TvShow {
         job: string;
         name: string;
     }];
+    owned?: any;
+    favourites?: any;
+    wishes?: any;
 }

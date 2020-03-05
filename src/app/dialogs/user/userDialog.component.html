@@ -66,8 +66,8 @@
                 </mat-form-field>
             </div>
 
-            <div class="row mt-2">
-                <mat-form-field class="col-md-auto">
+            <div class="row justify-content-between">
+                <mat-form-field class="col-auto">
                     <mat-label>Tipo de usuario</mat-label>
                     <mat-select formControlName="userLevel" required>
                         <mat-option value="user">Usuario</mat-option>
@@ -76,6 +76,10 @@
                     <mat-error *ngIf="form.controls.userLevel.hasError('required')">Por favor indique el tipo de usuario
                     </mat-error>
                 </mat-form-field>
+
+                <div class="col-auto align-self-center" *ngIf="editting">
+                    <mat-slide-toggle color="warning" formControlName="punishment">Multa por retraso</mat-slide-toggle>
+                </div>
             </div>
         </div>
     </mat-dialog-content>

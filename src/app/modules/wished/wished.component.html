@@ -1,9 +1,9 @@
 <ng-container *ngIf="isLoged">
-    <div class="container-fluid mt-2">
+    <div class="container-fluid">
         <mat-toolbar>
             <span>Libros</span>
             <div class="spacer"></div>
-            <button mat-icon-button matTooltip="Añadir favorito" (click)="addBook()" color="primary">
+            <button mat-icon-button matTooltip="Añadir deseado" (click)="addBook()" color="primary">
                 <i class="fas fa-plus"></i>
             </button>
         </mat-toolbar>
@@ -12,17 +12,17 @@
             <span>Aun no hay elementos deseados añadidos</span>
         </mat-toolbar>
 
-        <mat-accordion *ngIf="bookList.length >= 1">
+        <mat-accordion *ngIf="bookList.length > 0">
             <mat-expansion-panel *ngFor="let item of bookList">
                 <mat-expansion-panel-header>
-                    <mat-panel-title>
+                    <mat-panel-title class="align-items-center">
                         <span class="mr-2"><b>{{item.title}}</b></span>
                         <span>{{item.subtitle}}</span>
                     </mat-panel-title>
-                    <mat-panel-description>{{item.authors}}</mat-panel-description>
+                    <mat-panel-description class="align-items-center">{{item.authors}}</mat-panel-description>
 
-                    <button mat-icon-button matTooltip="Añadir favorito"
-                        (click)="deleteBook(item.isbn); $event.stopPropagation()" color="primary">
+                    <button mat-icon-button matTooltip="Eliminar deseado"
+                        (click)="deleteBook(item); $event.stopPropagation()" color="primary">
                         <i class="fas fa-minus"></i>
                     </button>
                 </mat-expansion-panel-header>
@@ -30,13 +30,20 @@
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-2">
-                            <span *ngIf="item.cover">
-                                <img [src]="item.cover" class="w-100">
-                            </span>
-
-                            <span *ngIf="!item.cover" class="content-fluid">
-                                <i class="fas fa-book fa-4x"></i>
-                            </span>
+                            <div class="row">
+                                <div class="col">
+                                    <img [src]="item.cover" class="w-100" *ngIf="item.cover">
+                                    <i class="fas fa-book fa-4x" *ngIf="!item.cover"></i>
+                                </div>
+                            </div>
+    
+                            <div class="row mt-2 justify-content-end" *ngIf="item.url">
+                                <div class="col-auto">
+                                    <a [href]="item.url" target="_blank">
+                                        <button mat-raised-button color="primary">Entrada en OpenLibrary</button>
+                                    </a>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="col">
@@ -96,15 +103,6 @@
                                     <p> {{item.description}}</p>
                                 </div>
                             </div>
-
-                            <div class="row mt-2 justify-content-end" *ngIf="item.url">
-                                <div class="col-auto">
-                                    <a [href]="item.url" target="_blank">
-                                        <button mat-raised-button color="primary">Entrada en OpenLibrary</button>
-                                    </a>
-                                </div>
-                            </div>
-
                         </div>
                     </div>
                 </div>
@@ -113,11 +111,11 @@
         </mat-accordion>
     </div>
 
-    <div class="container-fluid mt-2">
+    <div class="container-fluid">
         <mat-toolbar>
             <span>Películas</span>
             <div class="spacer"></div>
-            <button mat-icon-button matTooltip="Añadir favorito" (click)="addMovie()" color="primary">
+            <button mat-icon-button matTooltip="Añadir deseado" (click)="addMovie()" color="primary">
                 <i class="fas fa-plus"></i>
             </button>
         </mat-toolbar>
@@ -126,16 +124,16 @@
             <span>Aun no hay elementos deseados añadidos</span>
         </mat-toolbar>
 
-        <mat-accordion *ngIf="movieList.length >= 1">
+        <mat-accordion *ngIf="movieList.length > 0">
             <mat-expansion-panel *ngFor="let item of movieList">
                 <mat-expansion-panel-header>
-                    <mat-panel-title>
+                    <mat-panel-title class="align-items-center">
                         <span class="mr-2"><b>{{item.title}}</b></span>
                         <span>{{item.release_date}}</span>
                     </mat-panel-title>
 
-                    <button mat-icon-button matTooltip="Eliminar favorito"
-                        (click)="deleteMovie(item.id); $event.stopPropagation()" color="primary">
+                    <button mat-icon-button matTooltip="Eliminar deseado"
+                        (click)="deleteMovie(item); $event.stopPropagation()" color="primary">
                         <i class="fas fa-minus"></i>
                     </button>
                 </mat-expansion-panel-header>
@@ -253,11 +251,11 @@
         </mat-accordion>
     </div>
 
-    <div class="container-fluid mt-2">
+    <div class="container-fluid mb-3">
         <mat-toolbar>
             <span>Series</span>
             <div class="spacer"></div>
-            <button mat-icon-button matTooltip="Añadir favorito" (click)="addTV()" color="primary">
+            <button mat-icon-button matTooltip="Añadir deseado" (click)="addTV()" color="primary">
                 <i class="fas fa-plus"></i>
             </button>
         </mat-toolbar>
@@ -266,16 +264,16 @@
             <span>Aun no hay elementos deseados añadidos</span>
         </mat-toolbar>
 
-        <mat-accordion *ngIf="tvList.length >= 1">
+        <mat-accordion *ngIf="tvList.length > 0">
             <mat-expansion-panel *ngFor="let item of tvList">
                 <mat-expansion-panel-header>
-                    <mat-panel-title>
+                    <mat-panel-title class="align-items-center">
                         <span class="mr-2"><b>{{item.name}}</b></span>
                         <span>{{item.first_air_date}}</span>
                     </mat-panel-title>
 
-                    <button mat-icon-button matTooltip="Eliminar favorito"
-                        (click)="deleteTV(item.id); $event.stopPropagation()" color="primary">
+                    <button mat-icon-button matTooltip="Eliminar deseado"
+                        (click)="deleteTV(item); $event.stopPropagation()" color="primary">
                         <i class="fas fa-minus"></i>
                     </button>
                 </mat-expansion-panel-header>

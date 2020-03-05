@@ -1,5 +1,3 @@
-import { Lending } from './lendings.dto';
-
 export interface User {
     id: string;
     name?: string;
@@ -11,13 +9,5 @@ export interface User {
     picture?: string;
     userLevel: string;
     libraryID: string;
-    bookFavourited?: string[];
-    moviesFavourited?: number[];
-    tvsFavourited?: number[];
-    bookWished?: string[];
-    moviesWished?: number[];
-    tvsWished?: number[];
-    bookLendings?: Lending[];
-    movieLendings?: Lending[];
-    tvLendings?: Lending[];
+    punishment?: boolean;
 }

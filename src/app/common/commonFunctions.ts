@@ -1,4 +1,5 @@
 import { User } from './dto/user.dto';
+import { isNullOrUndefined } from 'util';
 
 export class CommonFunctions {
 
@@ -64,5 +65,13 @@ export class CommonFunctions {
                 break;
         }
         return result;
+    }
+
+    returnDataIfNotUndefined(data: any) {
+        if (!isNullOrUndefined(data)) {
+            return data;
+        } else {
+            return null;
+        }
     }
 }

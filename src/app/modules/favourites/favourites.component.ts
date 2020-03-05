@@ -16,11 +16,8 @@ export class FavouritesComponent implements OnInit, OnDestroy {
     movieList = [];
     tvList = [];
     bookList$;
-    bookRef$;
     movieList$;
-    movieRef$;
     tvList$;
-    tvRef$;
 
     constructor(private authService: AuthenticationService,
         private db: FireDBService) {
@@ -31,68 +28,43 @@ export class FavouritesComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         if (this.isLoged) {
-            this.bookList$ = this.db.getList('users/' + this.authService.authUser.id + '/bookFavourited/')
+            this.bookList$ = this.db.getListFiltered('books/', '/favourites/' + this.authService.authUser.id, true)
                 .subscribe(data => {
-                    if (data) {
-                        data.forEach(isbn => {
-                            this.bookRef$ = this.db.getOne('books/' + isbn).subscribe((book: Book) => {
-                                const index = _.find(this.bookList, b => b.isbn === book.isbn);
-                                if (!index) {
-                                    this.bookList.push(book);
-                                    this.bookList = _.sortBy(this.bookList, 'title');
-                                }
-                            });
-                        });
+                    if (data.length !== 0) {
+                        this.bookList = data;
+                        this.bookList = _.sortBy(this.bookList, 'title');
                     }
-                },
-                    error => console.log(error));
-            this.movieList$ = this.db.getList('users/' + this.authService.authUser.id + '/moviesFavourited/')
+                }, error => console.log(error));
+            this.movieList$ = this.db.getListFiltered('movies/', '/favourites/' + this.authService.authUser.id, true)
                 .subscribe(data => {
-                    if (data) {
-                        data.forEach(id => {
-                            this.bookRef$ = this.db.getOne('movies/' + id).subscribe((movie: Movie) => {
-                                const index = _.find(this.movieList, b => b.id === movie.id);
-                                if (!index) {
-                                    this.movieList.push(movie);
-                                    this.movieList = _.sortBy(this.movieList, 'title');
-                                }
-                            });
-                        });
+                    if (data.length !== 0) {
+                        this.movieList = data;
+                        this.movieList = _.sortBy(this.movieList, 'title');
                     }
-                },
-                    error => console.log(error));
-            this.tvList$ = this.db.getList('users/' + this.authService.authUser.id + '/tvsFavourited/')
+                }, error => console.log(error));
+            this.tvList$ = this.db.getListFiltered('tvs/', '/favourites/' + this.authService.authUser.id, true)
                 .subscribe(data => {
-                    if (data) {
-                        data.forEach(id => {
-                            this.bookRef$ = this.db.getOne('tvs/' + id).subscribe((tv: TvShow) => {
-                                const index = _.find(this.tvList, b => b.id === tv.id);
-                                if (!index) {
-                                    this.tvList.push(tv);
-                                    this.tvList = _.sortBy(this.tvList, 'title');
-                                }
-                            });
-                        });
-
+                    if (data.length !== 0) {
+                        this.tvList = data;
+                        this.tvList = _.sortBy(this.tvList, 'title');
                     }
-                },
-                    error => console.log(error));
+                }, error => console.log(error));
         }
     }
 
-    deleteBook(isbn: string) {
-        this.db.deleteBookFavourited(isbn)
-            .then(() => _.remove(this.bookList, b => b.isbn === isbn));
+    deleteBook(book: Book) {
+        book.favourites[this.authService.authUser.id] = null;
+        this.db.updateBook(book);
     }
 
-    deleteMovie(id: number) {
-        this.db.deleteMovieFavourited(id)
-            .then(() => _.remove(this.movieList, b => b.id === id));
+    deleteMovie(movie: Movie) {
+        movie.favourites[this.authService.authUser.id] = null;
+        this.db.updateMovie(movie);
     }
 
-    deleteTV(id: number) {
-        this.db.deleteTVFavourited(id)
-            .then(() => _.remove(this.tvList, b => b.id === id));
+    deleteTV(tv: TvShow) {
+        tv.favourites[this.authService.authUser.id] = null;
+        this.db.updateTv(tv);
     }
 
     ngOnDestroy() {
@@ -104,15 +76,6 @@ export class FavouritesComponent implements OnInit, OnDestroy {
         }
         if (this.tvList$) {
             this.tvList$.unsubscribe();
-        }
-        if (this.bookRef$) {
-            this.bookRef$.unsubscribe();
-        }
-        if (this.movieRef$) {
-            this.movieRef$.unsubscribe();
-        }
-        if (this.tvRef$) {
-            this.tvRef$.unsubscribe();
         }
     }
 }

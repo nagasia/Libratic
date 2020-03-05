@@ -21,9 +21,11 @@
                         <span class="ml-2">Buscar en OpenLibrary</span>
                     </button>
                 </div>
+            </div>
 
+            <div class="row">
                 <div class="col" *ngIf="asked">
-                    <mat-progress-spinner mode="indeterminate" color="primary"></mat-progress-spinner>
+                    <mat-progress-bar mode="indeterminate" color="primary"></mat-progress-bar>
                 </div>
             </div>
 
@@ -62,15 +64,44 @@
             </div>
 
             <div class="row mt-2">
+                <div class="col-auto w-25">
+                    <mat-form-field class="w-100">
+                        <input matInput placeholder="CDU" type="text" formControlName="cdu">
+                    </mat-form-field>
+                </div>
+
+                <div class="col-auto">
+                    <mat-form-field>
+                        <input matInput placeholder="Nº de páginas" type="text" formControlName="number_of_pages">
+                    </mat-form-field>
+                </div>
+
+                <div class="col-auto">
+                    <mat-form-field>
+                        <input matInput placeholder="Nº de ejemplares" type="number" formControlName="nEjemplares"
+                            required>
+                        <mat-error *ngIf="form.controls.nEjemplares.hasError('required')">Por favor indique un número
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div class="row mt-2">
                 <div class="col">
                     <mat-form-field>
-                        <input matInput placeholder="CDU" type="text" formControlName="cdu">
+                        <input matInput placeholder="Fecha de publicación" type="text" formControlName="publish_date"
+                            required>
+                        <mat-error *ngIf="form.controls.publish_date.hasError('required')">Por favor indique una fecha
+                            de publicación</mat-error>
                     </mat-form-field>
                 </div>
 
                 <div class="col">
                     <mat-form-field>
-                        <input matInput placeholder="Nº de páginas" type="text" formControlName="number_of_pages">
+                        <mat-label>Formato físico</mat-label>
+                        <mat-select formControlName="physical_format">
+                            <mat-option *ngFor="let item of formats" [value]="item">{{item}}</mat-option>
+                        </mat-select>
                     </mat-form-field>
                 </div>
             </div>
@@ -125,26 +156,6 @@
                                 (matChipInputTokenEnd)="addItem($event,'authors')" required>
                         </mat-chip-list>
                         <mat-hint align="start">Si añade más de un autor, pulse intro entre ellos</mat-hint>
-                    </mat-form-field>
-                </div>
-            </div>
-
-            <div class="row mt-2">
-                <div class="col">
-                    <mat-form-field>
-                        <input matInput placeholder="Fecha de publicación" type="text" formControlName="publish_date"
-                            required>
-                        <mat-error *ngIf="form.controls.publish_date.hasError('required')">Por favor indique una fecha
-                            de publicación</mat-error>
-                    </mat-form-field>
-                </div>
-
-                <div class="col">
-                    <mat-form-field>
-                        <mat-label>Formato físico</mat-label>
-                        <mat-select formControlName="physical_format">
-                            <mat-option *ngFor="let item of formats" [value]="item">{{item}}</mat-option>
-                        </mat-select>
                     </mat-form-field>
                 </div>
             </div>

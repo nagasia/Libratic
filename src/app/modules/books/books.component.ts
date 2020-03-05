@@ -15,7 +15,6 @@ export class BooksComponent implements OnInit, OnDestroy {
     isAdmin: boolean;
     isLoged: boolean;
     books = [];
-    booksRef$;
     booksList$;
 
     constructor(private authService: AuthenticationService,
@@ -34,32 +33,24 @@ export class BooksComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         if (this.isLoged) {
-            this.booksList$ = this.db.getList('libraries/' + this.authService.authLibrary.id + '/booksIDs')
-                .subscribe(async list => {
-                    if (list) {
-                        list.forEach(element => {
-                            this.booksRef$ = this.db.getOne('books/' + element).subscribe((book: Book) => {
-                                const index = _.find(this.books, b => b.isbn === book.isbn);
-                                if (!index) {
-                                    this.books.push(book);
-                                    this.books = _.sortBy(this.books, 'title');
-                                }
-                            });
-                        });
+            this.booksList$ = this.db.getListFiltered('books/', '/owned/' + this.authService.authLibrary.id + '/id/',
+                this.authService.authLibrary.id).subscribe(list => {
+                    if (list.length !== 0) {
+                        this.books = list;
+                        this.books = _.sortBy(this.books, 'title');
                     }
                 },
                     error => console.log(error));
         } else {
             this.booksList$ = this.db.getList('books')
                 .subscribe(list => {
-                    if (list) {
+                    if (list.length !== 0) {
                         this.books = list;
                         this.books = _.sortBy(this.books, 'title');
                     }
                 },
                     error => console.log(error));
         }
-
     }
 
     newBook() {
@@ -75,16 +66,17 @@ export class BooksComponent implements OnInit, OnDestroy {
             error => console.log(error));
     }
 
-    deleteBook(isbn: string) {
-        this.db.deleteBook(isbn)
-            .then(() => {
-                _.remove(this.books, b => b.isbn === isbn);
-                this.snackBar.open('Libro borrado', '', { duration: 2000 });
-            })
-            .catch(error => {
-                console.log(error);
-                this.snackBar.open('Problema al borrar el libro', '', { duration: 2000 });
-            });
+    deleteBook(book) {
+        let nEjemplares = book.owned[this.authService.authLibrary.id].nEjemplares;
+        nEjemplares -= 1;
+
+        if (nEjemplares <= 0) {
+            book.owned[this.authService.authLibrary.id] = null;
+            _.remove(this.books, book);
+        } else {
+            book.owned[this.authService.authLibrary.id].nEjemplares = nEjemplares;
+        }
+        this.db.updateBook(book);
     }
 
     editBook(book: Book) {
@@ -95,13 +87,7 @@ export class BooksComponent implements OnInit, OnDestroy {
 
         bookDialog.afterClosed().subscribe(result => {
             if (result) {
-                if (result.book) {
-                    const index = _.findIndex(this.books, b => b.isbn === result.book.isbn);
-                    this.books[index] = result.book;
-                    this.snackBar.open(result.motive, '', { duration: 2000 });
-                } else {
-                    this.snackBar.open(result, '', { duration: 2000 });
-                }
+                this.snackBar.open(result, '', { duration: 2000 });
             }
         },
             error => console.log(error));
@@ -116,8 +102,14 @@ export class BooksComponent implements OnInit, OnDestroy {
             });
     }
 
+    removeBookFavourite(book: Book) {
+        book.favourites[this.authService.authUser.id] = null;
+        this.db.updateBook(book)
+            .then(() => this.snackBar.open('Favorito eliminado', '', { duration: 2000 }));
+    }
+
     addBookWished(isbn: string) {
-        this.db.saveUserBookWished(isbn)
+        this.db.saveBookWished(isbn, this.authService.authUser.id)
             .then(() => this.snackBar.open('Libro añadido a deseados', '', { duration: 2000 }))
             .catch(error => {
                 console.log(error);
@@ -125,12 +117,31 @@ export class BooksComponent implements OnInit, OnDestroy {
             });
     }
 
+    removeBookWished(book: Book) {
+        book.wishes[this.authService.authUser.id] = null;
+        this.db.updateBook(book)
+            .then(() => this.snackBar.open('Deseado eliminado', '', { duration: 2000 }));
+    }
+
+    getNumberOfItems(item: any) {
+        return item.owned[this.authService.authLibrary.id].nEjemplares;
+    }
+
+    checkExists(item: Book, key: string) {
+        if (this.functions.returnDataIfNotUndefined(item[key])) {
+            if (this.isAdmin) {
+                return this.functions.returnDataIfNotUndefined(item[key][this.authService.authLibrary.id]);
+            } else {
+                return this.functions.returnDataIfNotUndefined(item[key][this.authService.authUser.id]);
+            }
+        } else {
+            return false;
+        }
+    }
+
     ngOnDestroy() {
         if (this.booksList$) {
             this.booksList$.unsubscribe();
-        }
-        if (this.booksRef$) {
-            this.booksRef$.unsubscribe();
         }
     }
 

@@ -24,10 +24,28 @@
                 </div>
             </div>
 
-            <div class="row mt-2">
+            <div class="row">
                 <div class="col">
                     <mat-form-field class="w-100">
                         <input matInput placeholder="Ciudad" type="text" formControlName="city">
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <mat-form-field class="w-100">
+                        <input matInput placeholder="Teléfomo" type="number" formControlName="phone">
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <mat-form-field class="w-100">
+                        <input matInput placeholder="Email de la biblioteca" type="text" formControlName="emailLibrary">
+                        <mat-error *ngIf="form.controls.emailLibrary.hasError('email')">
+                            Por favor escriba un email válido</mat-error>
                     </mat-form-field>
                 </div>
             </div>
@@ -36,12 +54,12 @@
                 <div class="row mt-2">
                     <div class="col">
                         <mat-form-field class="w-100">
-                            <input matInput placeholder="Email del administrador" type="email" formControlName="email"
-                                required>
+                            <input matInput placeholder="Email del administrador" type="email"
+                                formControlName="emailAdmin" required>
                             <mat-error
-                                *ngIf="form.controls.email.hasError('email') && !form.controls.email.hasError('required')">
+                                *ngIf="form.controls.emailAdmin.hasError('email') && !form.controls.emailAdmin.hasError('required')">
                                 Por favor escriba un email válido</mat-error>
-                            <mat-error *ngIf="form.controls.email.hasError('required')">Por favor indique un email
+                            <mat-error *ngIf="form.controls.emailAdmin.hasError('required')">Por favor indique un email
                             </mat-error>
                         </mat-form-field>
                     </div>
@@ -50,8 +68,8 @@
                 <div class="row mt-2">
                     <div class="col">
                         <mat-form-field class="w-100">
-                            <input matInput placeholder="Contraseña" type="password" formControlName="password"
-                                required>
+                            <input matInput placeholder="Contraseña del administrador" type="password"
+                                formControlName="password" required>
                             <mat-hint align="start">Contraseña de Gmail para poder conectarse mediante Google</mat-hint>
                             <mat-error *ngIf="!form.controls.password.hasError('required')">Mínimo 6 caracteres
                             </mat-error>

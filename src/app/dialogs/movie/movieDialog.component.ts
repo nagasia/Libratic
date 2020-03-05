@@ -8,6 +8,7 @@ import { ENTER } from '@angular/cdk/keycodes';
 import * as _ from 'lodash';
 import { MoviesListDialogComponent } from '../moviesList/moviesListDialog.component';
 import { CommonFunctions } from '../../common/commonFunctions';
+import { AuthenticationService } from '../../services/authentication.service';
 
 @Component({
     selector: 'app-movie-dialog',
@@ -34,6 +35,7 @@ export class MovieDialogComponent {
     vote_average: number;
     cast: any = [];
     crew: any = [];
+    nEjemplares: number;
 
     movie: Movie;
     form: FormGroup;
@@ -44,6 +46,7 @@ export class MovieDialogComponent {
     constructor(private formBuilder: FormBuilder,
         private dialogRef: MatDialogRef<MovieDialogComponent>,
         private storage: StorageService,
+        private authService: AuthenticationService,
         private db: FireDBService,
         private dialog: MatDialog,
         private functions: CommonFunctions,
@@ -59,10 +62,12 @@ export class MovieDialogComponent {
             tagline: this.tagline,
             title: [this.title, [Validators.required]],
             vote_average: this.vote_average,
+            nEjemplares: [this.nEjemplares, [Validators.required]],
         });
     }
 
     private setData() {
+        this.nEjemplares = this.editting.owned[this.authService.authLibrary.id].nEjemplares;
         this.homepage = this.editting.homepage;
         this.url = this.editting.url;
         this.id = this.editting.id;
@@ -73,6 +78,7 @@ export class MovieDialogComponent {
         this.tagline = this.editting.tagline;
         this.title = this.editting.title;
         this.vote_average = this.editting.vote_average;
+
 
         if (this.editting.cast) {
             this.cast = this.editting.cast;
@@ -107,6 +113,7 @@ export class MovieDialogComponent {
         this.runtime = Object.assign({}, this.form.value).runtime;
         this.tagline = Object.assign({}, this.form.value).tagline;
         this.vote_average = Object.assign({}, this.form.value).vote_average;
+        this.nEjemplares = Object.assign({}, this.form.value).nEjemplares;
 
         if (!this.founded && !this.editting) {
             this.id = new Date().getTime();
@@ -120,33 +127,51 @@ export class MovieDialogComponent {
                 .catch(error => console.log(error));
         }
 
-        this.movie = {
-            genres: this.genres,
-            homepage: this.homepage,
-            url: this.url,
-            id: this.id,
-            overview: this.overview,
-            poster_path: this.poster_path,
-            production_companies: this.production_companies,
-            release_date: this.release_date,
-            runtime: this.runtime,
-            tagline: this.tagline,
-            title: this.title,
-            vote_average: this.vote_average,
-            cast: this.cast,
-            crew: this.crew,
-        };
-        this.movie = this.functions.checkKeys(this.movie);
-
         if (this.editting) {
-            this.db.updateMovie(this.movie)
-                .then(() => this.onClose('Película editada', this.movie))
+            this.editting.genres = this.genres;
+            this.editting.homepage = this.homepage;
+            this.editting.url = this.url;
+            this.editting.id = this.id;
+            this.editting.overview = this.overview;
+            this.editting.poster_path = this.poster_path;
+            this.editting.production_companies = this.production_companies;
+            this.editting.release_date = this.release_date;
+            this.editting.runtime = this.runtime;
+            this.editting.tagline = this.tagline;
+            this.editting.title = this.title;
+            this.editting.vote_average = this.vote_average;
+            this.editting.cast = this.cast;
+            this.editting.crew = this.crew;
+            this.editting.owned[this.authService.authLibrary.id].nEjemplares = this.nEjemplares;
+
+            this.editting = this.functions.checkKeys(this.editting);
+
+            this.db.updateMovie(this.editting)
+                .then(() => this.onClose('Película editada'))
                 .catch(error => {
                     console.log(error);
                     this.onClose('Problema al editar la película');
                 });
         } else {
-            this.db.saveMovie(this.movie)
+            this.movie = {
+                genres: this.genres,
+                homepage: this.homepage,
+                url: this.url,
+                id: this.id,
+                overview: this.overview,
+                poster_path: this.poster_path,
+                production_companies: this.production_companies,
+                release_date: this.release_date,
+                runtime: this.runtime,
+                tagline: this.tagline,
+                title: this.title,
+                vote_average: this.vote_average,
+                cast: this.cast,
+                crew: this.crew,
+            };
+            this.movie = this.functions.checkKeys(this.movie);
+
+            this.db.saveMovie(this.movie, this.nEjemplares)
                 .then(() => this.onClose('Película guardada'))
                 .catch(error => {
                     console.log(error);
@@ -256,10 +281,8 @@ export class MovieDialogComponent {
         this.newPoster = true;
     }
 
-    onClose(motive?: string, movie?: Movie) {
-        if (movie) {
-            this.dialogRef.close({ motive, movie });
-        } else if (motive) {
+    onClose(motive?: string) {
+        if (motive) {
             this.dialogRef.close(motive);
         } else {
             this.dialogRef.close();

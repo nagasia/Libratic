@@ -15,7 +15,9 @@ import { MatButtonModule,
     MatChipsModule,
     MatRadioModule,
     MatCheckboxModule,
-    MatProgressBarModule} from '@angular/material';
+    MatProgressBarModule,
+    MatDatepickerModule,
+    MatSlideToggleModule} from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
@@ -38,7 +40,9 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
         MatChipsModule,
         MatRadioModule,
         MatCheckboxModule,
-        MatProgressBarModule
+        MatProgressBarModule,
+        MatDatepickerModule,
+        MatSlideToggleModule
     ],
 })
 export class CommonMaterialModules { }

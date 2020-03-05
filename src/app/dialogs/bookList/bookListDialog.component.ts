@@ -7,7 +7,6 @@ import { OpenLibraryRequest, OpenLibraryShort, OpenLibraryLong } from '../../com
 import { map } from 'rxjs/operators';
 import { isNullOrUndefined } from 'util';
 import * as _ from 'lodash';
-import { async } from '@angular/core/testing';
 
 @Component({
     selector: 'app-book-list-dialog',
@@ -114,9 +113,6 @@ export class BookListDialogComponent implements OnInit {
                 await this.http.get(this.urlStart + this.isbn + this.urlLongEnd)
                     .pipe(map(data2 => this.parseLongJson(data2)))
                     .subscribe(async (resultLong: OpenLibraryLong) => {
-                        console.log('onclick-short', resultShort);
-                        console.log('onclick-long', resultLong);
-
                         const subtitle = (await resultShort).subtitle;
                         const physical_format = this.functions.translatePhysicalFormat((await resultShort).physical_format);
                         const url = resultLong.url;
@@ -227,19 +223,11 @@ export class BookListDialogComponent implements OnInit {
         }
     }
 
-    /*private parseShortJson(data: any): OpenLibraryShort {
-        const dataKeys = Object.keys(data);
-        const [firstKey] = dataKeys;
-        return data[firstKey].details;
-    }*/
-
     private async parseShortJson(data: any): Promise<OpenLibraryShort> {
-        console.log('parsejson-data', data);
         const dataKeys = Object.keys(data);
 
         if (dataKeys.length > 0) {
             const [firstKey] = dataKeys;
-            console.log('parsejson-details', data[firstKey].details);
             return data[firstKey].details;
         } else {
             if (this.isbn84.length > 0) {
@@ -277,5 +265,4 @@ export class BookListDialogComponent implements OnInit {
     onCLose() {
         this.dialogRef.close(this.book);
     }
-
 }

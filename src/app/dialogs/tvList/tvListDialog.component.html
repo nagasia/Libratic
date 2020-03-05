@@ -2,7 +2,11 @@
 
 <mat-dialog-content>
     <div class="container-fluid">
-        <mat-radio-group (change)="setTv($event)">
+        <mat-progress-bar mode="indeterminate" *ngIf="!isFinished"></mat-progress-bar>
+
+        <b *ngIf="isFinished && !isFounded">No se encontraron resultados</b>
+
+        <mat-radio-group (change)="setTv($event)" *ngIf="isFinished && isFounded">
             <div class="row mb-2" *ngFor="let item of tvList">
                 <div class="col-auto align-self-center">
                     <mat-radio-button [value]='item' color="primary"></mat-radio-button>

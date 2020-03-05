@@ -35,6 +35,8 @@ export class MoviesListDialogComponent implements OnInit {
     order_by: string;
 
     movie: Movie;
+    isFinished = false;
+    isFounded = false;
     selectedMovie;
     movieList;
 
@@ -56,7 +58,13 @@ export class MoviesListDialogComponent implements OnInit {
     ngOnInit() {
         if (typeof this.data === 'string') {
             const firstQuery = this.searchUrl + this.search + this.apiKey + this.query + this.title + this.language;
-            this.http.get(firstQuery).subscribe((data: any) => this.movieList = data.results,
+            this.http.get(firstQuery).subscribe((data: any) => {
+                if (data && data.results.length > 0) {
+                    this.movieList = data.results;
+                    this.isFounded = true;
+                }
+                this.isFinished = true;
+            },
                 error => console.log(error));
         } else {
             let firstQuery = this.searchUrl + this.discover + this.apiKey;
@@ -81,7 +89,13 @@ export class MoviesListDialogComponent implements OnInit {
                 firstQuery += this.orderBy + this.order_by;
             }
 
-            this.http.get(firstQuery + this.language).subscribe((data: any) => this.movieList = data.results,
+            this.http.get(firstQuery + this.language).subscribe((data: any) => {
+                if (data && data.results.length > 0) {
+                    this.movieList = data.results;
+                    this.isFounded = true;
+                }
+                this.isFinished = true;
+            },
                 error => console.log(error));
         }
     }

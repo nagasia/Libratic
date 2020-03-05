@@ -16,39 +16,36 @@ export class MoviesComponent implements OnInit, OnDestroy {
     isLoged = false;
     isAdmin = false;
     movies$;
-    movieRef$;
 
     constructor(private authService: AuthenticationService,
         private db: FireDBService,
         private functions: CommonFunctions,
         private dialog: MatDialog,
-        private snackBar: MatSnackBar) { }
-
-    ngOnInit() {
+        private snackBar: MatSnackBar) {
         this.isLoged = this.functions.isLoged(this.authService.authUser);
         if (this.isLoged) {
             this.isAdmin = this.functions.isAdmin(this.authService.authUser);
         }
+    }
 
+    ngOnInit() {
         if (this.isLoged) {
-            this.movies$ = this.db.getList('libraries/' + this.authService.authLibrary.id + '/moviesIDs/')
-                .subscribe(ids => {
-                    ids.forEach(element => {
-                        this.movieRef$ = this.db.getOne('movies/' + element).subscribe((movie: Movie) => {
-                            const index = _.find(this.movies, b => b.id === movie.id);
-                            if (!index) {
-                                this.movies.push(movie);
-                                this.movies = _.sortBy(this.movies, 'title');
-                            }
-                        });
-                    });
+            this.movies$ = this.db.getListFiltered('movies/', '/owned/' + this.authService.authLibrary.id + '/id/',
+                this.authService.authLibrary.id).subscribe(data => {
+                    if (data.length > 0) {
+                        this.movies = data;
+                        this.movies = _.sortBy(this.movies, 'title');
+                    }
+
                 },
                     error => console.log(error));
         } else {
             this.movies$ = this.movies$ = this.db.getList('movies/')
                 .subscribe(data => {
-                    this.movies = data;
-                    this.movies = _.sortBy(this.movies, 'title');
+                    if (data.length > 0) {
+                        this.movies = data;
+                        this.movies = _.sortBy(this.movies, 'title');
+                    }
                 },
                     error => console.log(error));
         }
@@ -74,25 +71,24 @@ export class MoviesComponent implements OnInit, OnDestroy {
         });
 
         movieDialog.afterClosed().subscribe(result => {
-            if (result.movie) {
-                const index = _.findIndex(this.movies, b => b.id === result.movie.id);
-                this.movies[index] = result.movie;
-                this.snackBar.open(result.motive, '', { duration: 2000 });
-            } else if (result) {
-                this.snackBar.open(result.motive, '', { duration: 2000 });
+            if (result) {
+                this.snackBar.open(result, '', { duration: 2000 });
             }
         },
             error => console.log(error));
     }
 
-    deleteMovie(id: number) {
-        this.db.deleteMovie(id).then(() => {
-            _.remove(this.movies, b => b.id === id);
-            this.snackBar.open('Película borrada', '', { duration: 2000 });
-        }).catch(error => {
-            console.log(error);
-            this.snackBar.open('Problema al borrar la película', '', { duration: 2000 });
-        });
+    deleteMovie(movie: Movie) {
+        let nEjemplares = movie.owned[this.authService.authLibrary.id].nEjemplares;
+        nEjemplares -= 1;
+
+        if (nEjemplares <= 0) {
+            movie.owned[this.authService.authLibrary.id] = null;
+            _.remove(this.movies, movie);
+        } else {
+            movie.owned[this.authService.authLibrary.id].nEjemplares = nEjemplares;
+        }
+        this.db.updateMovie(movie);
     }
 
     addMovieFavoutire(id: number) {
@@ -104,8 +100,14 @@ export class MoviesComponent implements OnInit, OnDestroy {
             });
     }
 
+    removeMovieFavoutire(movie: Movie) {
+        movie.favourites[this.authService.authUser.id] = null;
+        this.db.updateMovie(movie)
+            .then(() => this.snackBar.open('Favorito eliminado', '', { duration: 2000 }));
+    }
+
     addMovieWished(id: number) {
-        this.db.saveUserMovieWished(id)
+        this.db.saveMovieWished(id, this.authService.authUser.id)
             .then(() => this.snackBar.open('Película añadida a deseados', '', { duration: 2000 }))
             .catch(error => {
                 console.log(error);
@@ -113,12 +115,31 @@ export class MoviesComponent implements OnInit, OnDestroy {
             });
     }
 
+    removeMovieWished(movie: Movie) {
+        movie.wishes[this.authService.authUser.id] = null;
+        this.db.updateMovie(movie)
+            .then(() => this.snackBar.open('Deseado eliminado', '', { duration: 2000 }));
+    }
+
+    getNumberOfItems(item: any) {
+        return item.owned[this.authService.authLibrary.id].nEjemplares;
+    }
+
+    checkExists(item: Movie, key: string) {
+        if (this.functions.returnDataIfNotUndefined(item[key])) {
+            if (this.isAdmin) {
+                return this.functions.returnDataIfNotUndefined(item[key][this.authService.authLibrary.id]);
+            } else {
+                return this.functions.returnDataIfNotUndefined(item[key][this.authService.authUser.id]);
+            }
+        } else {
+            return false;
+        }
+    }
+
     ngOnDestroy() {
         if (this.movies$) {
             this.movies$.unsubscribe();
-        }
-        if (this.movieRef$) {
-            this.movieRef$.unsubscribe();
         }
     }
 }

@@ -21,8 +21,8 @@
                 </div>
             </div>
 
-            <div class="row row-cols-4 mt-2">
-                <div class="col">
+            <div class="row row-cols-3 mt-2">
+                <div class="col-auto">
                     <mat-form-field>
                         <input matInput placeholder="Fecha de estreno" type="text" formControlName="first_air_date"
                             required>
@@ -31,23 +31,34 @@
                     </mat-form-field>
                 </div>
 
-                <div class="col">
+                <div class="col-auto">
                     <mat-form-field>
                         <input matInput placeholder="Nº de temporadas" type="number"
                             formControlName="number_of_seasons">
                     </mat-form-field>
                 </div>
 
-                <div class="col">
+                <div class="col-auto">
                     <mat-form-field>
                         <input matInput placeholder="Nº de episodios" type="number"
                             formControlName="number_of_episodes">
                     </mat-form-field>
                 </div>
+            </div>
 
+            <div class="row mt-2">
                 <div class="col">
                     <mat-form-field>
                         <input matInput placeholder="Puntuación" type="number" formControlName="vote_average">
+                    </mat-form-field>
+                </div>
+
+                <div class="col">
+                    <mat-form-field>
+                        <input matInput placeholder="Nº de ejemplares" type="number" formControlName="nEjemplares"
+                            required>
+                        <mat-error *ngIf="form.controls.nEjemplares.hasError('required')">Por favor indique un número
+                        </mat-error>
                     </mat-form-field>
                 </div>
             </div>
