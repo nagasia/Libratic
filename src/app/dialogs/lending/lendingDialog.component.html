@@ -7,7 +7,7 @@
                 <div class="col">
                     <mat-form-field class="w-100">
                         <mat-label>Usuario</mat-label>
-                        <mat-select formControlName="users">
+                        <mat-select formControlName="users" (selectionChange)="filterLended($event)">
                             <mat-option *ngFor="let item of userList" [value]="item">{{item.name}} {{item.dni}}
                             </mat-option>
                         </mat-select>
@@ -21,14 +21,14 @@
                         <mat-label *ngIf="itemType === 'book'">Libro</mat-label>
                         <mat-label *ngIf="itemType === 'movie'">Película</mat-label>
                         <mat-select formControlName="items">
-                            <mat-option *ngFor="let item of itemList" [value]="item">{{item.title}}</mat-option>
+                            <mat-option *ngFor="let item of showItemList" [value]="item">{{item.title}}</mat-option>
                         </mat-select>
                     </mat-form-field>
                     
                     <mat-form-field class="w-100" *ngIf="itemType === 'tv'">
                         <mat-label>Serie</mat-label>
                         <mat-select formControlName="items">
-                            <mat-option *ngFor="let item of itemList" [value]="item">{{item.name}}</mat-option>
+                            <mat-option *ngFor="let item of showItemList" [value]="item">{{item.name}}</mat-option>
                         </mat-select>
                     </mat-form-field>
                 </div>

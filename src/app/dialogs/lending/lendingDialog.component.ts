@@ -22,6 +22,8 @@ export class LendingDialogComponent implements OnInit, OnDestroy {
     itemList: any[] = [];
     userList: User[];
     newLending: Lending;
+    lendings: any[];
+    showItemList: any[];
     itemList$;
     userList$;
     myItems$;
@@ -69,6 +71,8 @@ export class LendingDialogComponent implements OnInit, OnDestroy {
                     this.myLended$ = this.db.getListFiltered('lendings/' + this.authService.authLibrary.id, 'active', true)
                         .subscribe((lendings: Lending[]) => {
                             if (lendings.length > 0) {
+                                this.lendings = lendings;
+
                                 const booksIds: string[] = [];
                                 books.forEach(element => booksIds.push(element.isbn));
 
@@ -87,8 +91,10 @@ export class LendingDialogComponent implements OnInit, OnDestroy {
                                 });
 
                                 this.itemList = _.filter(books, b => noLended.includes(b.isbn));
+                                this.showItemList = _.clone(this.itemList);
                             } else {
                                 this.itemList = books;
+                                this.showItemList = _.clone(this.itemList);
                             }
                             this.itemList = _.sortBy(this.itemList, 'title');
                         }, error => console.log(error));
@@ -103,6 +109,8 @@ export class LendingDialogComponent implements OnInit, OnDestroy {
                     this.myLended$ = this.db.getListFiltered('lendings/' + this.authService.authLibrary.id, 'active', true)
                         .subscribe((lendings: Lending[]) => {
                             if (lendings.length > 0) {
+                                this.lendings = lendings;
+
                                 const moviesIds: number[] = [];
                                 movies.forEach(element => moviesIds.push(element.id));
 
@@ -121,8 +129,10 @@ export class LendingDialogComponent implements OnInit, OnDestroy {
                                 });
 
                                 this.itemList = _.filter(movies, b => noLended.includes(b.id));
+                                this.showItemList = _.clone(this.itemList);
                             } else {
                                 this.itemList = movies;
+                                this.showItemList = _.clone(this.itemList);
                             }
                             this.itemList = _.sortBy(this.itemList, 'title');
                         }, error => console.log(error));
@@ -137,6 +147,8 @@ export class LendingDialogComponent implements OnInit, OnDestroy {
                     this.myLended$ = this.db.getListFiltered('lendings/' + this.authService.authLibrary.id, 'active', true)
                         .subscribe((lendings: Lending[]) => {
                             if (lendings.length > 0) {
+                                this.lendings = lendings;
+
                                 const tvsIds: number[] = [];
                                 tvs.forEach(element => tvsIds.push(element.id));
 
@@ -155,8 +167,10 @@ export class LendingDialogComponent implements OnInit, OnDestroy {
                                 });
 
                                 this.itemList = _.filter(tvs, b => noLended.includes(b.id));
+                                this.showItemList = _.clone(this.itemList);
                             } else {
                                 this.itemList = tvs;
+                                this.showItemList = _.clone(this.itemList);
                             }
                             this.itemList = _.sortBy(this.itemList, 'name');
                         }, error => console.log(error));
@@ -202,6 +216,23 @@ export class LendingDialogComponent implements OnInit, OnDestroy {
         }
 
         this.save();
+    }
+
+    filterLended(event: any) {
+        this.showItemList = _.clone(this.itemList);
+
+        const userLendings = _.filter(this.lendings, { userId: event.value.id });
+        let itemsIds = [];
+        userLendings.forEach(element => itemsIds.push(element.itemId));
+
+        switch (this.itemType) {
+            case 'book':
+                _.remove(this.showItemList, b => itemsIds.includes(b.isbn));
+                break;
+            case 'movie': case 'tv':
+                _.remove(this.showItemList, b => itemsIds.includes(b.id));
+                break;
+        }
     }
 
     private save() {
