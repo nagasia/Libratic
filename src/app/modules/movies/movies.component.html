@@ -15,8 +15,8 @@
         <mat-expansion-panel *ngFor="let item of movies">
             <mat-expansion-panel-header>
                 <mat-panel-title class="align-items-center">
-                    <span class="mr-2"><b>{{item.title}}</b></span>
-                    <span>{{item.release_date}}</span>
+                    <b>{{item.title}}</b>
+                    <span class="ml-2 text-secondary">{{item.release_date}}</span>
                 </mat-panel-title>
 
                 <button mat-icon-button matTooltip="Añadir deseado"

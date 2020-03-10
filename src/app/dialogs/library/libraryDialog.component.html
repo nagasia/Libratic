@@ -79,6 +79,17 @@
                     </div>
                 </div>
             </ng-container>
+
+            <div class="row mt-2">
+                <div class="col-2">
+                    <img [src]="picture" class="w-100" *ngIf="picture">
+                    <i class="fas fa-university fa-4x" *ngIf="!picture"></i>
+                </div>
+
+                <div class="col align-self-center mt-2">
+                    <input mat-raised-button type="file" accept=".png,.jpg" (change)="setPicture($event)">
+                </div>
+            </div>
         </div>
     </mat-dialog-content>
 

@@ -34,7 +34,6 @@ export class LendingDialogComponent implements OnInit, OnDestroy {
         private db: FireDBService,
         private formBuilder: FormBuilder,
         @Inject(MAT_DIALOG_DATA) public itemType: string) {
-
         this.form = this.formBuilder.group({
             items: [this.items, [Validators.required]],
             users: [this.users, [Validators.required]],
@@ -72,6 +71,7 @@ export class LendingDialogComponent implements OnInit, OnDestroy {
                         .subscribe((lendings: Lending[]) => {
                             if (lendings.length > 0) {
                                 this.lendings = lendings;
+                                this.maxLendings();
 
                                 const booksIds: string[] = [];
                                 books.forEach(element => booksIds.push(element.isbn));
@@ -110,6 +110,7 @@ export class LendingDialogComponent implements OnInit, OnDestroy {
                         .subscribe((lendings: Lending[]) => {
                             if (lendings.length > 0) {
                                 this.lendings = lendings;
+                                this.maxLendings();
 
                                 const moviesIds: number[] = [];
                                 movies.forEach(element => moviesIds.push(element.id));
@@ -148,6 +149,7 @@ export class LendingDialogComponent implements OnInit, OnDestroy {
                         .subscribe((lendings: Lending[]) => {
                             if (lendings.length > 0) {
                                 this.lendings = lendings;
+                                this.maxLendings();
 
                                 const tvsIds: number[] = [];
                                 tvs.forEach(element => tvsIds.push(element.id));
@@ -176,6 +178,22 @@ export class LendingDialogComponent implements OnInit, OnDestroy {
                         }, error => console.log(error));
                 }
             }, error => console.log(error));
+    }
+
+    private maxLendings() {
+        this.userList.forEach(user => {
+            const maxItems = _.filter(this.lendings, { userId: user.id, itemType: this.itemType }).length;
+
+            if (this.itemType === 'book') {
+                if (maxItems >= 3) {
+                    _.remove(this.userList, user);
+                }
+            } else {
+                if (maxItems >= 1) {
+                    _.remove(this.userList, user);
+                }
+            }
+        });
     }
 
     getData() {

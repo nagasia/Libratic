@@ -11,8 +11,10 @@
         <mat-accordion>
             <mat-expansion-panel *ngFor="let item of usersList">
                 <mat-expansion-panel-header *ngIf="!item.punishment">
-                    <mat-panel-title class="align-items-center">{{item.name}}</mat-panel-title>
-                    <mat-panel-description class="align-items-center">{{item.email}}</mat-panel-description>
+                    <mat-panel-title class="align-items-center">
+                        <b>{{item.name}}</b>
+                        <span class="ml-4 text-secondary">{{item.email}}</span>
+                    </mat-panel-title>
 
                     <button mat-icon-button matTooltip="Editar" (click)="editUser(item); $event.stopPropagation()"
                         color="primary">
@@ -25,8 +27,10 @@
                 </mat-expansion-panel-header>
 
                 <mat-expansion-panel-header *ngIf="item.punishment" class="bg-danger">
-                    <mat-panel-title class="align-items-center text-white">{{item.name}}</mat-panel-title>
-                    <mat-panel-description class="align-items-center text-white">{{item.email}}</mat-panel-description>
+                    <mat-panel-title class="align-items-center text-white">
+                        <span>{{item.name}}</span>
+                        <span class="ml-4">{{item.email}}</span>
+                    </mat-panel-title>
 
                     <button mat-icon-button matTooltip="Editar" (click)="editUser(item); $event.stopPropagation()"
                         color="primary">
@@ -40,17 +44,12 @@
 
                 <div class="container-fluid mt-2" *ngIf="!functions.isAdmin(item)">
                     <div class="row">
-                        <div class="col-auto">
-                            <span *ngIf="item.picture">
-                                <i class="fas fa-user fa-4x"></i>
-                            </span>
-
-                            <span *ngIf="!item.picture">
-                                <i class="fas fa-user fa-4x"></i>
-                            </span>
+                        <div class="col-1">
+                            <img [src]="item.picture" *ngIf="item.picture" class="w-100">
+                            <i class="fas fa-user fa-4x" *ngIf="!item.picture"></i>
                         </div>
 
-                        <div class="col">
+                        <div class="col-auto">
                             <div class="row" *ngIf="item.adress">
                                 <div class="col">
                                     <b>Dirección: </b>
@@ -94,15 +93,11 @@
                     </mat-card-header>
 
                     <mat-card-content class="container-fluid">
-                        <div class="row mt-2">
-                            <div class="col-auto">
-                                <span *ngIf="authService.authUser.picture" class="content-fluid">
-                                    <i class="fas fa-user fa-4x"></i>
-                                </span>
-
-                                <span *ngIf="!authService.authUser.picture" class="content-fluid">
-                                    <i class="fas fa-user fa-4x"></i>
-                                </span>
+                        <div class="row">
+                            <div class="col-2">
+                                <img [src]="authService.authUser.picture" *ngIf="authService.authUser.picture"
+                                    class="w-100">
+                                <i class="fas fa-user fa-4x" *ngIf="!authService.authUser.picture"></i>
                             </div>
 
                             <div class="col-auto">
@@ -166,38 +161,48 @@
                     </mat-card-header>
 
                     <mat-card-content class="container-fluid">
-                        <div class="row mt-2">
-                            <div class="col">
-                                <b>Nombre: </b>
-                                <span>{{authService.authLibrary.name}}</span>
+                        <div class="row">
+                            <div class="col-2">
+                                <img [src]="authService.authLibrary.picture" *ngIf="authService.authLibrary.picture"
+                                    class="w-100">
+                                <i class="fas fa-university fa-4x" *ngIf="!authService.authLibrary.picture"></i>
                             </div>
-                        </div>
 
-                        <div class="row mt-2" *ngIf="authService.authLibrary.adress">
-                            <div class="col">
-                                <b>Dirección: </b>
-                                <span>{{authService.authLibrary.adress}}</span>
-                            </div>
-                        </div>
+                            <div class="col-auto">
+                                <div class="row">
+                                    <div class="col">
+                                        <b>Nombre: </b>
+                                        <span>{{authService.authLibrary.name}}</span>
+                                    </div>
+                                </div>
 
-                        <div class="row mt-2" *ngIf="authService.authLibrary.city">
-                            <div class="col">
-                                <b>Ciudad: </b>
-                                <span>{{authService.authLibrary.city}}</span>
-                            </div>
-                        </div>
+                                <div class="row mt-2" *ngIf="authService.authLibrary.adress">
+                                    <div class="col">
+                                        <b>Dirección: </b>
+                                        <span>{{authService.authLibrary.adress}}</span>
+                                    </div>
+                                </div>
 
-                        <div class="row mt-2" *ngIf="authService.authLibrary.email">
-                            <div class="col">
-                                <b>Email: </b>
-                                <span>{{authService.authLibrary.email}}</span>
-                            </div>
-                        </div>
+                                <div class="row mt-2" *ngIf="authService.authLibrary.city">
+                                    <div class="col">
+                                        <b>Ciudad: </b>
+                                        <span>{{authService.authLibrary.city}}</span>
+                                    </div>
+                                </div>
 
-                        <div class="row mt-2" *ngIf="authService.authLibrary.phone">
-                            <div class="col">
-                                <b>Teléfono: </b>
-                                <span>{{authService.authLibrary.phone}}</span>
+                                <div class="row mt-2" *ngIf="authService.authLibrary.email">
+                                    <div class="col">
+                                        <b>Email: </b>
+                                        <span>{{authService.authLibrary.email}}</span>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-2" *ngIf="authService.authLibrary.phone">
+                                    <div class="col">
+                                        <b>Teléfono: </b>
+                                        <span>{{authService.authLibrary.phone}}</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </mat-card-content>

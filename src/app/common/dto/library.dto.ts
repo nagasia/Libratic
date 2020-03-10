@@ -5,4 +5,6 @@ export interface Library {
     city?: string;
     email?: string;
     phone?: number;
+    picture?: string;
+    deactivate?: boolean;
 }

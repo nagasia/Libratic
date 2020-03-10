@@ -31,7 +31,8 @@ export class BookDialogComponent implements OnDestroy {
     title: string;
     subtitle: string;
     number_of_pages = null;
-    cover: string;
+    //cover: string;
+    cover;
     subjects: string[] = [];
     authors: string[] = [];
     publish_date: string;
@@ -118,7 +119,6 @@ export class BookDialogComponent implements OnDestroy {
                         title: this.title,
                         subtitle: this.subtitle,
                         number_of_pages: this.number_of_pages,
-                        cover: this.cover,
                         subjects: this.subjects,
                         authors: this.authors,
                         publish_date: this.publish_date,
@@ -143,6 +143,18 @@ export class BookDialogComponent implements OnDestroy {
     setCover(event) {
         this.coverEvent = event;
         this.newCover = true;
+
+        if (this.editting) {
+            this.storage.upload('books/' + this.isbn, this.coverEvent)
+                .then(() => this.storage.getUrl('books/' + this.isbn)
+                    .subscribe(url => this.cover = url))
+                .catch(error => console.log(error));
+        } else {
+            this.storage.upload('books/temp' + this.authService.authLibrary.id, this.coverEvent)
+                .then(() => this.storage.getUrl('books/temp' + this.authService.authLibrary.id)
+                    .subscribe(url => this.cover = url))
+                .catch(error => console.log(error));
+        }
     }
 
     async searchOpenLibrary() {
@@ -253,14 +265,6 @@ export class BookDialogComponent implements OnDestroy {
             this.books$.unsubscribe();
         }
 
-        if (this.newCover) {
-            await this.storage.uploadCover('books/' + this.isbn, this.coverEvent)
-                .then(() => {
-                    this.book.cover = this.storage.savedPicture;
-                })
-                .catch(error => console.log(error));
-        }
-
         if (this.editting) {
             this.editting.cdu = this.cdu;
             this.editting.title = this.title;
@@ -273,6 +277,7 @@ export class BookDialogComponent implements OnDestroy {
             this.editting.publishers = this.publishers;
             this.editting.subjects = this.subjects;
             this.editting.authors = this.authors;
+            this.editting.cover = this.cover;
             this.editting.owned[this.authService.authLibrary.id].nEjemplares = this.nEjemplares;
 
             this.editting = this.functions.checkKeys(this.editting);
@@ -284,6 +289,14 @@ export class BookDialogComponent implements OnDestroy {
                     this.onClose('Problema al editar el libro');
                 });
         } else {
+            if (this.newCover) {
+                this.storage.delete('books/temp' + this.authService.authLibrary.id);
+                await this.storage.upload('books/' + this.isbn, this.coverEvent)
+                    .then(async () => await this.storage.getUrl('books/' + this.isbn)
+                        .subscribe(url => this.book.cover = url))
+                    .catch(error => console.log(error));
+            }
+
             this.book = this.functions.checkKeys(this.book);
 
             this.db.saveBook(this.book, this.nEjemplares)

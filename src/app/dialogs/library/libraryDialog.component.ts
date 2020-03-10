@@ -5,6 +5,8 @@ import { FireDBService } from '../../services/fireDB.service';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { User } from '../../common/dto/user.dto';
 import { Library } from 'src/app/common/dto/library.dto';
+import { StorageService } from '../../services/storage.service';
+import { CommonFunctions } from '../../common/commonFunctions';
 
 @Component({
     selector: 'app-library-dialog',
@@ -21,6 +23,10 @@ export class LibraryDialogComponent implements OnDestroy {
     password: string;
     date: string;
     user: User;
+    picture: string;
+    pictureEvent;
+    newPicture = false;
+    library: Library;
     user$;
     library$;
 
@@ -28,6 +34,8 @@ export class LibraryDialogComponent implements OnDestroy {
         private dialogRef: MatDialogRef<LibraryDialogComponent>,
         private db: FireDBService,
         public authService: AuthenticationService,
+        private storage: StorageService,
+        private functions: CommonFunctions,
         @Inject(MAT_DIALOG_DATA) public isEditting: boolean) {
         if (isEditting) {
             this.name = this.authService.authLibrary.name;
@@ -35,6 +43,7 @@ export class LibraryDialogComponent implements OnDestroy {
             this.city = this.authService.authLibrary.city;
             this.phone = this.authService.authLibrary.phone;
             this.emailLibrary = this.authService.authLibrary.email;
+            this.picture = this.authService.authLibrary.picture;
 
             this.form = this.formBuilder.group({
                 name: [this.name, [Validators.required, Validators.minLength(6)]],
@@ -123,13 +132,14 @@ export class LibraryDialogComponent implements OnDestroy {
         this.saveLibrary();
     }
 
-    private saveLibrary() {
+    private async saveLibrary() {
         if (this.isEditting) {
             this.authService.authLibrary.name = this.name;
             this.authService.authLibrary.adress = this.adress;
             this.authService.authLibrary.city = this.city;
             this.authService.authLibrary.phone = this.phone;
             this.authService.authLibrary.email = this.emailLibrary;
+            this.authService.authLibrary.picture = this.picture;
 
             this.db.updateLibrary(this.authService.authLibrary)
                 .then(() => {
@@ -141,7 +151,7 @@ export class LibraryDialogComponent implements OnDestroy {
                 });
         } else {
             const id = this.db.getNewRefKey('libraries');
-            const library: Library = {
+            this.library = {
                 id,
                 name: this.name,
                 adress: this.adress,
@@ -150,16 +160,42 @@ export class LibraryDialogComponent implements OnDestroy {
                 email: this.emailLibrary,
             };
             this.user.libraryID = id;
+            if (this.newPicture) {
+                this.storage.delete('libraries/temp');
+                await this.storage.upload('libraries/' + this.library.id, this.pictureEvent)
+                    .then(async () => await this.storage.getUrl('libraries/' + this.library.id)
+                        .subscribe(url => this.library.picture = url))
+                    .catch(error => console.log(error));
+            }
 
-            this.db.saveLibrary(this.user, library)
+            this.library = this.functions.checkKeys(this.library);
+
+            this.db.saveLibrary(this.user, this.library)
                 .then(() => {
-                    this.authService.authLibrary = library;
+                    this.authService.authLibrary = this.library;
                     this.onClose('Biblioteca creada', true);
                 })
                 .catch(error => {
                     console.log(error);
                     this.onClose();
                 });
+        }
+    }
+
+    setPicture(event: any) {
+        this.pictureEvent = event;
+        this.newPicture = true;
+
+        if (this.isEditting) {
+            this.storage.upload('libraries/' + this.authService.authLibrary.id, this.pictureEvent)
+                .then(() => this.storage.getUrl('libraries/' + this.authService.authLibrary.id)
+                    .subscribe(url => this.picture = url))
+                .catch(error => console.log(error));
+        } else {
+            this.storage.upload('libraries/temp', this.pictureEvent)
+                .then(() => this.storage.getUrl('libraries/temp')
+                    .subscribe(url => this.picture = url))
+                .catch(error => console.log(error));
         }
     }
 

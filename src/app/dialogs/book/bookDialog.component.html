@@ -31,13 +31,8 @@
 
             <div class="row mt-2">
                 <div class="col-2">
-                    <span *ngIf="cover">
-                        <img [src]="cover" class="w-100">
-                    </span>
-
-                    <span *ngIf="!cover" class="content-fluid">
-                        <i class="fas fa-book fa-4x"></i>
-                    </span>
+                    <img [src]="cover" class="w-100" *ngIf="cover">
+                    <i class="fas fa-book fa-4x" *ngIf="!cover"></i>
                 </div>
 
                 <div class="col align-self-center mt-2">

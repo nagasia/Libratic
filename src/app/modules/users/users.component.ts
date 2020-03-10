@@ -24,7 +24,6 @@ export class UsersComponent implements OnInit, OnDestroy {
 
     constructor(public authService: AuthenticationService,
         private db: FireDBService,
-        public storage: StorageService,
         private formBuilder: FormBuilder,
         public functions: CommonFunctions,
         private dialog: MatDialog,

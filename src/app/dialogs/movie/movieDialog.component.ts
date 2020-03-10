@@ -115,23 +115,10 @@ export class MovieDialogComponent {
         this.vote_average = Object.assign({}, this.form.value).vote_average;
         this.nEjemplares = Object.assign({}, this.form.value).nEjemplares;
 
-        if (!this.founded && !this.editting) {
-            this.id = new Date().getTime();
-        }
-
-        if (this.newPoster) {
-            await this.storage.uploadCover('movies/' + this.id, this.posterEvent)
-                .then(() => {
-                    this.poster_path = this.storage.savedPicture;
-                })
-                .catch(error => console.log(error));
-        }
-
         if (this.editting) {
             this.editting.genres = this.genres;
             this.editting.homepage = this.homepage;
             this.editting.url = this.url;
-            this.editting.id = this.id;
             this.editting.overview = this.overview;
             this.editting.poster_path = this.poster_path;
             this.editting.production_companies = this.production_companies;
@@ -153,6 +140,10 @@ export class MovieDialogComponent {
                     this.onClose('Problema al editar la película');
                 });
         } else {
+            if (!this.founded) {
+                this.id = new Date().getTime();
+            }
+
             this.movie = {
                 genres: this.genres,
                 homepage: this.homepage,
@@ -169,6 +160,14 @@ export class MovieDialogComponent {
                 cast: this.cast,
                 crew: this.crew,
             };
+            if (this.newPoster) {
+                this.storage.delete('movies/temp' + this.authService.authLibrary.id);
+                await this.storage.upload('movies/' + this.id, this.posterEvent)
+                    .then(async () => await this.storage.getUrl('movies/' + this.id)
+                        .subscribe(url => this.movie.poster_path = url))
+                    .catch(error => console.log(error));
+            }
+
             this.movie = this.functions.checkKeys(this.movie);
 
             this.db.saveMovie(this.movie, this.nEjemplares)
@@ -279,6 +278,18 @@ export class MovieDialogComponent {
     setPosterPath(event) {
         this.posterEvent = event;
         this.newPoster = true;
+
+        if (this.editting) {
+            this.storage.upload('movies/' + this.id, this.posterEvent)
+                .then(() => this.storage.getUrl('movies/' + this.id)
+                    .subscribe(url => this.poster_path = url))
+                .catch(error => console.log(error));
+        } else {
+            this.storage.upload('movies/temp' + this.authService.authLibrary.id, this.posterEvent)
+                .then(() => this.storage.getUrl('movies/temp' + this.authService.authLibrary.id)
+                    .subscribe(url => this.poster_path = url))
+                .catch(error => console.log(error));
+        }
     }
 
     onClose(motive?: string) {

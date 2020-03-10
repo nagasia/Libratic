@@ -15,8 +15,8 @@
         <mat-expansion-panel *ngFor="let item of tvShows">
             <mat-expansion-panel-header>
                 <mat-panel-title class="align-items-center">
-                    <span class="mr-2"><b>{{item.name}}</b></span>
-                    <span>{{item.first_air_date}}</span>
+                    <b>{{item.name}}</b>
+                    <span class="ml-2 text-secondary">{{item.first_air_date}}</span>
                 </mat-panel-title>
 
                 <button mat-icon-button matTooltip="Añadir deseado"

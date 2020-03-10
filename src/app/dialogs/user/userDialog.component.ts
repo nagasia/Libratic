@@ -4,6 +4,8 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { User } from 'src/app/common/dto/user.dto';
 import { FireDBService } from '../../services/fireDB.service';
 import { AuthenticationService } from '../../services/authentication.service';
+import { StorageService } from 'src/app/services/storage.service';
+import { CommonFunctions } from '../../common/commonFunctions';
 
 @Component({
     selector: 'app-user-dialog',
@@ -18,14 +20,20 @@ export class UserDialogComponent implements OnDestroy {
     phone: number;
     dni: number;
     userLevel: string;
-    uid: string;
+    id: string;
     punishment: boolean;
+    picture: string;
+    pictureEvent;
+    newPicture = false;
+    user: User;
     newUser$;
 
     constructor(private formBuilder: FormBuilder,
         private dialogRef: MatDialogRef<UserDialogComponent>,
         private db: FireDBService,
+        private storage: StorageService,
         private authService: AuthenticationService,
+        private functions: CommonFunctions,
         @Inject(MAT_DIALOG_DATA) public editting: User) {
         if (editting) {
             this.name = editting.name;
@@ -35,8 +43,9 @@ export class UserDialogComponent implements OnDestroy {
             this.phone = editting.phone;
             this.dni = editting.dni;
             this.userLevel = editting.userLevel;
-            this.uid = editting.id;
+            this.id = editting.id;
             this.punishment = editting.punishment;
+            this.picture = editting.picture;
         }
 
         this.form = this.formBuilder.group({
@@ -68,7 +77,7 @@ export class UserDialogComponent implements OnDestroy {
 
             await this.authService.newUser(this.email, password)
                 .then((data: any) => {
-                    this.uid = data.user.uid;
+                    this.id = data.user.uid;
 
                     this.checkUser();
                 })
@@ -80,7 +89,7 @@ export class UserDialogComponent implements OnDestroy {
     }
 
     private checkUser() {
-        this.newUser$ = this.db.getOne('users/' + this.uid)
+        this.newUser$ = this.db.getOne('users/' + this.id)
             .subscribe(response => {
                 if (!response) {
                     this.newUser();
@@ -93,13 +102,13 @@ export class UserDialogComponent implements OnDestroy {
             });
     }
 
-    private newUser() {
+    private async newUser() {
         if (this.newUser$) {
             this.newUser$.unsubscribe();
         }
 
-        const user: User = {
-            id: this.uid,
+        this.user = {
+            id: this.id,
             name: this.name,
             adress: this.adress,
             city: this.city,
@@ -110,8 +119,17 @@ export class UserDialogComponent implements OnDestroy {
             libraryID: this.authService.authLibrary.id,
             punishment: this.punishment,
         };
+        if (this.newPicture) {
+            this.storage.delete('users/temp' + this.authService.authLibrary.id);
+            await this.storage.upload('users/' + this.id, this.pictureEvent)
+                .then(async () => await this.storage.getUrl('users/' + this.id)
+                    .subscribe(url => this.user.picture = url))
+                .catch(error => console.log(error));
+        }
 
-        this.db.saveUser(user)
+        this.user = this.functions.checkKeys(this.user);
+
+        this.db.saveUser(this.user)
             .then(() => {
                 this.authService.reestartPassword(this.email)
                     .catch(error => console.log(error));
@@ -124,25 +142,42 @@ export class UserDialogComponent implements OnDestroy {
     }
 
     private editUser() {
-        const user: User = {
-            id: this.uid,
-            name: this.name,
-            adress: this.adress,
-            city: this.city,
-            email: this.email,
-            phone: this.phone,
-            dni: this.dni,
-            userLevel: this.userLevel,
-            libraryID: this.authService.authLibrary.id,
-            punishment: this.punishment,
-        };
+        this.editting.name = this.name;
+        this.editting.adress = this.adress;
+        this.editting.city = this.city;
+        this.editting.email = this.email;
+        this.editting.phone = this.phone;
+        this.editting.dni = this.dni;
+        this.editting.userLevel = this.userLevel;
+        this.editting.libraryID = this.authService.authLibrary.id;
+        this.editting.punishment = this.punishment;
+        this.editting.picture = this.picture;
 
-        this.db.saveUser(user)
+        this.editting = this.functions.checkKeys(this.editting);
+
+        this.db.saveUser(this.editting)
             .then(() => this.onClose('Usuario editado'))
             .catch(error => {
                 console.log(error);
                 this.onClose();
             });
+    }
+
+    setPicture(event: any) {
+        this.pictureEvent = event;
+        this.newPicture = true;
+
+        if (this.editting) {
+            this.storage.upload('users/' + this.id, this.pictureEvent)
+                .then(() => this.storage.getUrl('users/' + this.id)
+                    .subscribe(url => this.picture = url))
+                .catch(error => console.log(error));
+        } else {
+            this.storage.upload('users/temp' + this.authService.authLibrary.id, this.pictureEvent)
+                .then(() => this.storage.getUrl('users/temp' + this.authService.authLibrary.id)
+                    .subscribe(url => this.picture = url))
+                .catch(error => console.log(error));
+        }
     }
 
     onClose(motive?: string) {

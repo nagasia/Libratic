@@ -112,7 +112,7 @@ export class TvDialogComponent {
         }
     }
 
-    async setDataFromForm() {
+    setDataFromForm() {
         this.first_air_date = Object.assign({}, this.form.value).first_air_date;
         this.homepage = Object.assign({}, this.form.value).homepage;
         this.name = Object.assign({}, this.form.value).name;
@@ -122,24 +122,10 @@ export class TvDialogComponent {
         this.overview = Object.assign({}, this.form.value).overview;
         this.nEjemplares = Object.assign({}, this.form.value).nEjemplares;
 
-        if (!this.founded && !this.editting) {
-            this.id = new Date().getTime();
-        }
-
-        if (this.newPoster) {
-            await this.storage.uploadCover('tvs/' + this.id, this.posterEvent)
-                .then(() => {
-                    this.poster_path = this.storage.savedPicture;
-                })
-                .catch(error => console.log(error));
-        }
-
-
-
         this.save();
     }
 
-    private save() {
+    private async save() {
         if (this.editting) {
             this.editting.first_air_date = this.first_air_date;
             this.editting.homepage = this.homepage;
@@ -165,6 +151,10 @@ export class TvDialogComponent {
                     this.onClose('Problema al editar la serie');
                 });
         } else {
+            if (!this.founded) {
+                this.id = new Date().getTime();
+            }
+
             this.tv = {
                 created_by: this.created_by,
                 first_air_date: this.first_air_date,
@@ -182,6 +172,14 @@ export class TvDialogComponent {
                 cast: this.cast,
                 crew: this.crew,
             };
+            if (this.newPoster) {
+                this.storage.delete('tvs/temp' + this.authService.authLibrary.id);
+                await this.storage.upload('tvs/' + this.id, this.posterEvent)
+                    .then(async () => await this.storage.getUrl('tvs/' + this.id)
+                        .subscribe(url => this.tv.poster_path = url))
+                    .catch(error => console.log(error));
+            }
+
             this.tv = this.functions.checkKeys(this.tv);
 
             this.db.saveTv(this.tv, this.nEjemplares)
@@ -299,6 +297,18 @@ export class TvDialogComponent {
     setPosterPath(event) {
         this.posterEvent = event;
         this.newPoster = true;
+
+        if (this.editting) {
+            this.storage.upload('tvs/' + this.id, this.posterEvent)
+                .then(() => this.storage.getUrl('tvs/' + this.id)
+                    .subscribe(url => this.poster_path = url))
+                .catch(error => console.log(error));
+        } else {
+            this.storage.upload('tvs/temp' + this.authService.authLibrary.id, this.posterEvent)
+                .then(() => this.storage.getUrl('tvs/temp' + this.authService.authLibrary.id)
+                    .subscribe(url => this.poster_path = url))
+                .catch(error => console.log(error));
+        }
     }
 
     onClose(motive?: string) {

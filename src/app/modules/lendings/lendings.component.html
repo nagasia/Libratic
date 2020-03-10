@@ -20,11 +20,9 @@
                         <mat-expansion-panel *ngFor="let item of bookList">
                             <mat-expansion-panel-header *ngIf="item.late" class="bg-danger">
                                 <mat-panel-title class="align-items-center text-white">
-                                    {{item.itemName}}
+                                    <span>{{item.itemName}}</span>
+                                    <span class="ml-4">{{functions.translateDate(item.endDate)}}</span>
                                 </mat-panel-title>
-                                <mat-panel-description class="align-items-center text-white">
-                                    {{functions.translateDate(item.endDate)}}
-                                </mat-panel-description>
 
                                 <button mat-icon-button matTooltip="Añadir tiempo" *ngIf="isAdmin"
                                     (click)="editLending(item,'book'); $event.stopPropagation()">
@@ -38,11 +36,9 @@
 
                             <mat-expansion-panel-header *ngIf="!item.late">
                                 <mat-panel-title class="align-items-center">
-                                    {{item.itemName}}
+                                    <b>{{item.itemName}}</b>
+                                    <span class="ml-4 text-secondary">{{functions.translateDate(item.endDate)}}</span>
                                 </mat-panel-title>
-                                <mat-panel-description class="align-items-center">
-                                    {{functions.translateDate(item.endDate)}}
-                                </mat-panel-description>
 
                                 <button mat-icon-button matTooltip="Añadir tiempo" *ngIf="isAdmin" color="primary"
                                     (click)="editLending(item,'book'); $event.stopPropagation()">
@@ -104,11 +100,9 @@
                         <mat-expansion-panel *ngFor="let item of movieList">
                             <mat-expansion-panel-header *ngIf="item.late" class="bg-danger">
                                 <mat-panel-title class="align-items-center text-white">
-                                    {{item.itemName}}
+                                    <span>{{item.itemName}}</span>
+                                    <span class="ml-4">{{functions.translateDate(item.endDate)}}</span>
                                 </mat-panel-title>
-                                <mat-panel-description class="align-items-center text-white">
-                                    {{functions.translateDate(item.endDate)}}
-                                </mat-panel-description>
 
                                 <button mat-icon-button matTooltip="Añadir tiempo" *ngIf="isAdmin"
                                     (click)="editLending(item,'movie'); $event.stopPropagation()">
@@ -122,11 +116,9 @@
 
                             <mat-expansion-panel-header *ngIf="!item.late">
                                 <mat-panel-title class="align-items-center">
-                                    {{item.itemName}}
+                                    <b>{{item.itemName}}</b>
+                                    <span class="ml-4 text-secondary">{{functions.translateDate(item.endDate)}}</span>
                                 </mat-panel-title>
-                                <mat-panel-description class="align-items-center">
-                                    {{functions.translateDate(item.endDate)}}
-                                </mat-panel-description>
 
                                 <button mat-icon-button matTooltip="Añadir tiempo" *ngIf="isAdmin" color="primary"
                                     (click)="editLending(item,'movie'); $event.stopPropagation()">
@@ -188,11 +180,9 @@
                         <mat-expansion-panel *ngFor="let item of tvList">
                             <mat-expansion-panel-header *ngIf="item.late" class="bg-danger">
                                 <mat-panel-title class="align-items-center text-white">
-                                    {{item.itemName}}
+                                    <span>{{item.itemName}}</span>
+                                    <span class="ml-4">{{functions.translateDate(item.endDate)}}</span>
                                 </mat-panel-title>
-                                <mat-panel-description class="align-items-center text-white">
-                                    {{functions.translateDate(item.endDate)}}
-                                </mat-panel-description>
 
                                 <button mat-icon-button matTooltip="Añadir tiempo" *ngIf="isAdmin"
                                     (click)="editLending(item,'tv'); $event.stopPropagation()">
@@ -206,11 +196,9 @@
 
                             <mat-expansion-panel-header *ngIf="!item.late">
                                 <mat-panel-title class="align-items-center">
-                                    {{item.itemName}}
+                                    <b>{{item.itemName}}</b>
+                                    <span class="ml-4 text-secondary">{{functions.translateDate(item.endDate)}}</span>
                                 </mat-panel-title>
-                                <mat-panel-description class="align-items-center">
-                                    {{functions.translateDate(item.endDate)}}
-                                </mat-panel-description>
 
                                 <button mat-icon-button matTooltip="Añadir tiempo" *ngIf="isAdmin" color="primary"
                                     (click)="editLending(item,'tv'); $event.stopPropagation()">
