@@ -176,7 +176,7 @@ export class TvListDialogComponent implements OnInit {
                     overview: tv.overview,
                     poster_path,
                     production_companies,
-                    first_air_date: tv.first_air_date,
+                    first_air_date: this.functions.reverseDate(tv.first_air_date),
                     number_of_episodes: tv.number_of_episodes,
                     number_of_seasons: tv.number_of_seasons,
                     name: tv.name,

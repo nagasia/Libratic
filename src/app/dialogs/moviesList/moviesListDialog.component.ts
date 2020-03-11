@@ -182,7 +182,7 @@ export class MoviesListDialogComponent implements OnInit {
                     overview: movie.overview,
                     poster_path,
                     production_companies,
-                    release_date: movie.release_date,
+                    release_date: this.functions.reverseDate(movie.release_date),
                     runtime: movie.runtime,
                     tagline,
                     title: movie.title,

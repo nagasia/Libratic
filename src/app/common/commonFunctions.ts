@@ -1,5 +1,6 @@
 import { User } from './dto/user.dto';
 import { isNullOrUndefined } from 'util';
+import { logging } from 'protractor';
 
 export class CommonFunctions {
 
@@ -77,6 +78,27 @@ export class CommonFunctions {
 
     translateDate(time: number): string {
         const date = new Date(time);
-        return date.getDate() + '/' + date.getMonth() + '/' + date.getFullYear();
+        return date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear();
+    }
+
+    reverseDate(day: string): string {
+        let result = day;
+        let elements = [];
+
+        if (day.includes('-')) {
+            elements = day.split('-');
+        } else if (day.includes('/')) {
+            elements = day.split('/');
+        }
+
+        if (elements.length > 0) {
+            if (elements[0].length === 4) {
+                result = elements[2] + '/' + elements[1] + '/' + elements[0];
+            } else {
+                result = elements.join('/');
+            }
+        }
+
+        return result;
     }
 }

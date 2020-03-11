@@ -205,7 +205,7 @@ export class MovieDialogComponent {
                     this.form.patchValue({
                         homepage: result.homepage,
                         overview: result.overview,
-                        release_date: result.release_date,
+                        release_date: this.functions.reverseDate(result.release_date),
                         runtime: result.runtime,
                         tagline: result.tagline,
                         title: result.title,

@@ -216,7 +216,7 @@ export class TvDialogComponent {
                     this.created_by = result.created_by;
 
                     this.form.patchValue({
-                        first_air_date: result.first_air_date,
+                        first_air_date: this.functions.reverseDate(result.first_air_date),
                         homepage: result.homepage,
                         name: result.name,
                         number_of_episodes: result.number_of_episodes,
