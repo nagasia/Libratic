@@ -186,7 +186,6 @@ export class MovieDialogComponent {
 
         if (this.title || this.release_date) {
             const movieDialog = this.dialog.open(MoviesListDialogComponent, {
-                width: '50%',
                 data: this.title,
             });
 

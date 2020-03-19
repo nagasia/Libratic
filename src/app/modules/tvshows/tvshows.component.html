@@ -4,15 +4,19 @@
     </a>
 
     <div class="spacer"></div>
+
+    <button mat-icon-button matTooltip="Filtrar" (click)="filter()" color="primary">
+        <i class="fas fa-filter"></i>
+    </button>
     <button mat-icon-button matTooltip="Crear" (click)="newTv()" color="primary" *ngIf="isAdmin">
         <i class="fas fa-plus"></i>
         <i class="fas fa-tv"></i>
     </button>
 </mat-toolbar>
 
-<div class="container-fluid mb-3" *ngIf="tvShows.length > 0">
+<div class="container-fluid mb-3" *ngIf="filteredTvs.length > 0">
     <mat-accordion>
-        <mat-expansion-panel *ngFor="let item of tvShows">
+        <mat-expansion-panel *ngFor="let item of filteredTvs">
             <mat-expansion-panel-header>
                 <mat-panel-title class="align-items-center">
                     <b>{{item.name}}</b>
@@ -125,7 +129,7 @@
                             <div class="col">
                                 <b>Autores: </b>
                                 <mat-chip-list>
-                                    <mat-chip *ngFor="let author of item.genres">{{author}}</mat-chip>
+                                    <mat-chip *ngFor="let author of item.created_by">{{author}}</mat-chip>
                                 </mat-chip-list>
                             </div>
                         </div>

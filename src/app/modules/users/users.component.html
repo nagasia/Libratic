@@ -2,14 +2,18 @@
     <mat-toolbar>
         <span>{{authService.authLibrary.name}}</span>
         <div class="spacer"></div>
+
+        <button mat-icon-button matTooltip="Filtrar" (click)="filter()" color="primary">
+            <i class="fas fa-filter"></i>
+        </button>
         <button mat-icon-button matTooltip="Crear" (click)="newUser()" color="primary">
             <i class="fas fa-user-plus"></i>
         </button>
     </mat-toolbar>
 
-    <div class="container-fluid mb-3" *ngIf="usersList.length > 0">
+    <div class="container-fluid mb-3" *ngIf="filteredUsers.length > 0">
         <mat-accordion>
-            <mat-expansion-panel *ngFor="let item of usersList">
+            <mat-expansion-panel *ngFor="let item of filteredUsers">
                 <mat-expansion-panel-header *ngIf="!item.punishment">
                     <mat-panel-title class="align-items-center">
                         <b>{{item.name}}</b>

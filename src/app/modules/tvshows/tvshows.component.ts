@@ -6,6 +6,8 @@ import { TvShow } from '../../common/dto/tv.dto';
 import * as _ from 'lodash';
 import { MatSnackBar, MatDialog } from '@angular/material';
 import { TvDialogComponent } from '../../dialogs/tv/tvDialog.component';
+import { FilterDialogComponent } from '../../dialogs/filter/filterDialog.component';
+import { Filter } from '../../common/dto/filter.dto';
 
 @Component({
     selector: 'app-tvshows',
@@ -16,6 +18,8 @@ export class TvshowsComponent implements OnInit, OnDestroy {
     isLoged = false;
     tvShows = [];
     tvShows$;
+    tvFilters: Filter;
+    filteredTvs = [];
 
     constructor(private functions: CommonFunctions,
         private authService: AuthenticationService,
@@ -35,6 +39,10 @@ export class TvshowsComponent implements OnInit, OnDestroy {
                     if (data.length > 0) {
                         this.tvShows = data;
                         this.tvShows = _.sortBy(this.tvShows, 'name');
+                        this.filteredTvs = _.clone(this.tvShows);
+                        if (this.tvFilters) {
+                            this.filteredTvs = this.functions.filterLending(this.tvShows, this.filteredTvs, this.tvFilters);
+                        }
                     }
                 }, error => console.log(error));
         } else {
@@ -42,6 +50,10 @@ export class TvshowsComponent implements OnInit, OnDestroy {
                 if (data.length > 0) {
                     this.tvShows = data;
                     this.tvShows = _.sortBy(this.tvShows, 'name');
+                    this.filteredTvs = _.clone(this.tvShows);
+                    if (this.tvFilters) {
+                        this.filteredTvs = this.functions.filterLending(this.tvShows, this.filteredTvs, this.tvFilters);
+                    }
                 }
             },
                 error => console.log(error));
@@ -49,9 +61,7 @@ export class TvshowsComponent implements OnInit, OnDestroy {
     }
 
     newTv() {
-        const tvDialog = this.dialog.open(TvDialogComponent, {
-            width: '50%',
-        });
+        const tvDialog = this.dialog.open(TvDialogComponent);
 
         tvDialog.afterClosed().subscribe(result => {
             if (result) {
@@ -63,7 +73,6 @@ export class TvshowsComponent implements OnInit, OnDestroy {
 
     editTv(tv: TvShow) {
         const tvDialog = this.dialog.open(TvDialogComponent, {
-            width: '50%',
             data: tv,
         });
 
@@ -132,6 +141,25 @@ export class TvshowsComponent implements OnInit, OnDestroy {
         } else {
             return false;
         }
+    }
+
+    filter() {
+        const filterDialog = this.dialog.open(FilterDialogComponent, {
+            data: {
+                filterType: 'tv',
+                filter: this.tvFilters,
+            },
+        });
+
+        filterDialog.afterClosed().subscribe(result => {
+            this.tvFilters = result;
+            if (result) {
+                this.filteredTvs = this.functions.filterTv(this.tvShows, this.filteredTvs, result);
+            } else {
+                this.filteredTvs = _.clone(this.tvShows);
+            }
+        },
+            error => console.log(error));
     }
 
     ngOnDestroy() {

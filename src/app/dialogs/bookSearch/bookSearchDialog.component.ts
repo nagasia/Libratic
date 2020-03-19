@@ -406,7 +406,6 @@ export class BookSearchDialogComponent {
         if (this.selectedTitle || this.selectedAuthor || this.selectedYear || this.selectedPublisher
             || this.selectedSubject.length > 0) {
             const bookDialog = this.dialog.open(BookListDialogComponent, {
-                width: '50%',
                 data: {
                     title: this.selectedTitle,
                     author: this.selectedAuthor,

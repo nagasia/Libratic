@@ -5,6 +5,7 @@ import * as _ from 'lodash';
 import { Book } from '../../common/dto/book.dto';
 import { Movie } from '../../common/dto/movie.dto';
 import { TvShow } from '../../common/dto/tv.dto';
+import { MatDialog } from '@angular/material';
 
 @Component({
     selector: 'app-favourites',

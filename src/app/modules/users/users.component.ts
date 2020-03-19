@@ -5,9 +5,10 @@ import { User } from '../../common/dto/user.dto';
 import { MatDialog, MatSnackBar } from '@angular/material';
 import { UserDialogComponent } from '../../dialogs/user/userDialog.component';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { StorageService } from '../../services/storage.service';
 import { CommonFunctions } from '../../common/commonFunctions';
 import * as _ from 'lodash';
+import { FilterDialogComponent } from '../../dialogs/filter/filterDialog.component';
+import { Filter } from '../../common/dto/filter.dto';
 
 @Component({
     selector: 'app-user',
@@ -21,6 +22,8 @@ export class UsersComponent implements OnInit, OnDestroy {
     usersList = [];
     listFiltered$;
     newUser$;
+    filters: Filter;
+    filteredUsers = [];
 
     constructor(public authService: AuthenticationService,
         private db: FireDBService,
@@ -49,6 +52,10 @@ export class UsersComponent implements OnInit, OnDestroy {
                         this.usersList = data;
                         this.isLoading = false;
                         this.usersList = _.sortBy(this.usersList, 'name');
+                        this.filteredUsers = _.clone(this.usersList);
+                        if (this.filters) {
+                            this.filteredUsers = this.functions.filterBook(this.usersList, this.filteredUsers, this.filters);
+                        }
                     }
                 },
                     error => console.log(error));
@@ -56,9 +63,7 @@ export class UsersComponent implements OnInit, OnDestroy {
     }
 
     newUser() {
-        this.newUser$ = this.dialog.open(UserDialogComponent, {
-            width: '50%',
-        });
+        this.newUser$ = this.dialog.open(UserDialogComponent);
 
         this.newUser$.afterClosed().subscribe(result => {
             if (result) {
@@ -69,7 +74,6 @@ export class UsersComponent implements OnInit, OnDestroy {
 
     editUser(user: User) {
         this.newUser$ = this.dialog.open(UserDialogComponent, {
-            width: '50%',
             data: user,
         });
 
@@ -96,6 +100,25 @@ export class UsersComponent implements OnInit, OnDestroy {
                 console.log(error);
                 this.snackBar.open('Error al borrar al usuario', '', { duration: 2000 });
             });
+    }
+
+    filter() {
+        const filterDialog = this.dialog.open(FilterDialogComponent, {
+            data: {
+                filterType: 'user',
+                filter: this.filters,
+            },
+        });
+
+        filterDialog.afterClosed().subscribe(result => {
+            this.filters = result;
+            if (result) {
+                this.filteredUsers = this.functions.filterUser(this.usersList, this.filteredUsers, result);
+            } else {
+                this.filteredUsers = _.clone(this.usersList);
+            }
+        },
+            error => console.log(error));
     }
 
     ngOnDestroy() {

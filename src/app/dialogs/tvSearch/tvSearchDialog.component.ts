@@ -63,12 +63,10 @@ export class TvSearchDialogComponent {
         let tvDialog;
         if (this.name) {
             tvDialog = this.dialog.open(TvListDialogComponent, {
-                width: '50%',
                 data: this.name,
             });
         } else if (this.first_air_date || this.vote_average || this.genresSelected || this.genresWSelected) {
             tvDialog = this.dialog.open(TvListDialogComponent, {
-                width: '50%',
                 data: {
                     first_air_date: this.first_air_date,
                     vote_average: this.vote_average,

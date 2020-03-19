@@ -198,7 +198,6 @@ export class TvDialogComponent {
 
         if (this.name || this.first_air_date) {
             const tvDialog = this.dialog.open(TvListDialogComponent, {
-                width: '50%',
                 data: this.name,
             });
 

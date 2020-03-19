@@ -6,9 +6,11 @@
                     <i class="fas fa-book mr-2"></i>
                     Libros
                 </div>
-                <div class="col-auto">
-                    <button mat-icon-button matTooltip="Crear" (click)="newBookLending()" color="primary"
-                        *ngIf="isAdmin">
+                <div class="col-auto" *ngIf="isAdmin">
+                    <button mat-icon-button matTooltip="Filtrar" (click)="bookFilter()" color="primary">
+                        <i class="fas fa-filter"></i>
+                    </button>
+                    <button mat-icon-button matTooltip="Crear" (click)="newBookLending()" color="primary">
                         <i class="fas fa-plus"></i>
                     </button>
                 </div>
@@ -17,7 +19,7 @@
             <div class="row mt-2">
                 <div class="col">
                     <mat-accordion>
-                        <mat-expansion-panel *ngFor="let item of bookList">
+                        <mat-expansion-panel *ngFor="let item of filteredBooks">
                             <mat-expansion-panel-header *ngIf="item.late" class="bg-danger">
                                 <mat-panel-title class="align-items-center text-white">
                                     <span>{{item.itemName}}</span>
@@ -88,6 +90,9 @@
                     Películas
                 </div>
                 <div class="col-auto" *ngIf="isAdmin">
+                    <button mat-icon-button matTooltip="Filtrar" (click)="movieFilter()" color="primary">
+                        <i class="fas fa-filter"></i>
+                    </button>
                     <button mat-icon-button matTooltip="Crear" (click)="newMovieLending()" color="primary">
                         <i class="fas fa-plus"></i>
                     </button>
@@ -97,7 +102,7 @@
             <div class="row mt-2">
                 <div class="col">
                     <mat-accordion>
-                        <mat-expansion-panel *ngFor="let item of movieList">
+                        <mat-expansion-panel *ngFor="let item of filteredMovies">
                             <mat-expansion-panel-header *ngIf="item.late" class="bg-danger">
                                 <mat-panel-title class="align-items-center text-white">
                                     <span>{{item.itemName}}</span>
@@ -168,6 +173,9 @@
                     Series
                 </div>
                 <div class="col-auto" *ngIf="isAdmin">
+                    <button mat-icon-button matTooltip="Filtrar" (click)="tvFilter()" color="primary">
+                        <i class="fas fa-filter"></i>
+                    </button>
                     <button mat-icon-button matTooltip="Crear" (click)="newTVLending()" color="primary">
                         <i class="fas fa-plus"></i>
                     </button>
@@ -177,7 +185,7 @@
             <div class="row mt-2">
                 <div class="col">
                     <mat-accordion>
-                        <mat-expansion-panel *ngFor="let item of tvList">
+                        <mat-expansion-panel *ngFor="let item of filteredTvs">
                             <mat-expansion-panel-header *ngIf="item.late" class="bg-danger">
                                 <mat-panel-title class="align-items-center text-white">
                                     <span>{{item.itemName}}</span>

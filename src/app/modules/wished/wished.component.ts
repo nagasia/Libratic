@@ -69,9 +69,7 @@ export class WishedComponent implements OnInit, OnDestroy {
     }
 
     addBook() {
-        const bookDialog = this.dialog.open(BookSearchDialogComponent, {
-            width: '50%',
-        });
+        const bookDialog = this.dialog.open(BookSearchDialogComponent);
 
         bookDialog.afterClosed().subscribe(result => {
             if (result) {
@@ -91,9 +89,7 @@ export class WishedComponent implements OnInit, OnDestroy {
     }
 
     addMovie() {
-        const movieDialog = this.dialog.open(MovieSearchDialogComponent, {
-            width: '50%',
-        });
+        const movieDialog = this.dialog.open(MovieSearchDialogComponent);
 
         movieDialog.afterClosed().subscribe(result => {
             if (result) {
@@ -113,9 +109,7 @@ export class WishedComponent implements OnInit, OnDestroy {
     }
 
     addTV() {
-        const tvDialog = this.dialog.open(TvSearchDialogComponent, {
-            width: '50%',
-        });
+        const tvDialog = this.dialog.open(TvSearchDialogComponent);
 
         tvDialog.afterClosed().subscribe(result => {
             if (result) {
@@ -145,5 +139,4 @@ export class WishedComponent implements OnInit, OnDestroy {
             this.tvList$.unsubscribe();
         }
     }
-
 }

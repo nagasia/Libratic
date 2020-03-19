@@ -6,6 +6,8 @@ import { Movie } from '../../common/dto/movie.dto';
 import * as _ from 'lodash';
 import { MatDialog, MatSnackBar } from '@angular/material';
 import { MovieDialogComponent } from '../../dialogs/movie/movieDialog.component';
+import { FilterDialogComponent } from '../../dialogs/filter/filterDialog.component';
+import { Filter } from '../../common/dto/filter.dto';
 
 @Component({
     selector: 'app-movies',
@@ -16,6 +18,8 @@ export class MoviesComponent implements OnInit, OnDestroy {
     isLoged = false;
     isAdmin = false;
     movies$;
+    movieFilters: Filter;
+    filteredMovies = [];
 
     constructor(private authService: AuthenticationService,
         private db: FireDBService,
@@ -35,8 +39,11 @@ export class MoviesComponent implements OnInit, OnDestroy {
                     if (data.length > 0) {
                         this.movies = data;
                         this.movies = _.sortBy(this.movies, 'title');
+                        this.filteredMovies = _.clone(this.movies);
+                        if (this.movieFilters) {
+                            this.filteredMovies = this.functions.filterLending(this.movies, this.filteredMovies, this.movieFilters);
+                        }
                     }
-
                 },
                     error => console.log(error));
         } else {
@@ -45,6 +52,10 @@ export class MoviesComponent implements OnInit, OnDestroy {
                     if (data.length > 0) {
                         this.movies = data;
                         this.movies = _.sortBy(this.movies, 'title');
+                        this.filteredMovies = _.clone(this.movies);
+                        if (this.movieFilters) {
+                            this.filteredMovies = this.functions.filterLending(this.movies, this.filteredMovies, this.movieFilters);
+                        }
                     }
                 },
                     error => console.log(error));
@@ -52,9 +63,7 @@ export class MoviesComponent implements OnInit, OnDestroy {
     }
 
     newMovie() {
-        const movieDialog = this.dialog.open(MovieDialogComponent, {
-            width: '50%',
-        });
+        const movieDialog = this.dialog.open(MovieDialogComponent);
 
         movieDialog.afterClosed().subscribe(result => {
             if (result) {
@@ -66,7 +75,6 @@ export class MoviesComponent implements OnInit, OnDestroy {
 
     editMovie(movie: Movie) {
         const movieDialog = this.dialog.open(MovieDialogComponent, {
-            width: '50%',
             data: movie,
         });
 
@@ -135,6 +143,25 @@ export class MoviesComponent implements OnInit, OnDestroy {
         } else {
             return false;
         }
+    }
+
+    filter() {
+        const filterDialog = this.dialog.open(FilterDialogComponent, {
+            data: {
+                filterType: 'movie',
+                filter: this.movieFilters,
+            },
+        });
+
+        filterDialog.afterClosed().subscribe(result => {
+            this.movieFilters = result;
+            if (result) {
+                this.filteredMovies = this.functions.filterMovie(this.movies, this.filteredMovies, result);
+            } else {
+                this.filteredMovies = _.clone(this.movies);
+            }
+        },
+            error => console.log(error));
     }
 
     ngOnDestroy() {

@@ -62,12 +62,10 @@ export class MovieSearchDialogComponent {
         let movieDialog;
         if (this.title) {
             movieDialog = this.dialog.open(MoviesListDialogComponent, {
-                width: '50%',
                 data: this.title,
             });
         } else if (this.release_date || this.runtime || this.vote_average || this.genresSelected) {
             movieDialog = this.dialog.open(MoviesListDialogComponent, {
-                width: '50%',
                 data: {
                     release_date: this.release_date,
                     runtime: this.runtime,

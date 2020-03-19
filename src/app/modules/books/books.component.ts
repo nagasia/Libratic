@@ -6,6 +6,8 @@ import { MatDialog, MatSnackBar } from '@angular/material';
 import { BookDialogComponent } from '../../dialogs/book/bookDialog.component';
 import { Book } from '../../common/dto/book.dto';
 import * as _ from 'lodash';
+import { FilterDialogComponent } from '../../dialogs/filter/filterDialog.component';
+import { Filter } from '../../common/dto/filter.dto';
 
 @Component({
     selector: 'app-books',
@@ -16,6 +18,8 @@ export class BooksComponent implements OnInit, OnDestroy {
     isLoged: boolean;
     books = [];
     booksList$;
+    filters: Filter;
+    filteredBooks = [];
 
     constructor(private authService: AuthenticationService,
         private db: FireDBService,
@@ -38,6 +42,10 @@ export class BooksComponent implements OnInit, OnDestroy {
                     if (list.length !== 0) {
                         this.books = list;
                         this.books = _.sortBy(this.books, 'title');
+                        this.filteredBooks = _.clone(this.books);
+                        if (this.filters) {
+                            this.filteredBooks = this.functions.filterBook(this.books, this.filteredBooks, this.filters);
+                        }
                     }
                 },
                     error => console.log(error));
@@ -47,6 +55,10 @@ export class BooksComponent implements OnInit, OnDestroy {
                     if (list.length !== 0) {
                         this.books = list;
                         this.books = _.sortBy(this.books, 'title');
+                        this.filteredBooks = _.clone(this.books);
+                        if (this.filters) {
+                            this.filteredBooks = this.functions.filterBook(this.books, this.filteredBooks, this.filters);
+                        }
                     }
                 },
                     error => console.log(error));
@@ -54,9 +66,7 @@ export class BooksComponent implements OnInit, OnDestroy {
     }
 
     newBook() {
-        const bookDialog = this.dialog.open(BookDialogComponent, {
-            width: '50%',
-        });
+        const bookDialog = this.dialog.open(BookDialogComponent);
 
         bookDialog.afterClosed().subscribe(result => {
             if (result) {
@@ -73,6 +83,7 @@ export class BooksComponent implements OnInit, OnDestroy {
         if (nEjemplares <= 0) {
             book.owned[this.authService.authLibrary.id] = null;
             _.remove(this.books, book);
+            _.remove(this.filteredBooks, book);
         } else {
             book.owned[this.authService.authLibrary.id].nEjemplares = nEjemplares;
         }
@@ -81,7 +92,6 @@ export class BooksComponent implements OnInit, OnDestroy {
 
     editBook(book: Book) {
         const bookDialog = this.dialog.open(BookDialogComponent, {
-            width: '50%',
             data: book,
         });
 
@@ -137,6 +147,25 @@ export class BooksComponent implements OnInit, OnDestroy {
         } else {
             return false;
         }
+    }
+
+    filter() {
+        const filterDialog = this.dialog.open(FilterDialogComponent, {
+            data: {
+                filterType: 'book',
+                filter: this.filters,
+            },
+        });
+
+        filterDialog.afterClosed().subscribe(result => {
+            this.filters = result;
+            if (result) {
+                this.filteredBooks = this.functions.filterBook(this.books, this.filteredBooks, result);
+            } else {
+                this.filteredBooks = _.clone(this.books);
+            }
+        },
+            error => console.log(error));
     }
 
     ngOnDestroy() {

@@ -4,15 +4,19 @@
     </a>
 
     <div class="spacer"></div>
+
+    <button mat-icon-button matTooltip="Filtrar" (click)="filter()" color="primary">
+        <i class="fas fa-filter"></i>
+    </button>
     <button mat-icon-button matTooltip="Crear" (click)="newMovie()" color="primary" *ngIf="isAdmin">
         <i class="fas fa-plus"></i>
         <i class="fas fa-film"></i>
     </button>
 </mat-toolbar>
 
-<div class="container-fluid mb-3" *ngIf="movies.length > 0">
+<div class="container-fluid mb-3" *ngIf="filteredMovies.length > 0">
     <mat-accordion>
-        <mat-expansion-panel *ngFor="let item of movies">
+        <mat-expansion-panel *ngFor="let item of filteredMovies">
             <mat-expansion-panel-header>
                 <mat-panel-title class="align-items-center">
                     <b>{{item.title}}</b>

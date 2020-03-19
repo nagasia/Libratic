@@ -6,6 +6,8 @@ import { CommonFunctions } from '../../common/commonFunctions';
 import { Lending } from '../../common/dto/lendings.dto';
 import { LendingDialogComponent } from '../../dialogs/lending/lendingDialog.component';
 import * as _ from 'lodash';
+import { FilterDialogComponent } from '../../dialogs/filter/filterDialog.component';
+import { Filter } from '../../common/dto/filter.dto';
 
 @Component({
     selector: 'app-lendings',
@@ -22,6 +24,12 @@ export class LendingsComponent implements OnInit, OnDestroy {
     bookList$;
     movieList$;
     tvList$;
+    bookFilters: Filter;
+    movieFilters: Filter;
+    tvFilters: Filter;
+    filteredBooks = [];
+    filteredMovies = [];
+    filteredTvs = [];
 
     constructor(private authService: AuthenticationService,
         private db: FireDBService,
@@ -44,15 +52,27 @@ export class LendingsComponent implements OnInit, OnDestroy {
 
                     this.bookList = _.filter(data, { itemType: 'book' });
                     this.bookList = this.checkLateReturns(this.bookList);
-                    _.sortBy(this.bookList, ['late', 'itemName']);
+                    _.sortBy(this.bookList, ['itemName']);
+                    this.filteredBooks = _.clone(this.bookList);
+                    if (this.bookFilters) {
+                        this.filteredBooks = this.functions.filterLending(this.bookList, this.filteredBooks, this.bookFilters);
+                    }
 
                     this.movieList = _.filter(data, { itemType: 'movie' });
                     this.movieList = this.checkLateReturns(this.movieList);
-                    _.sortBy(this.movieList, ['late', 'itemName']);
+                    _.sortBy(this.movieList, ['itemName']);
+                    this.filteredMovies = _.clone(this.movieList);
+                    if (this.movieFilters) {
+                        this.filteredMovies = this.functions.filterLending(this.movieList, this.filteredMovies, this.movieFilters);
+                    }
 
                     this.tvList = _.filter(data, { itemType: 'tv' });
                     this.tvList = this.checkLateReturns(this.tvList);
-                    _.sortBy(this.tvList, ['late', 'itemName']);
+                    _.sortBy(this.tvList, ['itemName']);
+                    this.filteredTvs = _.clone(this.tvList);
+                    if (this.tvFilters) {
+                        this.filteredTvs = this.functions.filterLending(this.tvList, this.filteredTvs, this.tvFilters);
+                    }
                 }
             },
                 error => console.log(error));
@@ -77,7 +97,6 @@ export class LendingsComponent implements OnInit, OnDestroy {
 
     newBookLending() {
         const bookDialog = this.dialog.open(LendingDialogComponent, {
-            width: '30%',
             data: 'book',
         });
 
@@ -91,7 +110,6 @@ export class LendingsComponent implements OnInit, OnDestroy {
 
     newMovieLending() {
         const bookDialog = this.dialog.open(LendingDialogComponent, {
-            width: '30%',
             data: 'movie',
         });
 
@@ -105,7 +123,6 @@ export class LendingsComponent implements OnInit, OnDestroy {
 
     newTVLending() {
         const bookDialog = this.dialog.open(LendingDialogComponent, {
-            width: '30%',
             data: 'tv',
         });
 
@@ -140,14 +157,12 @@ export class LendingsComponent implements OnInit, OnDestroy {
     }
 
     private updateList(list: Lending[], item: Lending) {
-        const bookIndex = _.findIndex(list,
-            { itemId: item.itemId, userId: item.userId, startDate: item.startDate });
+        const bookIndex = _.findIndex(list, item);
         list[bookIndex] = item;
     }
 
     private removeFromList(list: Lending[], item: Lending) {
-        const bookIndex = _.findIndex(list,
-            { itemId: item.itemId, userId: item.userId, startDate: item.startDate });
+        const bookIndex = _.findIndex(list, item);
         list[bookIndex] = item;
         _.remove(list, item);
     }
@@ -191,6 +206,63 @@ export class LendingsComponent implements OnInit, OnDestroy {
                 console.log(error);
                 this.snackBar.open('Problema con la operación', '', { duration: 2000 });
             });
+    }
+
+    bookFilter() {
+        const filterDialog = this.dialog.open(FilterDialogComponent, {
+            data: {
+                filterType: 'lending',
+                filter: this.bookFilters,
+            },
+        });
+
+        filterDialog.afterClosed().subscribe(result => {
+            this.bookFilters = result;
+            if (result) {
+                this.filteredBooks = this.functions.filterBook(this.bookList, this.filteredBooks, result);
+            } else {
+                this.filteredBooks = _.clone(this.bookList);
+            }
+        },
+            error => console.log(error));
+    }
+
+    movieFilter() {
+        const filterDialog = this.dialog.open(FilterDialogComponent, {
+            data: {
+                filterType: 'lending',
+                filter: this.movieFilters,
+            },
+        });
+
+        filterDialog.afterClosed().subscribe(result => {
+            this.movieFilters = result;
+            if (result) {
+                this.filteredMovies = this.functions.filterMovie(this.movieList, this.filteredMovies, result);
+            } else {
+                this.filteredMovies = _.clone(this.movieList);
+            }
+        },
+            error => console.log(error));
+    }
+
+    tvFilter() {
+        const filterDialog = this.dialog.open(FilterDialogComponent, {
+            data: {
+                filterType: 'lending',
+                filter: this.tvFilters,
+            },
+        });
+
+        filterDialog.afterClosed().subscribe(result => {
+            this.tvFilters = result;
+            if (result) {
+                this.filteredTvs = this.functions.filterTv(this.tvList, this.filteredTvs, result);
+            } else {
+                this.filteredTvs = _.clone(this.tvList);
+            }
+        },
+            error => console.log(error));
     }
 
     ngOnDestroy() {
