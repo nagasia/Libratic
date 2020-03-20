@@ -29,9 +29,7 @@ export class AppComponent implements OnDestroy {
     }
 
     newLibrary() {
-        this.libraryDialog$ = this.dialog.open(LibraryDialogComponent, {
-            width: '40%',
-        });
+        this.libraryDialog$ = this.dialog.open(LibraryDialogComponent);
 
         this.libraryDialog$.afterClosed().subscribe(result => {
             if (result) {
@@ -49,7 +47,6 @@ export class AppComponent implements OnDestroy {
 
     editLibrary() {
         this.libraryDialog$ = this.dialog.open(LibraryDialogComponent, {
-            width: '40%',
             data: true,
         });
 
@@ -99,6 +96,5 @@ export class AppComponent implements OnDestroy {
         if (this.loginDialog$) {
             this.loginDialog$.unsubscribe();
         }
-        //this.authService.logout();
     }
 }
