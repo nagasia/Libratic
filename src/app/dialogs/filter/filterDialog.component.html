@@ -2,104 +2,70 @@
 
 <form [formGroup]="form" (ngSubmit)="save()">
     <mat-dialog-content>
-        <div class="container-fluid">
-            <div class="row" *ngIf="filterType !== 'user'">
-                <div class="col">
-                    <mat-form-field class="w-100">
-                        <input matInput placeholder="Título" type="text" formControlName="title">
-                    </mat-form-field>
-                </div>
+        <div fxLayout="column" fxLayoutGap="8px">
+            <mat-form-field *ngIf="filterType !== 'user'">
+                <input matInput placeholder="Título" type="text" formControlName="title">
+            </mat-form-field>
+
+            <mat-form-field *ngIf="filterType === 'book'">
+                <input matInput placeholder="Autor" type="text" formControlName="author">
+            </mat-form-field>
+
+            <mat-form-field *ngIf="filterType === 'tv'">
+                <input matInput placeholder="Guionista" type="text" formControlName="author">
+            </mat-form-field>
+
+            <mat-form-field *ngIf="filterType === 'book'">
+                <input matInput placeholder="Año de publicación" type="number" formControlName="date">
+            </mat-form-field>
+
+            <div fxLayout="column" fxLayout.gt-xs="row" fxLayoutGap="8px"
+                *ngIf="filterType === 'movie' || filterType === 'tv'">
+                <mat-form-field>
+                    <input matInput placeholder="Año de emisión" type="number" formControlName="date">
+                </mat-form-field>
+
+                <mat-form-field *ngIf="filterType === 'movie'">
+                    <input matInput placeholder="Duración mínima" type="number" formControlName="runtime">
+                </mat-form-field>
+
+                <mat-form-field>
+                    <input matInput placeholder="Puntuación mínima" type="number" formControlName="vote">
+                </mat-form-field>
             </div>
 
-            <div class="row" *ngIf="filterType === 'book'">
-                <div class="col">
-                    <mat-form-field class="w-100">
-                        <input matInput placeholder="Autor" type="text" formControlName="author">
-                    </mat-form-field>
-                </div>
-            </div>
-            <div class="row" *ngIf="filterType === 'tv'">
-                <div class="col">
-                    <mat-form-field class="w-100">
-                        <input matInput placeholder="Guionista" type="text" formControlName="author">
-                    </mat-form-field>
-                </div>
-            </div>
+            <div fxLayout="column" fxLayout.gt-xs="row" fxLayoutAlign.gt-xs="space-between"
+                fxLayoutGap="8px" *ngIf="filterType !== 'user' && filterType !== 'lending' ">
+                <mat-form-field>
+                    <input matInput placeholder="Género" type="text" formControlName="subject">
+                </mat-form-field>
 
-            <div class="row" *ngIf="filterType === 'book'">
-                <div class="col">
-                    <mat-form-field class="w-100">
-                        <input matInput placeholder="Año de publicación" type="number" formControlName="date">
-                    </mat-form-field>
-                </div>
+                <mat-form-field *ngIf="filterType === 'book'">
+                    <input matInput placeholder="Editorial" type="text" formControlName="companie">
+                </mat-form-field>
+
+                <mat-form-field *ngIf="filterType === 'tv' || filterType === 'movie'">
+                    <input matInput placeholder="Productora" type="text" formControlName="companie">
+                </mat-form-field>
             </div>
 
-            <div class="row" *ngIf="filterType === 'movie' || filterType === 'tv'">
-                <div class="col">
-                    <mat-form-field class="w-100">
-                        <input matInput placeholder="Año de emisión" type="number" formControlName="date">
-                    </mat-form-field>
-                </div>
+            <div fxLayout="column" fxLayout.gt-xs="row" fxLayoutAlign.gt-xs="space-between"
+                fxLayoutGap="8px" *ngIf="filterType === 'movie' || filterType === 'tv'">
+                <mat-form-field>
+                    <input matInput placeholder="Actor" type="text" formControlName="actor">
+                </mat-form-field>
 
-                <div class="col" *ngIf="filterType === 'movie'">
-                    <mat-form-field class="w-100">
-                        <input matInput placeholder="Duración mínima" type="number" formControlName="runtime">
-                    </mat-form-field>
-                </div>
-
-                <div class="col">
-                    <mat-form-field class="w-100">
-                        <input matInput placeholder="Puntuación mínima" type="number" formControlName="vote">
-                    </mat-form-field>
-                </div>
+                <mat-form-field>
+                    <input matInput placeholder="Director" type="text" formControlName="director">
+                </mat-form-field>
             </div>
 
-            <div class="row" *ngIf="filterType !== 'user' && filterType !== 'lending' ">
-                <div class="col">
-                    <mat-form-field class="w-100">
-                        <input matInput placeholder="Género" type="text" formControlName="subject">
-                    </mat-form-field>
-                </div>
+            <mat-form-field *ngIf="filterType === 'user' || filterType === 'lending'">
+                <input matInput placeholder="Nombre de usuario" type="text" formControlName="username">
+            </mat-form-field>
 
-                <div class="col" *ngIf="filterType === 'book'">
-                    <mat-form-field class="w-100">
-                        <input matInput placeholder="Editorial" type="text" formControlName="companie">
-                    </mat-form-field>
-                </div>
-                <div class="col" *ngIf="filterType === 'tv' || filterType === 'movie'">
-                    <mat-form-field class="w-100">
-                        <input matInput placeholder="Productora" type="text" formControlName="companie">
-                    </mat-form-field>
-                </div>
-            </div>
-
-            <div class="row" *ngIf="filterType === 'movie' || filterType === 'tv'">
-                <div class="col">
-                    <mat-form-field class="w-100">
-                        <input matInput placeholder="Actor" type="text" formControlName="actor">
-                    </mat-form-field>
-                </div>
-
-                <div class="col">
-                    <mat-form-field class="w-100">
-                        <input matInput placeholder="Director" type="text" formControlName="director">
-                    </mat-form-field>
-                </div>
-            </div>
-
-            <div class="row" *ngIf="filterType === 'user' || filterType === 'lending'">
-                <div class="col">
-                    <mat-form-field class="w-100">
-                        <input matInput placeholder="Nombre de usuario" type="text" formControlName="username">
-                    </mat-form-field>
-                </div>
-            </div>
-
-            <div class="row mb-2" *ngIf="filterType === 'user'">
-                <div class="col">
-                    <mat-slide-toggle color="warning" formControlName="punishment">Multa por retraso</mat-slide-toggle>
-                </div>
-            </div>
+            <mat-slide-toggle *ngIf="filterType === 'user'" color="warning" formControlName="punishment">Multa por
+                retraso</mat-slide-toggle>
         </div>
     </mat-dialog-content>
 

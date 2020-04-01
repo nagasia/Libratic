@@ -21,7 +21,7 @@ export class TvshowsComponent implements OnInit, OnDestroy {
     tvFilters: Filter;
     filteredTvs = [];
 
-    constructor(private functions: CommonFunctions,
+    constructor(public functions: CommonFunctions,
         private authService: AuthenticationService,
         private db: FireDBService,
         private snackBar: MatSnackBar,

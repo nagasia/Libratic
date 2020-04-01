@@ -1,179 +1,153 @@
-<mat-toolbar>
-    <a href="https://www.themoviedb.org/" target="_blank" matTooltip="Patrocinado por The Movie DB">
-        <img class="w-25" src="../../../assets/movieDB_logo.png">
-    </a>
+<div fxLayout="column" fxLayoutAlign="center">
+    <mat-toolbar fxLayout="row" fxLayoutAlign="space-between center">
+        <a href="https://www.themoviedb.org/" target="_blank" matTooltip="Patrocinado por The Movie DB">
+            <img class="w-25" src="../../../assets/movieDB_logo.png">
+        </a>
 
-    <div class="spacer"></div>
+        <div>
+            <button mat-icon-button matTooltip="Filtrar" (click)="filter()" color="primary">
+                <i class="fas fa-filter"></i>
+            </button>
+            <button mat-icon-button matTooltip="Crear" (click)="newTv()" color="primary" *ngIf="isAdmin">
+                <i class="fas fa-plus"></i>
+                <i class="fas fa-tv"></i>
+            </button>
+        </div>
+    </mat-toolbar>
 
-    <button mat-icon-button matTooltip="Filtrar" (click)="filter()" color="primary">
-        <i class="fas fa-filter"></i>
-    </button>
-    <button mat-icon-button matTooltip="Crear" (click)="newTv()" color="primary" *ngIf="isAdmin">
-        <i class="fas fa-plus"></i>
-        <i class="fas fa-tv"></i>
-    </button>
-</mat-toolbar>
-
-<div class="container-fluid mb-3" *ngIf="filteredTvs.length > 0">
-    <mat-accordion>
+    <mat-accordion class="mx-2 mb-2" *ngIf="filteredTvs.length > 0">
         <mat-expansion-panel *ngFor="let item of filteredTvs">
             <mat-expansion-panel-header>
-                <mat-panel-title class="align-items-center">
+                <div class="panelTitle" fxLayoutGap="8px">
                     <b>{{item.name}}</b>
                     <span class="ml-2 text-secondary">{{item.first_air_date}}</span>
-                </mat-panel-title>
-
-                <button mat-icon-button matTooltip="Añadir deseado"
-                    (click)="addTvWished(item.id); $event.stopPropagation()" color="primary"
-                    *ngIf="isLoged && !isAdmin && !checkExists(item, 'wishes')">
-                    <i class="far fa-list-alt"></i>
-                </button>
-                <button mat-icon-button matTooltip="Eliminar deseado"
-                    (click)="removeTvWished(item.id); $event.stopPropagation()" color="primary"
-                    *ngIf="isLoged && !isAdmin && checkExists(item, 'wishes')">
-                    <i class="fas fa-list-alt"></i>
-                </button>
-
-                <button mat-icon-button matTooltip="Añadir favorito"
-                    (click)="addTvFavoutire(item.id); $event.stopPropagation()" color="primary"
-                    *ngIf="isLoged && !isAdmin && !checkExists(item, 'favourites')">
-                    <i class="far fa-heart"></i>
-                </button>
-                <button mat-icon-button matTooltip="Eliminar favorito"
-                    (click)="removeTvFavoutire(item.id); $event.stopPropagation()" color="primary"
-                    *ngIf="isLoged && !isAdmin && checkExists(item, 'favourites')">
-                    <i class="fas fa-heart"></i>
-                </button>
-
-                <button mat-icon-button matTooltip="Editar" (click)="editTv(item); $event.stopPropagation()"
-                    color="primary" *ngIf="isAdmin">
-                    <i class="fas fa-pen"></i>
-                </button>
-                <button mat-icon-button matTooltip="Eliminar" (click)="deleteTv(item); $event.stopPropagation()"
-                    color="primary" *ngIf="isAdmin">
-                    <i class="fas fa-minus"></i>
-                </button>
-            </mat-expansion-panel-header>
-
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-2">
-                        <div class="row">
-                            <span *ngIf="item.poster_path">
-                                <img [src]="item.poster_path" class="w-100">
-                            </span>
-
-                            <span *ngIf="!item.poster_path" class="content-fluid">
-                                <i class="fas fa-tv fa-4x"></i>
-                            </span>
-                        </div>
-
-                        <div class="row justify-content-end mt-2" *ngIf="item.homepage">
-                            <a [href]="item.homepage" target="_blank">
-                                <button mat-raised-button type="button" color="primary">Web oficial</button>
-                            </a>
-                        </div>
-
-                        <div class="row justify-content-end mt-2" *ngIf="item.url">
-                            <a [href]="item.url" target="_blank">
-                                <button mat-raised-button type="button" color="primary">Entrada en The Movie DB</button>
-                            </a>
-                        </div>
-
-                    </div>
-
-                    <div class="col">
-                        <div class="row" *ngIf="item.name">
-                            <div class="col">
-                                <b>Título: </b>
-                                <span>{{item.name}}</span>
-                            </div>
-                        </div>
-
-                        <div class="row mt-2"
-                            *ngIf="item.first_air_date || item.number_of_seasons || item.number_of_episodes || item.vote_average">
-                            <div class="col-auto" *ngIf="item.first_air_date">
-                                <b>Fecha de estreno: </b>
-                                <span>{{item.first_air_date}}</span>
-                            </div>
-
-                            <div class="col-auto" *ngIf="item.number_of_seasons">
-                                <b>Nº de temporadas: </b>
-                                <span>{{item.number_of_seasons}}</span>
-                            </div>
-
-                            <div class="col-auto" *ngIf="item.number_of_episodes">
-                                <b>Nº de episodios: </b>
-                                <span>{{item.number_of_episodes}}</span>
-                            </div>
-
-                            <div class="col-auto" *ngIf="item.vote_average">
-                                <b>Puntuación: </b>
-                                <span>{{item.vote_average}}</span>
-                            </div>
-
-                            <div class="col-auto" *ngIf="isLoged">
-                                <b>Nº de ejemplares: </b>
-                                <span>{{getNumberOfItems(item)}}</span>
-                            </div>
-                        </div>
-
-                        <div class="row mt-2" *ngIf="item.overview">
-                            <div class="col">
-                                <b>Resumen: </b>
-                                <span>{{item.overview}}</span>
-                            </div>
-                        </div>
-
-                        <div class="row mt-2" *ngIf="item.created_by">
-                            <div class="col">
-                                <b>Autores: </b>
-                                <mat-chip-list>
-                                    <mat-chip *ngFor="let author of item.created_by">{{author}}</mat-chip>
-                                </mat-chip-list>
-                            </div>
-                        </div>
-
-                        <div class="row mt-2" *ngIf="item.genres">
-                            <div class="col">
-                                <b>Géneros: </b>
-                                <mat-chip-list>
-                                    <mat-chip *ngFor="let genre of item.genres">{{genre}}</mat-chip>
-                                </mat-chip-list>
-                            </div>
-                        </div>
-
-                        <div class="row mt-2" *ngIf="item.production_companies">
-                            <div class="col">
-                                <b>Productoras: </b>
-                                <mat-chip-list>
-                                    <mat-chip *ngFor="let company of item.production_companies">{{company}}</mat-chip>
-                                </mat-chip-list>
-                            </div>
-                        </div>
-
-                        <div class="row mt-2" *ngIf="item.cast">
-                            <div class="col">
-                                <b>Actores: </b>
-                                <mat-chip-list>
-                                    <mat-chip *ngFor="let actor of item.cast">{{actor.character}}: {{actor.name}}
-                                    </mat-chip>
-                                </mat-chip-list>
-                            </div>
-                        </div>
-
-                        <div class="row mt-2" *ngIf="item.crew">
-                            <div class="col">
-                                <b>Personal: </b>
-                                <mat-chip-list>
-                                    <mat-chip *ngFor="let employee of item.crew">{{employee.job}}: {{employee.name}}
-                                    </mat-chip>
-                                </mat-chip-list>
-                            </div>
-                        </div>
-                    </div>
                 </div>
 
+                <div fxFlex="none">
+                    <button mat-icon-button matTooltip="Añadir deseado"
+                        (click)="addTvWished(item.id); $event.stopPropagation()" color="primary"
+                        *ngIf="isLoged && !isAdmin && !checkExists(item, 'wishes')">
+                        <i class="far fa-list-alt"></i>
+                    </button>
+                    <button mat-icon-button matTooltip="Eliminar deseado"
+                        (click)="removeTvWished(item.id); $event.stopPropagation()" color="primary"
+                        *ngIf="isLoged && !isAdmin && checkExists(item, 'wishes')">
+                        <i class="fas fa-list-alt"></i>
+                    </button>
+
+                    <button mat-icon-button matTooltip="Añadir favorito"
+                        (click)="addTvFavoutire(item.id); $event.stopPropagation()" color="primary"
+                        *ngIf="isLoged && !isAdmin && !checkExists(item, 'favourites')">
+                        <i class="far fa-heart"></i>
+                    </button>
+                    <button mat-icon-button matTooltip="Eliminar favorito"
+                        (click)="removeTvFavoutire(item.id); $event.stopPropagation()" color="primary"
+                        *ngIf="isLoged && !isAdmin && checkExists(item, 'favourites')">
+                        <i class="fas fa-heart"></i>
+                    </button>
+
+                    <button mat-icon-button matTooltip="Editar" (click)="editTv(item); $event.stopPropagation()"
+                        color="primary" *ngIf="isAdmin">
+                        <i class="fas fa-pen"></i>
+                    </button>
+                    <button mat-icon-button matTooltip="Eliminar" (click)="deleteTv(item); $event.stopPropagation()"
+                        color="primary" *ngIf="isAdmin">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                </div>
+            </mat-expansion-panel-header>
+
+            <div fxLayout="column" fxLayout.gt-xs="row" fxLayoutGap="8px">
+                <div fxFlex.sm="30" fxFlex.gt-sm="240px" fxLayout="column" fxLayoutGap="8px">
+                    <img [src]="item.poster_path" class="w-100" *ngIf="item.poster_path">
+                    <i class="fas fa-tv fa-4x" *ngIf="!item.poster_path"></i>
+
+                    <a fxFlexAlign="center" fxFlexAlign.gt-xs="end" [href]="item.homepage" target="_blank"
+                        *ngIf="item.homepage">
+                        <button mat-raised-button type="button" color="primary">Web oficial</button>
+                    </a>
+                    <a fxFlexAlign="center" fxFlexAlign.gt-xs="end" [href]="item.url" target="_blank" *ngIf="item.url">
+                        <button mat-raised-button type="button" color="primary">Entrada en The Movie DB</button>
+                    </a>
+                </div>
+
+                <div class=fxFlex fxLayout="column" fxLayoutGap="8px">
+                    <div *ngIf="item.name">
+                        <b>Título: </b>
+                        <span>{{item.name}}</span>
+                    </div>
+
+                    <div fxLayout="column" fxLayout.gt-xs="row wrap" fxLayoutGap="8px"
+                        *ngIf="item.first_air_date || item.number_of_seasons || item.number_of_episodes || item.vote_average">
+                        <div *ngIf="item.first_air_date">
+                            <b>Fecha de estreno: </b>
+                            <span>{{item.first_air_date}}</span>
+                        </div>
+
+                        <div *ngIf="item.number_of_seasons">
+                            <b>Nº de temporadas: </b>
+                            <span>{{item.number_of_seasons}}</span>
+                        </div>
+
+                        <div *ngIf="item.number_of_episodes">
+                            <b>Nº de episodios: </b>
+                            <span>{{item.number_of_episodes}}</span>
+                        </div>
+
+                        <div *ngIf="item.vote_average">
+                            <b>Puntuación: </b>
+                            <span>{{item.vote_average}}</span>
+                        </div>
+
+                        <div *ngIf="isLoged">
+                            <b>Nº de ejemplares: </b>
+                            <span>{{getNumberOfItems(item)}}</span>
+                        </div>
+                    </div>
+
+                    <div *ngIf="item.overview">
+                        <b>Resumen: </b>
+                        <span>{{item.overview}}</span>
+                    </div>
+
+                    <div *ngIf="item.created_by">
+                        <b>Autores: </b>
+                        <mat-chip-list>
+                            <mat-chip *ngFor="let author of item.created_by">{{author}}</mat-chip>
+                        </mat-chip-list>
+                    </div>
+
+                    <div *ngIf="item.genres">
+                        <b>Géneros: </b>
+                        <mat-chip-list>
+                            <mat-chip *ngFor="let genre of item.genres">{{genre}}</mat-chip>
+                        </mat-chip-list>
+                    </div>
+
+                    <div *ngIf="item.production_companies">
+                        <b>Productoras: </b>
+                        <mat-chip-list>
+                            <mat-chip *ngFor="let company of item.production_companies">{{company}}
+                            </mat-chip>
+                        </mat-chip-list>
+                    </div>
+
+                    <div *ngIf="item.cast">
+                        <b>Actores: </b>
+                        <mat-chip-list>
+                            <mat-chip *ngFor="let actor of item.cast">{{actor.character}}: {{actor.name}}
+                            </mat-chip>
+                        </mat-chip-list>
+                    </div>
+
+                    <div *ngIf="item.crew">
+                        <b>Personal: </b>
+                        <mat-chip-list>
+                            <mat-chip *ngFor="let employee of item.crew">{{employee.job}}: {{employee.name}}
+                            </mat-chip>
+                        </mat-chip-list>
+                    </div>
+                </div>
             </div>
         </mat-expansion-panel>
     </mat-accordion>

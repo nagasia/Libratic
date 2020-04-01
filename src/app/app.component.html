@@ -1,65 +1,147 @@
 <mat-toolbar color="primary">
-    <img src="../favicon.ico" class="mr-2">
-    <span>Libratic</span>
-    <div class="spacer"></div>
+    <div fxFlex fxLayout="row" fxLayoutAlign="space-between center">
+        <div>
+            <img src="../favicon.ico" class="mr-2">
+            <span>Libratic</span>
+        </div>
 
-    <button mat-icon-button matTooltip="Libros" routerLink="books">
-        <i class="fas fa-book"></i>
-    </button>
-
-    <button mat-icon-button matTooltip="Películas" routerLink="movies">
-        <i class="fas fa-film"></i>
-    </button>
+        <div fxHide.gt-xs>
+            <button mat-icon-button [matMenuTriggerFor]="menu" matTooltip="Menu">
+                <i class="fas fa-bars"></i>
+            </button>
+            <mat-menu #menu="matMenu">
+                <button mat-menu-item matTooltip="Libros" routerLink="books">
+                    <i class="fas fa-book text-white"></i>
+                    <span class="text-white ml-2">Libros</span>
+                </button>
     
-    <button mat-icon-button matTooltip="Series" routerLink="tv">
-        <i class="fas fa-tv"></i>
-    </button>
+                <button mat-menu-item matTooltip="Películas" routerLink="movies">
+                    <i class="fas fa-film text-white"></i>
+                    <span class="text-white ml-2">Películas</span>
+                </button>
+    
+                <button mat-menu-item matTooltip="Series" routerLink="tv">
+                    <i class="fas fa-tv text-white"></i>
+                    <span class="text-white ml-2">Series</span>
+                </button>
+    
+                <ng-container *ngIf="isLoged">
+                    <button mat-menu-item matTooltip="Préstamos" routerLink="lendings">
+                        <i class="far fa-calendar text-white"></i>
+                        <span class="text-white ml-2">Préstamos</span>
+                    </button>
+    
+                    <button mat-menu-item matTooltip="Deseados" routerLink="wished">
+                        <i class="fas fa-list-alt text-white"></i>
+                        <span class="text-white ml-2">Deseados</span>
+                    </button>
+    
+                    <ng-container *ngIf="!isAdmin">
+                        <button mat-menu-item matTooltip="Favoritos" routerLink="favourites">
+                            <i class="fas fa-heart text-white"></i>
+                            <span class="text-white ml-2">Favoritos</span>
+                        </button>
+    
+                        <button mat-menu-item matTooltip="Usuario" routerLink="users">
+                            <i class="fas fa-user text-white"></i>
+                            <span class="text-white ml-2">Usuario</span>
+                        </button>
+                    </ng-container>
+    
+                    <ng-container *ngIf="isAdmin">
+                        <button mat-menu-item matTooltip="Usuarios" routerLink="users">
+                            <i class="fas fa-users text-white"></i>
+                            <span class="text-white ml-2">Usuarios</span>
+                        </button>
+    
+                        <button mat-menu-item matTooltip="Editar biblioteca" (click)="editLibrary()">
+                            <i class="fas fa-pencil-alt text-white"></i>
+                            <i class="fas fa-landmark text-white"></i>
+                            <span class="text-white ml-2">Editar biblioteca</span>
+                        </button>
+                    </ng-container>
+    
+                    <button mat-menu-item (click)="logOut()" matTooltip="Desconectarse" routerLink="/">
+                        <i class="fas fa-sign-out-alt text-white"></i>
+                        <span class="text-white ml-2">Desconectarse</span>
+                    </button>
+                </ng-container>
+    
+                <ng-container *ngIf="!isLoged">
+                    <button mat-menu-item matTooltip="Nueva biblioteca" (click)="newLibrary()">
+                        <i class="fas fa-plus text-white"></i>
+                        <i class="fas fa-landmark text-white"></i>
+                        <span class="text-white ml-2">Nueva biblioteca</span>
+                    </button>
+    
+                    <button mat-menu-item (click)="logIn()" matTooltip="Conectarse">
+                        <i class="fas fa-sign-in-alt text-white"></i>
+                        <span class="text-white ml-2">Conectarse</span>
+                    </button>
+                </ng-container>
+            </mat-menu>
+        </div>
 
-    <ng-container *ngIf="isLoged">
-        <button mat-icon-button matTooltip="Préstamos" routerLink="lendings">
-            <i class="far fa-calendar"></i>
-        </button>
-
-        <button mat-icon-button matTooltip="Deseados" routerLink="wished">
-            <i class="fas fa-list-alt"></i>
-        </button>
-
-        <ng-container *ngIf="!isAdmin">
-            <button mat-icon-button matTooltip="Favoritos" routerLink="favourites">
-                <i class="fas fa-heart"></i>
+        <div fxHide fxShow.gt-xs>
+            <button mat-icon-button matTooltip="Libros" routerLink="books">
+                <i class="fas fa-book"></i>
             </button>
 
-            <button mat-icon-button matTooltip="Usuario" routerLink="users">
-                <i class="fas fa-user"></i>
-            </button>
-        </ng-container>
-
-        <ng-container *ngIf="isAdmin">
-            <button mat-icon-button matTooltip="Usuarios" routerLink="users">
-                <i class="fas fa-users"></i>
+            <button mat-icon-button matTooltip="Películas" routerLink="movies">
+                <i class="fas fa-film"></i>
             </button>
 
-            <button mat-button matTooltip="Editar biblioteca" (click)="editLibrary()">
-                <i class="fas fa-pencil-alt"></i>
-                <i class="fas fa-landmark"></i>
+            <button mat-icon-button matTooltip="Series" routerLink="tv">
+                <i class="fas fa-tv"></i>
             </button>
-        </ng-container>
 
-        <button mat-icon-button (click)="logOut()" matTooltip="Desconectarse" routerLink="/">
-            <i class="fas fa-sign-out-alt"></i>
-        </button>
-    </ng-container>
+            <ng-container *ngIf="isLoged">
+                <button mat-icon-button matTooltip="Préstamos" routerLink="lendings">
+                    <i class="far fa-calendar"></i>
+                </button>
 
-    <ng-container *ngIf="!isLoged">
-        <button mat-button matTooltip="Nueva biblioteca" (click)="newLibrary()">
-            <i class="fas fa-plus"></i>
-            <i class="fas fa-landmark"></i>
-        </button>
+                <button mat-icon-button matTooltip="Deseados" routerLink="wished">
+                    <i class="fas fa-list-alt"></i>
+                </button>
 
-        <button mat-icon-button (click)="logIn()" matTooltip="Conectarse">
-            <i class="fas fa-sign-in-alt"></i>
-        </button>
-    </ng-container>
+                <ng-container *ngIf="!isAdmin">
+                    <button mat-icon-button matTooltip="Favoritos" routerLink="favourites">
+                        <i class="fas fa-heart"></i>
+                    </button>
+
+                    <button mat-icon-button matTooltip="Usuario" routerLink="users">
+                        <i class="fas fa-user"></i>
+                    </button>
+                </ng-container>
+
+                <ng-container *ngIf="isAdmin">
+                    <button mat-icon-button matTooltip="Usuarios" routerLink="users">
+                        <i class="fas fa-users"></i>
+                    </button>
+
+                    <button mat-button matTooltip="Editar biblioteca" (click)="editLibrary()">
+                        <i class="fas fa-pencil-alt"></i>
+                        <i class="fas fa-landmark"></i>
+                    </button>
+                </ng-container>
+
+                <button mat-icon-button (click)="logOut()" matTooltip="Desconectarse" routerLink="/">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </ng-container>
+
+            <ng-container *ngIf="!isLoged">
+                <button mat-button matTooltip="Nueva biblioteca" (click)="newLibrary()">
+                    <i class="fas fa-plus"></i>
+                    <i class="fas fa-landmark"></i>
+                </button>
+
+                <button mat-icon-button (click)="logIn()" matTooltip="Conectarse">
+                    <i class="fas fa-sign-in-alt"></i>
+                </button>
+            </ng-container>
+        </div>
+    </div>
 </mat-toolbar>
 
 <router-outlet></router-outlet>

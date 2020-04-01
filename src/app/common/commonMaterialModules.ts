@@ -17,12 +17,15 @@ import { MatButtonModule,
     MatCheckboxModule,
     MatProgressBarModule,
     MatDatepickerModule,
-    MatSlideToggleModule} from '@angular/material';
+    MatSlideToggleModule,
+    MatMenuModule} from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { FlexLayoutModule } from '@angular/flex-layout';
 
 @NgModule({
     exports: [
         BrowserAnimationsModule,
+        FlexLayoutModule,
         MatButtonModule,
         MatIconModule,
         MatToolbarModule,
@@ -42,7 +45,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
         MatCheckboxModule,
         MatProgressBarModule,
         MatDatepickerModule,
-        MatSlideToggleModule
+        MatSlideToggleModule,
+        MatMenuModule
     ],
 })
 export class CommonMaterialModules { }

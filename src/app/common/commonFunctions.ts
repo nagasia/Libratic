@@ -39,6 +39,10 @@ export class CommonFunctions {
         return result;
     }
 
+    transformComma(arr: string[]){
+        return arr.join(', ');
+    }
+
     fillArray(data: any) {
         let result;
         if (data !== undefined) {

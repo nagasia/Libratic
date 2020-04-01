@@ -2,187 +2,148 @@
 
 <form [formGroup]="form" (ngSubmit)="save()">
     <mat-dialog-content>
-        <div class="container-fluid">
+        <div fxLayout="column" fxLayoutGap="8px">
 
-            <div class="row">
-                <div class="col">
-                    <mat-form-field class="w-100">
-                        <input matInput placeholder="Título" type="text" formControlName="title">
-                    </mat-form-field>
-                </div>
+            <mat-form-field fxFill>
+                <input matInput placeholder="Título" type="text" formControlName="title">
+            </mat-form-field>
+
+            <mat-form-field fxFill>
+                <input matInput placeholder="Autor" type="text" formControlName="author">
+            </mat-form-field>
+
+            <div fxLayout="column" fxLayout.gt-xs="row" fxLayoutGap="8px">
+                <mat-form-field>
+                    <input matInput placeholder="Año de publicación" type="number" formControlName="year">
+                </mat-form-field>
+
+                <mat-form-field>
+                    <input matInput placeholder="Editorial" type="text" formControlName="publisher">
+                </mat-form-field>
             </div>
 
-            <div class="row">
-                <div class="col">
-                    <mat-form-field class="w-100">
-                        <input matInput placeholder="Autor" type="text" formControlName="author">
-                    </mat-form-field>
-                </div>
+            <mat-form-field fxFill>
+                <mat-chip-list #genreList aria-label="Géneros">
+                    <mat-chip *ngFor="let genre of writtenSubjects" [selectable]="selectable" [removable]="removable"
+                        (removed)="removeItem(genre)">
+                        {{genre}}
+                        <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+                    </mat-chip>
+                    <input placeholder="Géneros" [matChipInputFor]="genreList"
+                        [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="addOnBlur"
+                        (matChipInputTokenEnd)="addItem($event)">
+                </mat-chip-list>
+                <mat-hint align="start">Si añade más de un género, pulse intro entre ellos. Escríbalos en
+                    inglés.</mat-hint>
+            </mat-form-field>
+
+            <div fxLayout="row wrap" fxLayoutGap="8px">
+                <mat-checkbox  fxFlex="none" color="primary" [checked]="item.selected"
+                    (change)="manageCheckBoxes($event,i)" *ngFor="let item of subjectsData; let i = index">
+                    {{item.name}}
+                </mat-checkbox>
             </div>
 
-            <div class="row row-cols-2">
-                <div class="col">
-                    <mat-form-field class="w-100">
-                        <input matInput placeholder="Año de publicación" type="number" formControlName="year">
-                    </mat-form-field>
-                </div>
+            <button mat-raised-button type="button" (click)="searchOpenLibrary()" color="primary">
+                <i class="fas fa-search"></i>
+                <span class="ml-2">Buscar en OpenLibrary</span>
+            </button>
 
-                <div class="col">
-                    <mat-form-field class="w-100">
-                        <input matInput placeholder="Editorial" type="text" formControlName="publisher">
-                    </mat-form-field>
-                </div>
-            </div>
+            <div fxLayout="column" fxLayout.gt-xs="row" fxLayoutGap="8px" *ngIf="book">
+                <div fxLayout="column" fxLayoutGap="8px">
+                    <img [src]="book.cover" class="w-100" *ngIf="book.cover">
+                    <i class="fas fa-book fa-4x" *ngIf="!book.cover"></i>
 
-            <div class="row">
-                <div class="col">
-                    <mat-form-field class="w-100">
-                        <mat-chip-list #genreList aria-label="Géneros">
-                            <mat-chip *ngFor="let genre of writtenSubjects" [selectable]="selectable"
-                                [removable]="removable" (removed)="removeItem(genre)">
-                                {{genre}}
-                                <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
-                            </mat-chip>
-                            <input placeholder="Géneros" [matChipInputFor]="genreList"
-                                [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="addOnBlur"
-                                (matChipInputTokenEnd)="addItem($event)">
-                        </mat-chip-list>
-                        <mat-hint align="start">Si añade más de un género, pulse intro entre ellos. Escríbalos en
-                            inglés.</mat-hint>
-                    </mat-form-field>
-                </div>
-            </div>
-
-            <div class="row mt-2">
-                <div class="col" *ngFor="let item of subjectsData; let i = index">
-                    <mat-checkbox color="primary" [checked]="item.selected" (change)="manageCheckBoxes($event,i)">
-                        {{item.name}}
-                    </mat-checkbox>
-                </div>
-            </div>
-
-            <div class="row justify-content-end">
-                <div class="col-auto">
-                    <button mat-raised-button type="button" (click)="searchOpenLibrary()" color="primary">
-                        <i class="fas fa-search"></i>
-                        <span class="ml-2">Buscar en OpenLibrary</span>
+                    <button mat-raised-button type="button" target="url" color="primary" *ngIf="book.url">
+                        <span>Entrada en OpenLibrary</span>
                     </button>
                 </div>
-            </div>
 
-            <ng-container *ngIf="book">
-                <div class="row row-cols-2 mt-4">
-                    <div class="col-3">
-                        <img [src]="book.cover" class="w-100" *ngIf="book.cover">
-                        <i class="fas fa-book fa-4x" *ngIf="!book.cover"></i>
-                    </div>
-
-                    <div class="col align-self-center" *ngIf="book.url">
-                        <div class="row">
-                            <div class="col">
-                                <button mat-raised-button type="button" target="url" color="primary">
-                                    <span>Entrada en OpenLibrary</span>
-                                </button>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-
-                <div class="row mt-2" *ngIf="book.title">
-                    <div class="col">
+                <div fxLayout="column" fxLayoutGap="8px">
+                    <div *ngIf="book.title">
                         <b>Título: </b>
                         <span>{{book.title}}</span>
                     </div>
-                </div>
 
-                <div class="row mt-2" *ngIf="book.subtitle">
-                    <div class="col">
+                    <div *ngIf="book.subtitle">
                         <b>Subtítulo: </b>
                         <span>{{book.subtitle}}</span>
-                    </div>
-                </div>
 
-                <div class="row mt-2" *ngIf="book.isbn || book.cdu || book.number_of_pages">
-                    <div class="col" *ngIf="book.cdu">
-                        <b>ISBN: </b>
-                        <span>{{book.isbn}}</span>
                     </div>
 
-                    <div class="col" *ngIf="book.cdu">
-                        <b>CDU: </b>
-                        <span>{{book.cdu}}</span>
+                    <div fxLayout="column" fxLayout.gt-xs="row wrap" fxLayoutGap="8px"
+                        *ngIf="book.isbn || book.cdu || book.number_of_pages">
+                        <div fxFlex="none" *ngIf="book.cdu">
+                            <b>ISBN: </b>
+                            <span>{{book.isbn}}</span>
+                        </div>
+
+                        <div fxFlex="none" *ngIf="book.cdu">
+                            <b>CDU: </b>
+                            <span>{{book.cdu}}</span>
+                        </div>
+
+                        <div fxFlex="none" *ngIf="book.number_of_pages">
+                            <b>Nº de páginas: </b>
+                            <span>{{book.number_of_pages}}</span>
+                        </div>
                     </div>
 
-                    <div class="col" *ngIf="book.number_of_pages">
-                        <b>Nº de páginas: </b>
-                        <span>{{book.number_of_pages}}</span>
-                    </div>
-                </div>
+                    <div fxLayout="column" fxLayout.gt-xs="row wrap" fxLayoutGap="8px"
+                        *ngIf="book.publish_date || book.physical_format">
+                        <div fxFlex="none" *ngIf="book.publish_date">
+                            <b>Fecha de publicación: </b>
+                            <span>{{book.publish_date}}</span>
+                        </div>
 
-                <div class="row mt-2" *ngIf="book.publish_date || book.physical_format">
-                    <div class="col" *ngIf="book.publish_date">
-                        <b>Fecha de publicación: </b>
-                        <span>{{book.publish_date}}</span>
+                        <div fxFlex="none" *ngIf="book.physical_format">
+                            <b>Formato físico: </b>
+                            <span>{{book.physical_format}}</span>
+                        </div>
                     </div>
 
-                    <div class="col" *ngIf="book.physical_format">
-                        <b>Formato físico: </b>
-                        <span>{{book.physical_format}}</span>
-                    </div>
-                </div>
-
-                <div class="row mt-2" *ngIf="book.publishers">
-                    <div class="col">
+                    <div *ngIf="book.publishers">
                         <b>Editoriales</b>
-                        <mat-chip-list>
-                            <mat-chip *ngFor="let publisher of book.publishers">
+                        <mat-chip-list fxLayout="row wrap">
+                            <mat-chip fxFlex="none" *ngFor="let publisher of book.publishers">
                                 {{publisher}}
                             </mat-chip>
                         </mat-chip-list>
                     </div>
-                </div>
 
-                <div class="row mt-2" *ngIf="book.subjects">
-                    <div class="col">
+                    <div *ngIf="book.subjects">
                         <b>Temas</b>
-                        <mat-chip-list>
-                            <mat-chip *ngFor="let subject of book.subjects">
+                        <mat-chip-list fxLayout="row wrap">
+                            <mat-chip fxFlex="none" *ngFor="let subject of book.subjects">
                                 {{subject}}
                             </mat-chip>
                         </mat-chip-list>
                     </div>
-                </div>
 
-                <div class="row mt-2" *ngIf="book.authors">
-                    <div class="col">
+                    <div *ngIf="book.authors">
                         <b>Autores</b>
-                        <mat-chip-list>
-                            <mat-chip *ngFor="let author of book.authors">
+                        <mat-chip-list fxLayout="row wrap">
+                            <mat-chip fxFlex="none" *ngFor="let author of book.authors">
                                 {{author}}
                             </mat-chip>
                         </mat-chip-list>
                     </div>
-                </div>
 
-                <div class="row mt-2" *ngIf="book.publish_places">
-                    <div class="col">
+                    <div *ngIf="book.publish_places">
                         <b>Lugares de publicación</b>
-                        <mat-chip-list #placeList>
-                            <mat-chip *ngFor="let place of book.publish_places">
+                        <mat-chip-list fxLayout="row wrap">
+                            <mat-chip fxFlex="none" *ngFor="let place of book.publish_places">
                                 {{place}}
                             </mat-chip>
                         </mat-chip-list>
                     </div>
-                </div>
 
-                <div class="row mt-2" *ngIf="book.description">
-                    <div class="col">
+                    <div *ngIf="book.description">
                         <b>Resumen: </b>
                         <span>{{book.description}}</span>
                     </div>
                 </div>
-            </ng-container>
+            </div>
         </div>
     </mat-dialog-content>
 

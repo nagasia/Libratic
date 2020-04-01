@@ -2,37 +2,29 @@
 
 <form [formGroup]="form" (ngSubmit)="getData()">
     <mat-dialog-content>
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col">
-                    <mat-form-field class="w-100">
-                        <mat-label>Usuario</mat-label>
-                        <mat-select formControlName="users" (selectionChange)="filterLended($event)">
-                            <mat-option *ngFor="let item of userList" [value]="item">{{item.name}} {{item.dni}}
-                            </mat-option>
-                        </mat-select>
-                    </mat-form-field>
-                </div>
-            </div>
+        <div fxLayout="column" fxLayoutGap="8px">
+            <mat-form-field fxFill>
+                <mat-label>Usuario</mat-label>
+                <mat-select formControlName="users" (selectionChange)="filterLended($event)">
+                    <mat-option *ngFor="let item of userList" [value]="item">{{item.name}} {{item.dni}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
 
-            <div class="row">
-                <div class="col">
-                    <mat-form-field class="w-100" *ngIf="itemType !== 'tv'">
-                        <mat-label *ngIf="itemType === 'book'">Libro</mat-label>
-                        <mat-label *ngIf="itemType === 'movie'">Película</mat-label>
-                        <mat-select formControlName="items">
-                            <mat-option *ngFor="let item of showItemList" [value]="item">{{item.title}}</mat-option>
-                        </mat-select>
-                    </mat-form-field>
-                    
-                    <mat-form-field class="w-100" *ngIf="itemType === 'tv'">
-                        <mat-label>Serie</mat-label>
-                        <mat-select formControlName="items">
-                            <mat-option *ngFor="let item of showItemList" [value]="item">{{item.name}}</mat-option>
-                        </mat-select>
-                    </mat-form-field>
-                </div>
-            </div>
+            <mat-form-field fxFill *ngIf="itemType !== 'tv'">
+                <mat-label *ngIf="itemType === 'book'">Libro</mat-label>
+                <mat-label *ngIf="itemType === 'movie'">Película</mat-label>
+                <mat-select formControlName="items">
+                    <mat-option *ngFor="let item of showItemList" [value]="item">{{item.title}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <mat-form-field fxFill *ngIf="itemType === 'tv'">
+                <mat-label>Serie</mat-label>
+                <mat-select formControlName="items">
+                    <mat-option *ngFor="let item of showItemList" [value]="item">{{item.name}}</mat-option>
+                </mat-select>
+            </mat-form-field>
         </div>
     </mat-dialog-content>
 

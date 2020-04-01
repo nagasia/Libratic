@@ -1,12 +1,10 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AngularFireModule } from '@angular/fire';
 import { AngularFireAuthModule } from '@angular/fire/auth';
 import { AngularFireDatabaseModule } from '@angular/fire/database';
 import { AngularFireStorageModule } from '@angular/fire/storage';
 import { CommonModule } from '@angular/common';
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { CommonMaterialModules } from './common/commonMaterialModules';
@@ -28,8 +26,8 @@ import { WishedModule } from './modules/wished/wished.module';
     imports: [
         CommonModule,
         BrowserModule,
-        BrowserAnimationsModule,
         CommonMaterialModules,
+        AppRoutingModule,
         UsersModule,
         BooksModule,
         LendingsModule,
@@ -39,7 +37,6 @@ import { WishedModule } from './modules/wished/wished.module';
         WishedModule,
         LoginDialogModule,
         LibraryDialogModule,
-        AppRoutingModule,
         AngularFireModule.initializeApp(environment.firebaseConfig),
         AngularFireAuthModule,
         AngularFireDatabaseModule,

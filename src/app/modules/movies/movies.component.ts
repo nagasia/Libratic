@@ -23,7 +23,7 @@ export class MoviesComponent implements OnInit, OnDestroy {
 
     constructor(private authService: AuthenticationService,
         private db: FireDBService,
-        private functions: CommonFunctions,
+        public functions: CommonFunctions,
         private dialog: MatDialog,
         private snackBar: MatSnackBar) {
         this.isLoged = this.functions.isLoged(this.authService.authUser);

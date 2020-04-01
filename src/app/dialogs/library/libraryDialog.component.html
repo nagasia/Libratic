@@ -2,93 +2,60 @@
 <h1 mat-dialog-title *ngIf="!isEditting">Nueva biblioteca</h1>
 
 <form [formGroup]="form" (ngSubmit)="save()">
-
     <mat-dialog-content>
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col">
-                    <mat-form-field class="w-100">
-                        <input matInput placeholder="Nombre" type="text" formControlName="name" required>
-                        <mat-error *ngIf="!form.controls.name.hasError('required')">Mínimo 6 caracteres</mat-error>
-                        <mat-error *ngIf="form.controls.name.hasError('required')">Por favor indique un nombre de
-                            biblioteca</mat-error>
-                    </mat-form-field>
-                </div>
-            </div>
+        <div fxLayout="column" fxLayoutAlign="none" fxLayoutGap="8px">
+            <mat-form-field fxFill>
+                <input matInput placeholder="Nombre" type="text" formControlName="name" required>
+                <mat-error *ngIf="!form.controls.name.hasError('required')">Mínimo 6 caracteres</mat-error>
+                <mat-error *ngIf="form.controls.name.hasError('required')">Por favor indique un nombre de
+                    biblioteca</mat-error>
+            </mat-form-field>
 
-            <div class="row mt-2">
-                <div class="col">
-                    <mat-form-field class="w-100">
-                        <input matInput placeholder="Dirección" type="text" formControlName="adress">
-                    </mat-form-field>
-                </div>
-            </div>
+            <mat-form-field fxFill>
+                <input matInput placeholder="Dirección" type="text" formControlName="adress">
+            </mat-form-field>
 
-            <div class="row">
-                <div class="col">
-                    <mat-form-field class="w-100">
-                        <input matInput placeholder="Ciudad" type="text" formControlName="city">
-                    </mat-form-field>
-                </div>
-            </div>
+            <mat-form-field fxFill>
+                <input matInput placeholder="Ciudad" type="text" formControlName="city">
+            </mat-form-field>
 
-            <div class="row">
-                <div class="col">
-                    <mat-form-field class="w-100">
-                        <input matInput placeholder="Teléfomo" type="number" formControlName="phone">
-                    </mat-form-field>
-                </div>
-            </div>
+            <mat-form-field class="half">
+                <input matInput placeholder="Teléfomo" type="number" formControlName="phone">
+            </mat-form-field>
 
-            <div class="row">
-                <div class="col">
-                    <mat-form-field class="w-100">
-                        <input matInput placeholder="Email de la biblioteca" type="text" formControlName="emailLibrary">
-                        <mat-error *ngIf="form.controls.emailLibrary.hasError('email')">
-                            Por favor escriba un email válido</mat-error>
-                    </mat-form-field>
-                </div>
-            </div>
+            <mat-form-field fxFill>
+                <input matInput placeholder="Email de la biblioteca" type="text" formControlName="emailLibrary">
+                <mat-error *ngIf="form.controls.emailLibrary.hasError('email')">
+                    Por favor escriba un email válido</mat-error>
+            </mat-form-field>
 
             <ng-container *ngIf="!isEditting">
-                <div class="row mt-2">
-                    <div class="col">
-                        <mat-form-field class="w-100">
-                            <input matInput placeholder="Email del administrador" type="email"
-                                formControlName="emailAdmin" required>
-                            <mat-error
-                                *ngIf="form.controls.emailAdmin.hasError('email') && !form.controls.emailAdmin.hasError('required')">
-                                Por favor escriba un email válido</mat-error>
-                            <mat-error *ngIf="form.controls.emailAdmin.hasError('required')">Por favor indique un email
-                            </mat-error>
-                        </mat-form-field>
-                    </div>
-                </div>
+                <mat-form-field fxFill>
+                    <input matInput placeholder="Email del administrador" type="email" formControlName="emailAdmin"
+                        required>
+                    <mat-error
+                        *ngIf="form.controls.emailAdmin.hasError('email') && !form.controls.emailAdmin.hasError('required')">
+                        Por favor escriba un email válido</mat-error>
+                    <mat-error *ngIf="form.controls.emailAdmin.hasError('required')">Por favor indique un email
+                    </mat-error>
+                </mat-form-field>
 
-                <div class="row mt-2">
-                    <div class="col">
-                        <mat-form-field class="w-100">
-                            <input matInput placeholder="Contraseña del administrador" type="password"
-                                formControlName="password" required>
-                            <mat-hint align="start">Contraseña de Gmail para poder conectarse mediante Google</mat-hint>
-                            <mat-error *ngIf="!form.controls.password.hasError('required')">Mínimo 6 caracteres
-                            </mat-error>
-                            <mat-error *ngIf="form.controls.password.hasError('required')">Por favor indique una
-                                contraseña</mat-error>
-                        </mat-form-field>
-                    </div>
-                </div>
+                <mat-form-field fxFill>
+                    <input matInput placeholder="Contraseña del administrador" type="password"
+                        formControlName="password" required>
+                    <mat-hint align="start">Contraseña de Gmail para poder conectarse mediante Google</mat-hint>
+                    <mat-error *ngIf="!form.controls.password.hasError('required')">Mínimo 6 caracteres
+                    </mat-error>
+                    <mat-error *ngIf="form.controls.password.hasError('required')">Por favor indique una
+                        contraseña</mat-error>
+                </mat-form-field>
             </ng-container>
 
-            <div class="row mt-2">
-                <div class="col-2">
-                    <img [src]="picture" class="w-100" *ngIf="picture">
-                    <i class="fas fa-university fa-4x" *ngIf="!picture"></i>
-                </div>
+            <div fxLayout="column" fxLayout.gt-xs="row" fxLayoutAlign.gt-xs="start center" fxLayoutGap="8px">
+                <img [src]="picture" class="half" *ngIf="picture">
+                <i class="fas fa-university fa-4x" *ngIf="!picture"></i>
 
-                <div class="col align-self-center mt-2">
-                    <input mat-raised-button type="file" accept=".png,.jpg" (change)="setPicture($event)">
-                </div>
+                <input mat-raised-button type="file" accept=".png,.jpg" (change)="setPicture($event)">
             </div>
         </div>
     </mat-dialog-content>
