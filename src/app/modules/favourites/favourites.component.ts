@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 import { Book } from '../../common/dto/book.dto';
 import { Movie } from '../../common/dto/movie.dto';
 import { TvShow } from '../../common/dto/tv.dto';
-import { MatDialog } from '@angular/material';
+import { CommonFunctions } from '../../common/commonFunctions';
 
 @Component({
     selector: 'app-favourites',
@@ -21,10 +21,9 @@ export class FavouritesComponent implements OnInit, OnDestroy {
     tvList$;
 
     constructor(private authService: AuthenticationService,
-        private db: FireDBService) {
-        if (this.authService.authUser) {
-            this.isLoged = true;
-        }
+        private db: FireDBService,
+        public functions: CommonFunctions) {
+        this.isLoged = functions.isLoged(this.authService.authUser);
     }
 
     ngOnInit() {

@@ -3,187 +3,130 @@
 
 <form [formGroup]="form" (ngSubmit)="setDataFromForm()">
     <mat-dialog-content>
-        <div class="content-fluid">
-            <div class="row">
-                <div class="col">
-                    <mat-form-field class="w-100">
-                        <input matInput placeholder="Título" type="text" formControlName="name" required>
-                        <mat-error *ngIf="form.controls.name.hasError('required')">Por favor indique un título
-                        </mat-error>
-                    </mat-form-field>
-                </div>
+        <div fxLayout="column" fxLayoutGap="8px">
+            <mat-form-field>
+                <input matInput placeholder="Título" type="text" formControlName="name" required>
+                <mat-error *ngIf="form.controls.name.hasError('required')">Por favor indique un título
+                </mat-error>
+            </mat-form-field>
+
+            <button mat-raised-button fxFlexAlign.gt-xs="end" type="button" color="primary"
+                (click)="searchTMDB()">Buscar en The Movie DB</button>
+
+            <div fxLayout="column" fxLayout.gt-xs="row" fxLayoutAlign.gt-xs="start center" fxLayoutGap="8px">
+                <img [src]="poster_path" class="half" *ngIf="poster_path" fxFlexAlign="center">
+                <i class="fas fa-film fa-4x" *ngIf="!poster_path" fxFlexAlign="center"></i>
+
+                <input mat-raised-button type="file" accept=".png,.jpg" (change)="setPosterPath($event)">
             </div>
 
-            <div class="row justify-content-end mt-2">
-                <div class="col-auto">
-                    <button mat-raised-button type="button" color="primary" (click)="searchTMDB()">Buscar en The Movie
-                        DB</button>
-                </div>
+            <div fxLayout="column" fxLayout.gt-xs="row" fxLayoutGap="8px">
+                <mat-form-field fxFlex.gt-xs="33">
+                    <input matInput placeholder="Fecha de estreno" type="text" formControlName="first_air_date"
+                        required>
+                    <mat-error *ngIf="form.controls.first_air_date.hasError('required')">Por favor indique una fecha
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field fxFlex.gt-xs="33">
+                    <input matInput placeholder="Nº de temporadas" type="number" formControlName="number_of_seasons">
+                </mat-form-field>
+
+                <mat-form-field fxFlex.gt-xs="33">
+                    <input matInput placeholder="Nº de episodios" type="number" formControlName="number_of_episodes">
+                </mat-form-field>
             </div>
 
-            <div class="row row-cols-3 mt-2">
-                <div class="col-auto">
-                    <mat-form-field>
-                        <input matInput placeholder="Fecha de estreno" type="text" formControlName="first_air_date"
-                            required>
-                        <mat-error *ngIf="form.controls.first_air_date.hasError('required')">Por favor indique una fecha
-                        </mat-error>
-                    </mat-form-field>
-                </div>
+            <div fxLayout="column" fxLayout.gt-xs="row" fxLayoutGap="8px">
+                <mat-form-field>
+                    <input matInput placeholder="Puntuación" type="number" formControlName="vote_average">
+                </mat-form-field>
 
-                <div class="col-auto">
-                    <mat-form-field>
-                        <input matInput placeholder="Nº de temporadas" type="number"
-                            formControlName="number_of_seasons">
-                    </mat-form-field>
-                </div>
-
-                <div class="col-auto">
-                    <mat-form-field>
-                        <input matInput placeholder="Nº de episodios" type="number"
-                            formControlName="number_of_episodes">
-                    </mat-form-field>
-                </div>
+                <mat-form-field>
+                    <input matInput placeholder="Nº de ejemplares" type="number" formControlName="nEjemplares" required>
+                    <mat-error *ngIf="form.controls.nEjemplares.hasError('required')">Por favor indique un número
+                    </mat-error>
+                </mat-form-field>
             </div>
 
-            <div class="row mt-2">
-                <div class="col">
-                    <mat-form-field>
-                        <input matInput placeholder="Puntuación" type="number" formControlName="vote_average">
-                    </mat-form-field>
-                </div>
+            <mat-form-field>
+                <mat-chip-list #creatorList aria-label="Autores">
+                    <mat-chip *ngFor="let creator of created_by" [selectable]="selectable" [removable]="removable"
+                        (removed)="removeItem(creator,'created_by')">
+                        {{creator}}
+                        <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+                    </mat-chip>
+                    <input placeholder="Autores" [matChipInputFor]="creatorList"
+                        [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="addOnBlur"
+                        (matChipInputTokenEnd)="addItem($event,'created_by')">
+                </mat-chip-list>
+                <mat-hint align="start">Si añade más de un autor, pulse intro entre ellos</mat-hint>
+            </mat-form-field>
 
-                <div class="col">
-                    <mat-form-field>
-                        <input matInput placeholder="Nº de ejemplares" type="number" formControlName="nEjemplares"
-                            required>
-                        <mat-error *ngIf="form.controls.nEjemplares.hasError('required')">Por favor indique un número
-                        </mat-error>
-                    </mat-form-field>
-                </div>
-            </div>
+            <mat-form-field>
+                <mat-chip-list #genreList aria-label="Géneros">
+                    <mat-chip *ngFor="let genre of genres" [selectable]="selectable" [removable]="removable"
+                        (removed)="removeItem(genre,'genres')">
+                        {{genre}}
+                        <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+                    </mat-chip>
+                    <input placeholder="Géneros" [matChipInputFor]="genreList"
+                        [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="addOnBlur"
+                        (matChipInputTokenEnd)="addItem($event,'genres')">
+                </mat-chip-list>
+                <mat-hint align="start">Si añade más de un género, pulse intro entre ellos</mat-hint>
+            </mat-form-field>
 
-            <div class="row mt-2">
-                <div class="col">
-                    <div class="col-2">
-                        <img [src]="poster_path" class="w-100" *ngIf="poster_path">
-                        <i class="fas fa-film fa-4x" *ngIf="!poster_path"></i>
-                    </div>
+            <mat-form-field>
+                <mat-chip-list #castList aria-label="Actores">
+                    <mat-chip *ngFor="let item of cast" [selectable]="selectable" [removable]="removable"
+                        (removed)="removeItem(item,'cast')">
+                        {{item.character}}: {{item.name}}
+                        <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+                    </mat-chip>
+                    <input placeholder="Actores" [matChipInputFor]="castList"
+                        [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="addOnBlur"
+                        (matChipInputTokenEnd)="addItem($event,'cast')">
+                </mat-chip-list>
+                <mat-hint align="start">Personaje: Actor Si añade más de un actor, pulse intro entre ellos
+                </mat-hint>
+            </mat-form-field>
 
-                    <div class="col align-self-center mt-2">
-                        <input mat-raised-button type="file" accept=".png,.jpg" (change)="setPosterPath($event)">
-                    </div>
-                </div>
-            </div>
+            <mat-form-field>
+                <mat-chip-list #crewList aria-label="Personal">
+                    <mat-chip *ngFor="let item of crew" [selectable]="selectable" [removable]="removable"
+                        (removed)="removeItem(item,'crew')">
+                        {{item.job}}: {{item.name}}
+                        <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+                    </mat-chip>
+                    <input placeholder="Personal" [matChipInputFor]="crewList"
+                        [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="addOnBlur"
+                        (matChipInputTokenEnd)="addItem($event,'crew')">
+                </mat-chip-list>
+                <mat-hint align="start">Puesto: Nombre Si añade más de una persona, pulse intro entre ellas
+                </mat-hint>
+            </mat-form-field>
 
-            <div class="row mt-2">
-                <div class="col">
-                    <mat-form-field class="w-100">
-                        <input matInput placeholder="Web oficial" type="url" formControlName="homepage">
-                    </mat-form-field>
-                </div>
-            </div>
+            <mat-form-field>
+                <mat-chip-list #companyList aria-label="Productoras">
+                    <mat-chip *ngFor="let company of production_companies" [selectable]="selectable"
+                        [removable]="removable" (removed)="removeItem(company,'production_companies')">
+                        {{company}}
+                        <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+                    </mat-chip>
+                    <input placeholder="Productoras" [matChipInputFor]="companyList"
+                        [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="addOnBlur"
+                        (matChipInputTokenEnd)="addItem($event,'production_companies')">
+                </mat-chip-list>
+                <mat-hint align="start">Si añade más de una compañía, pulse intro entre ellas</mat-hint>
+            </mat-form-field>
 
-            <div class="row mt-2">
-                <div class="col">
-                    <mat-form-field class="w-100">
-                        <mat-chip-list #creatorList aria-label="Autores">
-                            <mat-chip *ngFor="let creator of created_by" [selectable]="selectable"
-                                [removable]="removable" (removed)="removeItem(creator,'created_by')">
-                                {{creator}}
-                                <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
-                            </mat-chip>
-                            <input placeholder="Autores" [matChipInputFor]="creatorList"
-                                [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="addOnBlur"
-                                (matChipInputTokenEnd)="addItem($event,'created_by')">
-                        </mat-chip-list>
-                        <mat-hint align="start">Si añade más de un autor, pulse intro entre ellos</mat-hint>
-                    </mat-form-field>
-                </div>
-            </div>
-
-            <div class="row mt-2">
-                <div class="col">
-                    <mat-form-field class="w-100">
-                        <mat-chip-list #genreList aria-label="Géneros">
-                            <mat-chip *ngFor="let genre of genres" [selectable]="selectable" [removable]="removable"
-                                (removed)="removeItem(genre,'genres')">
-                                {{genre}}
-                                <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
-                            </mat-chip>
-                            <input placeholder="Géneros" [matChipInputFor]="genreList"
-                                [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="addOnBlur"
-                                (matChipInputTokenEnd)="addItem($event,'genres')">
-                        </mat-chip-list>
-                        <mat-hint align="start">Si añade más de un género, pulse intro entre ellos</mat-hint>
-                    </mat-form-field>
-                </div>
-            </div>
-
-            <div class="row mt-2">
-                <div class="col">
-                    <mat-form-field class="w-100">
-                        <mat-chip-list #castList aria-label="Actores">
-                            <mat-chip *ngFor="let item of cast" [selectable]="selectable" [removable]="removable"
-                                (removed)="removeItem(item,'cast')">
-                                {{item.character}}: {{item.name}}
-                                <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
-                            </mat-chip>
-                            <input placeholder="Actores" [matChipInputFor]="castList"
-                                [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="addOnBlur"
-                                (matChipInputTokenEnd)="addItem($event,'cast')">
-                        </mat-chip-list>
-                        <mat-hint align="start">Personaje: Actor Si añade más de un actor, pulse intro entre ellos
-                        </mat-hint>
-                    </mat-form-field>
-                </div>
-            </div>
-
-            <div class="row mt-2">
-                <div class="col">
-                    <mat-form-field class="w-100">
-                        <mat-chip-list #crewList aria-label="Personal">
-                            <mat-chip *ngFor="let item of crew" [selectable]="selectable" [removable]="removable"
-                                (removed)="removeItem(item,'crew')">
-                                {{item.job}}: {{item.name}}
-                                <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
-                            </mat-chip>
-                            <input placeholder="Personal" [matChipInputFor]="crewList"
-                                [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="addOnBlur"
-                                (matChipInputTokenEnd)="addItem($event,'crew')">
-                        </mat-chip-list>
-                        <mat-hint align="start">Puesto: Nombre Si añade más de una persona, pulse intro entre ellas
-                        </mat-hint>
-                    </mat-form-field>
-                </div>
-            </div>
-
-            <div class="row mt-2">
-                <div class="col">
-                    <mat-form-field class="w-100">
-                        <mat-chip-list #companyList aria-label="Productoras">
-                            <mat-chip *ngFor="let company of production_companies" [selectable]="selectable"
-                                [removable]="removable" (removed)="removeItem(company,'production_companies')">
-                                {{company}}
-                                <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
-                            </mat-chip>
-                            <input placeholder="Productoras" [matChipInputFor]="companyList"
-                                [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="addOnBlur"
-                                (matChipInputTokenEnd)="addItem($event,'production_companies')">
-                        </mat-chip-list>
-                        <mat-hint align="start">Si añade más de una compañía, pulse intro entre ellas</mat-hint>
-                    </mat-form-field>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col">
-                    <mat-form-field class="w-100">
-                        <mat-label>Resumen</mat-label>
-                        <textarea matInput cols="30" rows="5" formControlName="overview"></textarea>
-                    </mat-form-field>
-                </div>
-            </div>
+            <mat-form-field>
+                <input matInput placeholder="Web oficial" type="url" formControlName="homepage">
+            </mat-form-field>
+            
+            <mat-label>Resumen</mat-label>
+            <textarea matInput rows="4" formControlName="overview"></textarea>
         </div>
     </mat-dialog-content>
 

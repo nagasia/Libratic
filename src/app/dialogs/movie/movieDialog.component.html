@@ -10,35 +10,40 @@
                 </mat-error>
             </mat-form-field>
 
-            <button mat-raised-button fxFlexAlign.gt-xs="end" type="button" color="primary" (click)="searchTMDB()">Buscar en
+            <button mat-raised-button fxFlexAlign.gt-xs="end" type="button" color="primary"
+                (click)="searchTMDB()">Buscar en
                 The Movie DB</button>
 
             <div fxLayout="column" fxLayout.gt-xs="row" fxLayoutAlign.gt-xs="start center" fxLayoutGap="8px">
-                <img [src]="poster_path" class="half" *ngIf="poster_path">
-                <i class="fas fa-film fa-4x" *ngIf="!poster_path"></i>
+                <img [src]="poster_path" class="half" *ngIf="poster_path" fxFlexAlign="center">
+                <i class="fas fa-film fa-4x" *ngIf="!poster_path" fxFlexAlign="center"></i>
 
                 <input mat-raised-button type="file" accept=".png,.jpg" (change)="setPosterPath($event)">
             </div>
 
-            <mat-form-field>
-                <input matInput placeholder="Fecha de estreno" type="text" formControlName="release_date" required>
-                <mat-error *ngIf="form.controls.release_date.hasError('required')">Por favor indique una fecha
-                </mat-error>
-            </mat-form-field>
+            <div fxLayout="column" fxLayout.gt-xs="row" fxLayoutGap="8px">
+                <mat-form-field fxFlex.gt-xs="33">
+                    <input matInput placeholder="Fecha de estreno" type="text" formControlName="release_date" required>
+                    <mat-error *ngIf="form.controls.release_date.hasError('required')">Por favor indique una fecha
+                    </mat-error>
+                </mat-form-field>
 
-            <mat-form-field>
-                <input matInput placeholder="Duración" type="number" formControlName="runtime">
-            </mat-form-field>
+                <mat-form-field fxFlex.gt-xs="33">
+                    <input matInput placeholder="Duración" type="number" formControlName="runtime">
+                </mat-form-field>
 
-            <mat-form-field>
-                <input matInput placeholder="Puntuación" type="number" formControlName="vote_average">
-            </mat-form-field>
+                <mat-form-field fxFlex.gt-xs="33">
+                    <input matInput placeholder="Puntuación" type="number" formControlName="vote_average">
+                </mat-form-field>
+            </div>
 
-            <mat-form-field>
-                <input matInput placeholder="Nº de ejemplares" type="number" formControlName="nEjemplares" required>
-                <mat-error *ngIf="form.controls.nEjemplares.hasError('required')">Por favor indique un número
-                </mat-error>
-            </mat-form-field>
+            <div fxLayout="column" fxLayout.gt-xs="row">
+                <mat-form-field>
+                    <input matInput placeholder="Nº de ejemplares" type="number" formControlName="nEjemplares" required>
+                    <mat-error *ngIf="form.controls.nEjemplares.hasError('required')">Por favor indique un número
+                    </mat-error>
+                </mat-form-field>
+            </div>
 
             <mat-form-field>
                 <input matInput placeholder="Web oficial" type="url" formControlName="homepage">

@@ -29,7 +29,7 @@ export class WishedComponent implements OnInit, OnDestroy {
         private db: FireDBService,
         private snackBar: MatSnackBar,
         private dialog: MatDialog,
-        private functions: CommonFunctions) {
+        public functions: CommonFunctions) {
         this.isLoged = this.functions.isLoged(this.authService.authUser);
         if (this.isLoged) {
             this.isAdmin = this.functions.isAdmin(this.authService.authUser);
@@ -126,6 +126,10 @@ export class WishedComponent implements OnInit, OnDestroy {
             tv.wishes[this.authService.authUser.id] = null;
         }
         this.db.updateTv(tv);
+    }
+
+    getNumberOfItems(item: any) {
+        return item.owned[this.authService.authLibrary.id].nEjemplares;
     }
 
     ngOnDestroy() {

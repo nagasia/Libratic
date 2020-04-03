@@ -7,15 +7,15 @@
 
     <mat-radio-group (change)="setMovie($event)" *ngIf="isFinished && isFounded" fxLayout="column" fxLayoutGap="8px">
         <div *ngFor="let item of movieList">
-            <div fxLayout="column" fxLayout.gt-xs="row" fxLayoutAlign="start center" fxLayoutGap="8px">
-                <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="8px" class="half">
+            <div fxLayout="column" fxLayout.gt-xs="row" fxLayoutAlign="start center" fxLayoutGap.lt-md="8px">
+                <div fxFlex.xs="100" fxFlex.gt-xs="30" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="8px">
                     <mat-radio-button [value]='item' color="primary"></mat-radio-button>
 
-                    <img fxFlex="auto" [src]="image + item.poster_path" *ngIf="item.poster_path">
+                    <img class="w-75" [src]="image + item.poster_path" *ngIf="item.poster_path">
                     <i class="fas fa-film fa-4x" *ngIf="!item.poster_path"></i>
                 </div>
 
-                <div fxLayout="column" fxLayoutGap="8px">
+                <div fxFlex fxLayout="column" fxLayoutGap="8px">
                     <div *ngIf="item.title">
                         <b>Título: </b>
                         <span>{{item.title}}</span>
@@ -26,9 +26,13 @@
                         <span>{{functions.reverseDate(item.release_date)}}</span>
                     </div>
 
-                    <div *ngIf="item.overview">
+                    <div *ngIf="item.overview" fxHide.gt-sm>
                         <b>Resumen: </b>
                         <span>{{functions.shortOverview(item.overview)}}</span>
+                    </div>
+                    <div *ngIf="item.overview" fxHide fxShow.gt-sm>
+                        <b>Resumen: </b>
+                        <span>{{item.overview}}</span>
                     </div>
                 </div>
             </div>

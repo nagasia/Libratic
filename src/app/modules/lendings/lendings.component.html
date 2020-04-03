@@ -1,252 +1,214 @@
-<div class="container-fuid m-3">
-    <div class="row row-cols-3">
-        <div class="col">
-            <div class="row justify-content-around">
-                <div class="col-auto align-self-center">
-                    <i class="fas fa-book mr-2"></i>
-                    Libros
-                </div>
-                <div class="col-auto" *ngIf="isAdmin">
-                    <button mat-icon-button matTooltip="Filtrar" (click)="bookFilter()" color="primary">
-                        <i class="fas fa-filter"></i>
-                    </button>
-                    <button mat-icon-button matTooltip="Crear" (click)="newBookLending()" color="primary">
-                        <i class="fas fa-plus"></i>
-                    </button>
-                </div>
-            </div>
-
-            <div class="row mt-2">
-                <div class="col">
-                    <mat-accordion>
-                        <mat-expansion-panel *ngFor="let item of filteredBooks">
-                            <mat-expansion-panel-header *ngIf="item.late" class="bg-danger">
-                                <mat-panel-title class="align-items-center text-white">
-                                    <span>{{item.itemName}}</span>
-                                    <span class="ml-4">{{functions.translateDate(item.endDate)}}</span>
-                                </mat-panel-title>
-
-                                <button mat-icon-button matTooltip="Añadir tiempo" *ngIf="isAdmin"
-                                    (click)="editLending(item,'book'); $event.stopPropagation()">
-                                    <i class="far fa-clock text-white"></i>
-                                </button>
-                                <button mat-icon-button matTooltip="Devolver" *ngIf="isAdmin"
-                                    (click)="returnLending(item,'book'); $event.stopPropagation()">
-                                    <i class="fas fa-exchange-alt text-white"></i>
-                                </button>
-                            </mat-expansion-panel-header>
-
-                            <mat-expansion-panel-header *ngIf="!item.late">
-                                <mat-panel-title class="align-items-center">
-                                    <b>{{item.itemName}}</b>
-                                    <span class="ml-4 text-secondary">{{functions.translateDate(item.endDate)}}</span>
-                                </mat-panel-title>
-
-                                <button mat-icon-button matTooltip="Añadir tiempo" *ngIf="isAdmin" color="primary"
-                                    (click)="editLending(item,'book'); $event.stopPropagation()">
-                                    <i class="far fa-clock"></i>
-                                </button>
-                                <button mat-icon-button matTooltip="Devolver" *ngIf="isAdmin" color="primary"
-                                    (click)="returnLending(item,'book'); $event.stopPropagation()">
-                                    <i class="fas fa-exchange-alt"></i>
-                                </button>
-                            </mat-expansion-panel-header>
-
-                            <div class="row">
-                                <div class="col">
-                                    <b>Título: </b>
-                                    <span>{{item.itemName}}</span>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col">
-                                    <b>Usuario: </b>
-                                    <span>{{item.userName}}</span>
-                                </div>
-                            </div>
-
-                            <div class="row justify-content-between">
-                                <div class="col-auto">
-                                    <b>Préstamo: </b>
-                                    <span>{{functions.translateDate(item.startDate)}}</span>
-                                </div>
-                                <div class="col-auto">
-                                    <b>Devolución: </b>
-                                    <span>{{functions.translateDate(item.endDate)}}</span>
-                                </div>
-                            </div>
-
-                        </mat-expansion-panel>
-                    </mat-accordion>
-                </div>
-            </div>
+<div fxLayout="column" fxLayoutAlign="center">
+    <mat-toolbar fxLayout="row" fxLayoutAlign="space-between center">
+        <div>
+            <i class="fas fa-book mr-2"></i>
+            <span>Libros</span>
         </div>
 
-        <div class="col">
-            <div class="row justify-content-around">
-                <div class="col-auto align-self-center">
-                    <i class="fas fa-film mr-2"></i>
-                    Películas
+        <div *ngIf="isAdmin">
+            <button mat-icon-button matTooltip="Filtrar" (click)="bookFilter()" color="primary">
+                <i class="fas fa-filter"></i>
+            </button>
+            <button mat-icon-button matTooltip="Crear" (click)="newBookLending()" color="primary">
+                <i class="fas fa-plus"></i>
+            </button>
+        </div>
+    </mat-toolbar>
+
+    <mat-accordion class="mx-2">
+        <mat-expansion-panel *ngFor="let item of filteredBooks">
+            <mat-expansion-panel-header *ngIf="item.late" class="bg-danger">
+                <div class="panelTitle text-white" fxLayoutGap="8px">
+                    <span>{{item.itemName}}</span>
+                    <span>{{functions.translateDate(item.endDate)}}</span>
                 </div>
-                <div class="col-auto" *ngIf="isAdmin">
-                    <button mat-icon-button matTooltip="Filtrar" (click)="movieFilter()" color="primary">
-                        <i class="fas fa-filter"></i>
+
+                <div fxFlex="none">
+                    <button mat-icon-button matTooltip="Añadir tiempo" *ngIf="isAdmin"
+                        (click)="editLending(item,'book'); $event.stopPropagation()">
+                        <i class="far fa-clock text-white"></i>
                     </button>
-                    <button mat-icon-button matTooltip="Crear" (click)="newMovieLending()" color="primary">
-                        <i class="fas fa-plus"></i>
+                    <button mat-icon-button matTooltip="Devolver" *ngIf="isAdmin"
+                        (click)="returnLending(item,'book'); $event.stopPropagation()">
+                        <i class="fas fa-exchange-alt text-white"></i>
                     </button>
+                </div>
+            </mat-expansion-panel-header>
+
+            <mat-expansion-panel-header *ngIf="!item.late">
+                <div class="panelTitle" fxLayoutGap="8px">
+                    <b>{{item.itemName}}</b>
+                    <span class="text-secondary">{{functions.translateDate(item.endDate)}}</span>
+                </div>
+
+                <div fxFlex="none">
+                    <button mat-icon-button matTooltip="Añadir tiempo" *ngIf="isAdmin" color="primary"
+                        (click)="editLending(item,'book'); $event.stopPropagation()">
+                        <i class="far fa-clock"></i>
+                    </button>
+                    <button mat-icon-button matTooltip="Devolver" *ngIf="isAdmin" color="primary"
+                        (click)="returnLending(item,'book'); $event.stopPropagation()">
+                        <i class="fas fa-exchange-alt"></i>
+                    </button>
+                </div>
+            </mat-expansion-panel-header>
+
+            <div fxLayout="column" fxLayoutAlign="space-between start" fxLayoutGap="8px">
+                <div *ngIf="item.late" class="mt-1"></div>
+
+                <p><b>Título: </b>{{item.itemName}}</p>
+
+                <p><b>Usuario: </b>{{item.userName}}</p>
+
+                <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutAlign.gt-xs="start center"
+                    fxLayoutGap="16px">
+                    <p><b>Préstamo: </b>{{functions.translateDate(item.startDate)}}</p>
+
+                    <p><b>Devolución: </b>{{functions.translateDate(item.endDate)}}</p>
                 </div>
             </div>
+        </mat-expansion-panel>
+    </mat-accordion>
 
-            <div class="row mt-2">
-                <div class="col">
-                    <mat-accordion>
-                        <mat-expansion-panel *ngFor="let item of filteredMovies">
-                            <mat-expansion-panel-header *ngIf="item.late" class="bg-danger">
-                                <mat-panel-title class="align-items-center text-white">
-                                    <span>{{item.itemName}}</span>
-                                    <span class="ml-4">{{functions.translateDate(item.endDate)}}</span>
-                                </mat-panel-title>
-
-                                <button mat-icon-button matTooltip="Añadir tiempo" *ngIf="isAdmin"
-                                    (click)="editLending(item,'movie'); $event.stopPropagation()">
-                                    <i class="far fa-clock text-white"></i>
-                                </button>
-                                <button mat-icon-button matTooltip="Devolver" *ngIf="isAdmin"
-                                    (click)="returnLending(item,'movie'); $event.stopPropagation()">
-                                    <i class="fas fa-exchange-alt text-white"></i>
-                                </button>
-                            </mat-expansion-panel-header>
-
-                            <mat-expansion-panel-header *ngIf="!item.late">
-                                <mat-panel-title class="align-items-center">
-                                    <b>{{item.itemName}}</b>
-                                    <span class="ml-4 text-secondary">{{functions.translateDate(item.endDate)}}</span>
-                                </mat-panel-title>
-
-                                <button mat-icon-button matTooltip="Añadir tiempo" *ngIf="isAdmin" color="primary"
-                                    (click)="editLending(item,'movie'); $event.stopPropagation()">
-                                    <i class="far fa-clock"></i>
-                                </button>
-                                <button mat-icon-button matTooltip="Devolver" *ngIf="isAdmin" color="primary"
-                                    (click)="returnLending(item,'movie'); $event.stopPropagation()">
-                                    <i class="fas fa-exchange-alt"></i>
-                                </button>
-                            </mat-expansion-panel-header>
-
-                            <div class="row">
-                                <div class="col">
-                                    <b>Título: </b>
-                                    <span>{{item.itemName}}</span>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col">
-                                    <b>Usuario: </b>
-                                    <span>{{item.userName}}</span>
-                                </div>
-                            </div>
-
-                            <div class="row justify-content-between">
-                                <div class="col-auto">
-                                    <b>Préstamo: </b>
-                                    <span>{{functions.translateDate(item.startDate)}}</span>
-                                </div>
-                                <div class="col-auto">
-                                    <b>Devolución: </b>
-                                    <span>{{functions.translateDate(item.endDate)}}</span>
-                                </div>
-                            </div>
-
-                        </mat-expansion-panel>
-                    </mat-accordion>
-                </div>
-            </div>
+    <mat-toolbar fxLayout="row" fxLayoutAlign="space-between center">
+        <div>
+            <i class="fas fa-film mr-2"></i>
+            <span>Películas</span>
         </div>
 
-        <div class="col">
-            <div class="row justify-content-around">
-                <div class="col-auto align-self-center">
-                    <i class="fas fa-tv mr-2"></i>
-                    Series
-                </div>
-                <div class="col-auto" *ngIf="isAdmin">
-                    <button mat-icon-button matTooltip="Filtrar" (click)="tvFilter()" color="primary">
-                        <i class="fas fa-filter"></i>
-                    </button>
-                    <button mat-icon-button matTooltip="Crear" (click)="newTVLending()" color="primary">
-                        <i class="fas fa-plus"></i>
-                    </button>
-                </div>
-            </div>
-
-            <div class="row mt-2">
-                <div class="col">
-                    <mat-accordion>
-                        <mat-expansion-panel *ngFor="let item of filteredTvs">
-                            <mat-expansion-panel-header *ngIf="item.late" class="bg-danger">
-                                <mat-panel-title class="align-items-center text-white">
-                                    <span>{{item.itemName}}</span>
-                                    <span class="ml-4">{{functions.translateDate(item.endDate)}}</span>
-                                </mat-panel-title>
-
-                                <button mat-icon-button matTooltip="Añadir tiempo" *ngIf="isAdmin"
-                                    (click)="editLending(item,'tv'); $event.stopPropagation()">
-                                    <i class="far fa-clock text-white"></i>
-                                </button>
-                                <button mat-icon-button matTooltip="Devolver" *ngIf="isAdmin"
-                                    (click)="returnLending(item,'tv'); $event.stopPropagation()">
-                                    <i class="fas fa-exchange-alt text-white"></i>
-                                </button>
-                            </mat-expansion-panel-header>
-
-                            <mat-expansion-panel-header *ngIf="!item.late">
-                                <mat-panel-title class="align-items-center">
-                                    <b>{{item.itemName}}</b>
-                                    <span class="ml-4 text-secondary">{{functions.translateDate(item.endDate)}}</span>
-                                </mat-panel-title>
-
-                                <button mat-icon-button matTooltip="Añadir tiempo" *ngIf="isAdmin" color="primary"
-                                    (click)="editLending(item,'tv'); $event.stopPropagation()">
-                                    <i class="far fa-clock"></i>
-                                </button>
-                                <button mat-icon-button matTooltip="Devolver" *ngIf="isAdmin" color="primary"
-                                    (click)="returnLending(item,'tv'); $event.stopPropagation()">
-                                    <i class="fas fa-exchange-alt"></i>
-                                </button>
-                            </mat-expansion-panel-header>
-
-                            <div class="row">
-                                <div class="col">
-                                    <b>Título: </b>
-                                    <span>{{item.itemName}}</span>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col">
-                                    <b>Usuario: </b>
-                                    <span>{{item.userName}}</span>
-                                </div>
-                            </div>
-
-                            <div class="row justify-content-between">
-                                <div class="col-auto">
-                                    <b>Préstamo: </b>
-                                    <span>{{functions.translateDate(item.startDate)}}</span>
-                                </div>
-                                <div class="col-auto">
-                                    <b>Devolución: </b>
-                                    <span>{{functions.translateDate(item.endDate)}}</span>
-                                </div>
-                            </div>
-
-                        </mat-expansion-panel>
-                    </mat-accordion>
-                </div>
-            </div>
+        <div *ngIf="isAdmin">
+            <button mat-icon-button matTooltip="Filtrar" (click)="movieFilter()" color="primary">
+                <i class="fas fa-filter"></i>
+            </button>
+            <button mat-icon-button matTooltip="Crear" (click)="newMovieLending()" color="primary">
+                <i class="fas fa-plus"></i>
+            </button>
         </div>
-    </div>
+    </mat-toolbar>
+
+    <mat-accordion class="mx-2">
+        <mat-expansion-panel *ngFor="let item of filteredMovies">
+            <mat-expansion-panel-header *ngIf="item.late" class="bg-danger">
+                <div class="panelTitle text-white" fxLayoutGap="8px">
+                    <span>{{item.itemName}}</span>
+                    <span>{{functions.translateDate(item.endDate)}}</span>
+                </div>
+
+                <div fxFlex="none">
+                    <button mat-icon-button matTooltip="Añadir tiempo" *ngIf="isAdmin"
+                        (click)="editLending(item,'movie'); $event.stopPropagation()">
+                        <i class="far fa-clock text-white"></i>
+                    </button>
+                    <button mat-icon-button matTooltip="Devolver" *ngIf="isAdmin"
+                        (click)="returnLending(item,'movie'); $event.stopPropagation()">
+                        <i class="fas fa-exchange-alt text-white"></i>
+                    </button>
+                </div>
+            </mat-expansion-panel-header>
+
+            <mat-expansion-panel-header *ngIf="!item.late">
+                <div class="panelTitle" fxLayoutGap="8px">
+                    <b>{{item.itemName}}</b>
+                    <span class="text-secondary">{{functions.translateDate(item.endDate)}}</span>
+                </div>
+
+                <div fxFlex="none">
+                    <button mat-icon-button matTooltip="Añadir tiempo" *ngIf="isAdmin" color="primary"
+                        (click)="editLending(item,'movie'); $event.stopPropagation()">
+                        <i class="far fa-clock"></i>
+                    </button>
+                    <button mat-icon-button matTooltip="Devolver" *ngIf="isAdmin" color="primary"
+                        (click)="returnLending(item,'movie'); $event.stopPropagation()">
+                        <i class="fas fa-exchange-alt"></i>
+                    </button>
+                </div>
+            </mat-expansion-panel-header>
+
+            <div fxLayout="column" fxLayoutAlign="space-between start" fxLayoutGap="8px">
+                <div *ngIf="item.late" class="mt-1"></div>
+
+                <p><b>Título: </b><span>{{item.itemName}}</span></p>
+
+                <p><b>Usuario: </b><span>{{item.userName}}</span></p>
+
+                <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutAlign.gt-xs="start center"
+                    fxLayoutGap="16px">
+                    <p><b>Préstamo: </b>{{functions.translateDate(item.startDate)}}</p>
+
+                    <p><b>Devolución: </b>{{functions.translateDate(item.endDate)}}</p>
+                </div>
+            </div>
+        </mat-expansion-panel>
+    </mat-accordion>
+
+    <mat-toolbar fxLayout="row" fxLayoutAlign="space-between center">
+        <div>
+            <i class="fas fa-tv mr-2"></i>
+            <span>Series</span>
+        </div>
+
+        <div *ngIf="isAdmin">
+            <button mat-icon-button matTooltip="Filtrar" (click)="tvFilter()" color="primary">
+                <i class="fas fa-filter"></i>
+            </button>
+            <button mat-icon-button matTooltip="Crear" (click)="newTVLending()" color="primary">
+                <i class="fas fa-plus"></i>
+            </button>
+        </div>
+    </mat-toolbar>
+
+    <mat-accordion class="mx-2">
+        <mat-expansion-panel *ngFor="let item of filteredTvs">
+            <mat-expansion-panel-header *ngIf="item.late" class="bg-danger">
+                <div class="panelTitle text-white" fxLayoutGap="8px">
+                    <span>{{item.itemName}}</span>
+                    <span>{{functions.translateDate(item.endDate)}}</span>
+                </div>
+
+                <div fxFlex="none">
+                    <button mat-icon-button matTooltip="Añadir tiempo" *ngIf="isAdmin"
+                        (click)="editLending(item,'tv'); $event.stopPropagation()">
+                        <i class="far fa-clock text-white"></i>
+                    </button>
+                    <button mat-icon-button matTooltip="Devolver" *ngIf="isAdmin"
+                        (click)="returnLending(item,'tv'); $event.stopPropagation()">
+                        <i class="fas fa-exchange-alt text-white"></i>
+                    </button>
+                </div>
+            </mat-expansion-panel-header>
+
+            <mat-expansion-panel-header *ngIf="!item.late">
+                <div class="panelTitle" fxLayoutGap="8px">
+                    <b>{{item.itemName}}</b>
+                    <span class="text-secondary">{{functions.translateDate(item.endDate)}}</span>
+                </div>
+
+                <div fxFlex="none">
+                    <button mat-icon-button matTooltip="Añadir tiempo" *ngIf="isAdmin" color="primary"
+                        (click)="editLending(item,'tv'); $event.stopPropagation()">
+                        <i class="far fa-clock"></i>
+                    </button>
+                    <button mat-icon-button matTooltip="Devolver" *ngIf="isAdmin" color="primary"
+                        (click)="returnLending(item,'tv'); $event.stopPropagation()">
+                        <i class="fas fa-exchange-alt"></i>
+                    </button>
+                </div>
+            </mat-expansion-panel-header>
+
+            <div fxLayout="column" fxLayoutAlign="space-between start" fxLayoutGap="8px">
+                <div *ngIf="item.late" class="mt-1"></div>
+
+                <p><b>Título: </b><span>{{item.itemName}}</span></p>
+
+                <p><b>Usuario: </b><span>{{item.userName}}</span></p>
+
+                <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutAlign.gt-xs="start center"
+                    fxLayoutGap="16px">
+                    <p><b>Préstamo: </b><span>{{functions.translateDate(item.startDate)}}</span></p>
+
+                    <p><b>Devolución: </b><span>{{functions.translateDate(item.endDate)}}</span></p>
+                </div>
+            </div>
+        </mat-expansion-panel>
+    </mat-accordion>
 </div>
