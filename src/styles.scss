@@ -8,6 +8,15 @@ body {
     background-color: #f5f5f5;
 }
 
+button:focus, button:active:focus, button.active:focus, #logo {
+    outline: none !important;
+    outline-style: none !important;
+}
+
+#logo {
+    cursor: pointer
+}
+
 .mat-content {
     place-content: center space-between;
     align-items: center;

@@ -1,6 +1,6 @@
 <mat-toolbar color="primary">
     <div fxFlex fxLayout="row" fxLayoutAlign="space-between center">
-        <div>
+        <div id="logo" routerLink="/">
             <img src="../favicon.ico" class="mr-2">
             <span>Libratic</span>
         </div>
@@ -119,7 +119,7 @@
                         <i class="fas fa-users"></i>
                     </button>
 
-                    <button mat-button matTooltip="Editar biblioteca" (click)="editLibrary()">
+                    <button mat-icon-button matTooltip="Editar biblioteca" (click)="editLibrary()">
                         <i class="fas fa-pencil-alt"></i>
                         <i class="fas fa-landmark"></i>
                     </button>
@@ -131,7 +131,7 @@
             </ng-container>
 
             <ng-container *ngIf="!isLoged">
-                <button mat-button matTooltip="Nueva biblioteca" (click)="newLibrary()">
+                <button mat-icon-button matTooltip="Nueva biblioteca" (click)="newLibrary()">
                     <i class="fas fa-plus"></i>
                     <i class="fas fa-landmark"></i>
                 </button>

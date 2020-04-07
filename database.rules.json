@@ -15,20 +15,24 @@
       ]
     },
     "books": {
-        ".indexOn": [
-          "title"
-        ]
+      ".indexOn": [
+        "title"
+      ]
     },
     "movies": {
-        ".indexOn": [
-          "title"
-        ]
+      ".indexOn": [
+        "title"
+      ]
     },
     "tvs": {
-        ".indexOn": [
-          "name"
-        ]
+      ".indexOn": [
+        "name"
+      ]
     },
-    "lendings": {}
+    "lendings": {
+      ".indexOn": [
+        "active"
+      ]
+    }
   }
 }
