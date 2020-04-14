@@ -29,7 +29,6 @@ import { FlexLayoutModule } from '@angular/flex-layout';
         MatButtonModule,
         MatIconModule,
         MatToolbarModule,
-        MatIconModule,
         MatTooltipModule,
         MatDialogModule,
         MatInputModule,
@@ -46,7 +45,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
         MatProgressBarModule,
         MatDatepickerModule,
         MatSlideToggleModule,
-        MatMenuModule
+        MatMenuModule,
     ],
 })
 export class CommonMaterialModules { }
